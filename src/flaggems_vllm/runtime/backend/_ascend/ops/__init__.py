@@ -110,6 +110,7 @@ from flaggems_vllm.runtime.backend._ascend.ops.topk_softplus_sqrt import (
     topk_softplus_sqrt,
 )
 from flaggems_vllm.runtime.backend._ascend.ops.unpack_seq import unpack_seq_triton
+from flaggems_vllm.runtime.backend._ascend.ops.indexer_k_quant_and_cache import indexer_k_quant_and_cache
 
 __all__ = [
     "dequantize_and_gather_k_cache",
@@ -121,6 +122,7 @@ __all__ = [
     "fused_inv_rope_int8_quant",
     "gemma_rms_norm",
     "grouped_topk",
+    "indexer_k_quant_and_cache",
     "inplace_fused_experts",
     "outplace_fused_experts",
     "qwen4_store_qsa_kv_rows",
