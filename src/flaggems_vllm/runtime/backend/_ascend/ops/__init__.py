@@ -74,6 +74,7 @@ from flaggems_vllm.runtime.backend._ascend.ops.top_k_per_row_decode import (
 from flaggems_vllm.runtime.backend._ascend.ops.top_k_per_row_prefill import (
     top_k_per_row_prefill,
 )
+from flaggems_vllm.runtime.backend._ascend.ops.indexer_k_quant_and_cache import indexer_k_quant_and_cache
 
 __all__ = [
     "SUPPORTED_FP8_DTYPE",
@@ -82,6 +83,7 @@ __all__ = [
     "causal_conv1d_update",
     "fused_experts_impl",
     "grouped_topk",
+    "indexer_k_quant_and_cache",
     "inplace_fused_experts",
     "outplace_fused_experts",
     "qwen4_store_qsa_kv_rows",
