@@ -43,21 +43,61 @@ def _is_fp8_fnuz(dtype):
     return hasattr(torch, "float8_e4m3fnuz") and dtype == torch.float8_e4m3fnuz
 
 
+_CVT_CONSTS = {}
+
+
+def _cvt_consts(device):
+    # NPU notes: python-int scalar ops take a slow path, and both int32 shifts
+    # and int32 div-floor (which is routed through float) are slow or inexact.
+    # All constants are therefore pre-materialized as device tensor scalars,
+    # and shifts are emulated by masking off the low bits (making the value an
+    # exactly-representable multiple of 2**k) followed by div-floor.
+    if device not in _CVT_CONSTS:
+        i32 = torch.int32
+        _CVT_CONSTS[device] = {
+            "m_abs": torch.tensor(0x7FFFFFFF, dtype=i32, device=device),
+            "c_sub": torch.tensor(0x3C000000, dtype=i32, device=device),
+            "c_rnd": torch.tensor(0x0007FFFF, dtype=i32, device=device),
+            "c_bit20": torch.tensor(0x00100000, dtype=i32, device=device),
+            "c_low20": torch.tensor(0x000FFFFF, dtype=i32, device=device),
+            "c_low24": torch.tensor(0x00FFFFFF, dtype=i32, device=device),
+            "c_one": torch.tensor(1, dtype=i32, device=device),
+            "c_ge": torch.tensor(0x3C800000, dtype=i32, device=device),
+            "c_sub2": torch.tensor(0x4B000000, dtype=i32, device=device),
+            "c_2p20": torch.tensor(1 << 20, dtype=i32, device=device),
+            "c_2p24": torch.tensor(1 << 24, dtype=i32, device=device),
+            "c_sign": torch.tensor(0x80, dtype=i32, device=device),
+        }
+    return _CVT_CONSTS[device]
+
+
 def _f32_to_fp8_e4m3fn(y):
     """Bit-exact f32 -> e4m3fn conversion (RNE); `y` must be finite and
     pre-clamped to [-448, 448].
     """
+    c = _cvt_consts(y.device)
     b = y.view(torch.int32)
-    a = b & 0x7FFFFFFF
-    t = a - 0x3C000000
-    t += 0x0007FFFF + ((t >> 20) & 1)
-    r_norm = t >> 20
-    r_sub = (a.view(torch.float32) * 512.0 + 8388608.0).view(torch.int32) - 0x4B000000
-    r = torch.where(a >= 0x3C800000, r_norm, r_sub)
-    return (r | ((b >> 24) & 0x80)).to(torch.uint8).view(torch.float8_e4m3fn)
+    a = b & c["m_abs"]
+    t = a - c["c_sub"]
+    # (t >> 20) & 1; the dividend is a single bit so the div is exact.
+    t += c["c_rnd"] + torch.div(t & c["c_bit20"], c["c_bit20"], rounding_mode="floor")
+    # t >> 20, exact: strip the low 20 bits first so the dividend is a multiple
+    # of 2**20 (exactly representable in f32, so the float-routed div is exact).
+    r_norm = torch.div(t - (t & c["c_low20"]), c["c_2p20"], rounding_mode="floor")
+    r_sub = (a.view(torch.float32) * 512.0 + 8388608.0).view(torch.int32) - c["c_sub2"]
+    r = torch.where(a >= c["c_ge"], r_norm, r_sub)
+    # (b >> 24) & 0x80, exact: strip the low 24 bits first.
+    sign = (
+        torch.div(b - (b & c["c_low24"]), c["c_2p24"], rounding_mode="floor")
+        & c["c_sign"]
+    )
+    return (r | sign).to(torch.uint8)
 
 
 def torch_indexer(k, kv_cache, slot_mapping, quant_block_size, scale_fmt):
+    # Vectorized reference: slot_id uniquely identifies the (block, row) since
+    # slot_id = block_id * block_size + block_offset, so the quant values and
+    # scales can be scattered with one advanced-indexing write each.
     num_blocks = kv_cache.shape[0]
     block_size = kv_cache.shape[1]
     head_dim = k.shape[-1]
@@ -65,42 +105,65 @@ def torch_indexer(k, kv_cache, slot_mapping, quant_block_size, scale_fmt):
     fp8_dtype = _default_fp8_dtype()
     scale_divisor = 224.0 if _is_fp8_fnuz(fp8_dtype) else 448.0
 
+    valid = slot_mapping >= 0
+    slots = slot_mapping[valid]
+    if slots.numel() == 0:
+        return
+    block_id = slots // block_size
+    block_offset = slots % block_size
+
+    val = k[valid]
+    num_valid = val.shape[0]
+    amax = (
+        val.abs()
+        .to(torch.float32)
+        .view(num_valid, num_quant_blocks, quant_block_size)
+        .amax(-1)
+    )
+    scale = (
+        torch.maximum(
+            amax,
+            torch.tensor(1e-4, dtype=torch.float32, device=k.device),
+        )
+        / scale_divisor
+    )
+    if scale_fmt == "ue8m0":
+        scale = torch.exp2(torch.ceil(torch.log2(scale)))
+
+    scaled_val = val.to(torch.float32).view(
+        num_valid, num_quant_blocks, quant_block_size
+    ) / scale.unsqueeze(-1)
+
     flat_cache = kv_cache.view(num_blocks, -1)
-    cache_values = flat_cache[:, : block_size * head_dim].view(fp8_dtype)
-    cache_scales = flat_cache[:, block_size * head_dim :].view(torch.float32)
-
-    for token_idx in range(slot_mapping.numel()):
-        slot_id = int(slot_mapping[token_idx].item())
-        if slot_id < 0:
-            continue
-
-        block_id = slot_id // block_size
-        block_offset = slot_id % block_size
-        for quant_block_id in range(num_quant_blocks):
-            start = quant_block_id * quant_block_size
-            end = start + quant_block_size
-            val = k[token_idx, start:end]
-            amax = val.abs().to(torch.float32).amax()
-
-            scale = (
-                torch.maximum(
-                    amax,
-                    torch.tensor(1e-4, dtype=torch.float32, device=k.device),
-                )
-                / scale_divisor
+    if USE_SOFT_CAST:
+        fp8_val = _f32_to_fp8_e4m3fn(scaled_val.reshape(num_valid, head_dim))
+        if head_dim % 4 == 0:
+            # uint8 scatters hit a slow NPU kernel; scatter as packed int32.
+            fp8_val = fp8_val.view(torch.int32)
+            values_view = (
+                flat_cache[:, : block_size * head_dim]
+                .view(torch.int32)
+                .unflatten(1, (block_size, head_dim // 4))
             )
-            if scale_fmt == "ue8m0":
-                scale = torch.exp2(torch.ceil(torch.log2(scale)))
+        else:
+            values_view = flat_cache[:, : block_size * head_dim].unflatten(
+                1, (block_size, head_dim)
+            )
+    else:
+        fp8_val = scaled_val.reshape(num_valid, head_dim).to(fp8_dtype)
+        values_view = (
+            flat_cache[:, : block_size * head_dim]
+            .view(fp8_dtype)
+            .unflatten(1, (block_size, head_dim))
+        )
+    values_view[block_id, block_offset] = fp8_val
 
-            value_start = block_offset * head_dim + start
-            value_end = value_start + quant_block_size
-            scaled_val = val.to(torch.float32) / scale
-            fp8_val = _f32_to_fp8_e4m3fn(scaled_val) if USE_SOFT_CAST else scaled_val.to(fp8_dtype)
-            cache_values[block_id, value_start:value_end].copy_(fp8_val)
-            cache_scales[
-                block_id,
-                block_offset * num_quant_blocks + quant_block_id,
-            ] = scale
+    scales_view = (
+        flat_cache[:, block_size * head_dim :]
+        .view(torch.float32)
+        .unflatten(1, (block_size, num_quant_blocks))
+    )
+    scales_view[block_id, block_offset] = scale
 
 
 def vllm_indexer(k, kv_cache, slot_mapping, quant_block_size, scale_fmt):

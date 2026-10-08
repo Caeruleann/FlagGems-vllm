@@ -42,7 +42,7 @@ def _f32_to_fp8_e4m3fn(y):
         triton.Config({}, num_warps=4),
         triton.Config({}, num_warps=8),
     ],
-    key=["QUANT_BLOCK_SIZE", "NUM_TOKENS_PAD"],
+    key=["QUANT_BLOCK_SIZE"],
 )
 @triton.jit
 def _indexer_k_quant_and_cache_kernel(
@@ -54,47 +54,64 @@ def _indexer_k_quant_and_cache_kernel(
     kv_cache_value_stride,
     block_size,
     num_quant_blocks,
+    num_tokens,
+    num_qb_groups,
     head_dim: tl.constexpr,
     QUANT_BLOCK_SIZE: tl.constexpr,
     USE_UE8M0: tl.constexpr,
-    NUM_TOKENS_PAD: tl.constexpr,
 ):
-    tid = tl.program_id(0)
-    quant_block_id = tl.program_id(1) * 4
+    pid = tl.program_id(0)
+    num_programs = tl.num_programs(0)
     quant_block_offsets = tl.arange(0, 4)
-    head_offsets = tl.arange(0, QUANT_BLOCK_SIZE)
-    offsets = (
-        quant_block_id + quant_block_offsets[:, None]
-    ) * QUANT_BLOCK_SIZE + head_offsets[None, :]
-    mask = offsets < head_dim
+    head_offsets = tl.arange(0, 4 * QUANT_BLOCK_SIZE)
+    total_work = num_tokens * num_qb_groups
 
-    src_ptr = k_ptr + tid * head_dim
-    slot_id = tl.load(slot_mapping_ptr + tid)
-    if slot_id < 0:
-        return
+    for work in range(pid, total_work, num_programs):
+        token_idx = work // num_qb_groups
+        quant_block_id = (work % num_qb_groups) * 4
+        # NOTE: use a flat 1D view of the (4, QUANT_BLOCK_SIZE) tile. The 2D
+        # formulation hits a FlagTree Ascend backend race where a 128-byte row
+        # of the masked i8 store is intermittently dropped; the flat form
+        # lowers to a single contiguous load/store and is stable.
+        flat_offsets = quant_block_id * QUANT_BLOCK_SIZE + head_offsets
+        flat_mask = flat_offsets < head_dim
+        scale_mask = quant_block_id + quant_block_offsets < num_quant_blocks
 
-    block_id = slot_id // block_size
-    block_offset = slot_id % block_size
+        slot_id = tl.load(slot_mapping_ptr + token_idx)
+        if slot_id >= 0:
+            block_id = slot_id // block_size
+            block_offset = slot_id % block_size
 
-    val = tl.load(src_ptr + offsets, mask=mask, other=0.0)
-    amax = tl.max(tl.abs(val).to(tl.float32), axis=1)
-    scale = tl.maximum(1e-4, amax) / 448.0
+            src_ptr = k_ptr + token_idx * head_dim
+            val = tl.reshape(
+                tl.load(src_ptr + flat_offsets, mask=flat_mask, other=0.0),
+                (4, QUANT_BLOCK_SIZE),
+            )
+            amax = tl.max(tl.abs(val).to(tl.float32), axis=1)
+            scale = tl.maximum(1e-4, amax) / 448.0
 
-    if USE_UE8M0:
-        scale = tl.exp2(tl.ceil(tl.log2(scale)))
+            if USE_UE8M0:
+                scale = tl.exp2(tl.ceil(tl.log2(scale)))
 
-    fp8_val = _f32_to_fp8_e4m3fn(val.to(tl.float32) / scale[:, None])
-    dst_ptr = kv_cache_ptr + block_id * kv_cache_value_stride + block_offset * head_dim
-    tl.store(dst_ptr + offsets, fp8_val, mask=mask)
+            fp8_val = _f32_to_fp8_e4m3fn(val.to(tl.float32) / scale[:, None])
+            dst_ptr = (
+                kv_cache_ptr
+                + block_id * kv_cache_value_stride
+                + block_offset * head_dim
+            )
+            tl.store(
+                dst_ptr + flat_offsets,
+                tl.reshape(fp8_val, (4 * QUANT_BLOCK_SIZE,)),
+                mask=flat_mask,
+            )
 
-    dst_scale_ptr = (
-        kv_cache_scale_ptr
-        + block_id * kv_cache_scale_stride
-        + block_offset * num_quant_blocks
-        + quant_block_id
-    )
-    scale_mask = quant_block_id + quant_block_offsets < num_quant_blocks
-    tl.store(dst_scale_ptr + quant_block_offsets, scale, mask=scale_mask)
+            dst_scale_ptr = (
+                kv_cache_scale_ptr
+                + block_id * kv_cache_scale_stride
+                + block_offset * num_quant_blocks
+                + quant_block_id
+            )
+            tl.store(dst_scale_ptr + quant_block_offsets, scale, mask=scale_mask)
 
 
 def indexer_k_quant_and_cache(
@@ -117,8 +134,13 @@ def indexer_k_quant_and_cache(
     #     "unsupported datatype for arith::TruncFOp to hfusion"
     kv_cache_value = kv_cache_flat[:, : block_size * head_dim].view(torch.uint8)
     kv_cache_scale = kv_cache_flat[:, block_size * head_dim :].view(torch.float32)
-    num_tokens_pad = triton.next_power_of_2(num_tokens)
-    _indexer_k_quant_and_cache_kernel[(num_tokens, triton.cdiv(num_quant_blocks, 4))](
+    # Persistent-style 1D launch: the NPU grid dim is capped at 65535 and
+    # there is no benefit in exceeding the AIV core count, so pin the total
+    # program count to a small constant and let each program stride over the
+    # flattened (token, quant-block-group) work items.
+    num_qb_groups = triton.cdiv(num_quant_blocks, 4)
+    grid = (min(num_tokens * num_qb_groups, 40),)
+    _indexer_k_quant_and_cache_kernel[grid](
         k,
         kv_cache_value,
         kv_cache_scale,
@@ -127,8 +149,9 @@ def indexer_k_quant_and_cache(
         kv_cache_value.stride(0),
         block_size,
         num_quant_blocks,
+        num_tokens,
+        num_qb_groups,
         head_dim,
         quant_block_size,
         USE_UE8M0=scale_fmt == "ue8m0",
-        NUM_TOKENS_PAD=num_tokens_pad,
     )
