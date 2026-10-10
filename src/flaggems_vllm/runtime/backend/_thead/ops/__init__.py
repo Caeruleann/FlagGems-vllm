@@ -19,11 +19,13 @@ from flaggems_vllm.runtime.backend._thead.ops.fused_moe import (
     outplace_fused_experts,
 )
 from flaggems_vllm.runtime.backend._thead.ops.gemma_rms_norm import gemma_rms_norm
+from flaggems_vllm.runtime.backend._thead.ops.indexer_k_quant_and_cache import (
+    indexer_k_quant_and_cache,
+)
 from flaggems_vllm.runtime.backend._thead.ops.per_token_group_quant_fp8 import (
     SUPPORTED_FP8_DTYPE,
     per_token_group_quant_fp8,
 )
-from flaggems_vllm.runtime.backend._thead.ops.indexer_k_quant_and_cache import indexer_k_quant_and_cache
 from flaggems_vllm.runtime.backend._thead.ops.persistent_topk import persistent_topk
 from flaggems_vllm.runtime.backend._thead.ops.topk_softplus_sqrt import (
     topk_softplus_sqrt,

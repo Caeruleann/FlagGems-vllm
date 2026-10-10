@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
 import pytest
 import torch
+
 import flaggems_vllm
 
 from . import base
 
 USE_SOFT_CAST = flaggems_vllm.vendor_name == "ascend"
+
 
 def _default_fp8_dtype():
     try:
@@ -47,6 +47,7 @@ _CVT_CONSTS = {}
 
 
 def _cvt_consts(device):
+    """Cache device scalars used by the Ascend software FP8 conversion."""
     # NPU notes: python-int scalar ops take a slow path, and both int32 shifts
     # and int32 div-floor (which is routed through float) are slow or inexact.
     # All constants are therefore pre-materialized as device tensor scalars,
@@ -61,7 +62,6 @@ def _cvt_consts(device):
             "c_bit20": torch.tensor(0x00100000, dtype=i32, device=device),
             "c_low20": torch.tensor(0x000FFFFF, dtype=i32, device=device),
             "c_low24": torch.tensor(0x00FFFFFF, dtype=i32, device=device),
-            "c_one": torch.tensor(1, dtype=i32, device=device),
             "c_ge": torch.tensor(0x3C800000, dtype=i32, device=device),
             "c_sub2": torch.tensor(0x4B000000, dtype=i32, device=device),
             "c_2p20": torch.tensor(1 << 20, dtype=i32, device=device),
@@ -114,21 +114,18 @@ def torch_indexer(k, kv_cache, slot_mapping, quant_block_size, scale_fmt):
 
     val = k[valid]
     num_valid = val.shape[0]
+    # abs/max selects an input magnitude exactly for fp16/bf16; cast only
+    # the reduced tensor rather than an entire extra copy of the input.
     amax = (
         val.abs()
-        .to(torch.float32)
         .view(num_valid, num_quant_blocks, quant_block_size)
         .amax(-1)
+        .to(torch.float32)
     )
-    scale = (
-        torch.maximum(
-            amax,
-            torch.tensor(1e-4, dtype=torch.float32, device=k.device),
-        )
-        / scale_divisor
-    )
+    # amax is a fresh temporary; updating it cannot mutate the inputs.
+    scale = amax.clamp_min_(1e-4).div_(scale_divisor)
     if scale_fmt == "ue8m0":
-        scale = torch.exp2(torch.ceil(torch.log2(scale)))
+        scale.log2_().ceil_().exp2_()
 
     scaled_val = val.to(torch.float32).view(
         num_valid, num_quant_blocks, quant_block_size
@@ -178,6 +175,7 @@ def vllm_indexer(k, kv_cache, slot_mapping, quant_block_size, scale_fmt):
 
 try:
     import vllm._custom_ops as ops  # noqa: F401
+
     if hasattr(torch.ops._C_cache_ops, "indexer_k_quant_and_cache"):
         ref_indexer = vllm_indexer
     else:

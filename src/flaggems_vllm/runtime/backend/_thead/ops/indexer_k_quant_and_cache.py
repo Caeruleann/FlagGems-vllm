@@ -114,7 +114,7 @@ def indexer_k_quant_and_cache(
 
     kv_cache_flat = kv_cache.view(num_blocks, -1)
     # replace torch.float8_e4m3fn with torch.uint8 to avoid the following CompilationError:
-    #     "type fp8e4nv not supported in this architecture. The supported fp8 dtypes are ('fp8e4b15', 'fp8e5')" 
+    #     "type fp8e4nv not supported in this architecture. The supported fp8 dtypes are ('fp8e4b15', 'fp8e5')"
     kv_cache_value = kv_cache_flat[:, : block_size * head_dim].view(torch.uint8)
     kv_cache_scale = kv_cache_flat[:, block_size * head_dim :].view(torch.float32)
     num_tokens_pad = triton.next_power_of_2(num_tokens)

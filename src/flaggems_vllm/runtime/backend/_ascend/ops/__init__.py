@@ -59,6 +59,9 @@ from flaggems_vllm.runtime.backend._ascend.ops.indexer_epilogue import indexer_e
 from flaggems_vllm.runtime.backend._ascend.ops.indexer_gemm_score import (
     indexer_gemm_score,
 )
+from flaggems_vllm.runtime.backend._ascend.ops.indexer_k_quant_and_cache import (
+    indexer_k_quant_and_cache,
+)
 from flaggems_vllm.runtime.backend._ascend.ops.kda_conv_gather import gather_conv_state
 from flaggems_vllm.runtime.backend._ascend.ops.kda_conv_scatter import (
     scatter_conv_state,
@@ -110,7 +113,6 @@ from flaggems_vllm.runtime.backend._ascend.ops.topk_softplus_sqrt import (
     topk_softplus_sqrt,
 )
 from flaggems_vllm.runtime.backend._ascend.ops.unpack_seq import unpack_seq_triton
-from flaggems_vllm.runtime.backend._ascend.ops.indexer_k_quant_and_cache import indexer_k_quant_and_cache
 
 __all__ = [
     "dequantize_and_gather_k_cache",
