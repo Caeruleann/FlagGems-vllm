@@ -87,6 +87,7 @@ from flaggems_vllm.ops.mhc import (
     mhc_pre,
     sinkhorn_forward,
 )
+from flaggems_vllm.ops.qsa_sparse_paged_attention import qsa_sparse_paged_attention
 from flaggems_vllm.ops.qwen4 import (
     ple_state_gather,
     ple_state_scatter_,
@@ -166,6 +167,7 @@ from flaggems_vllm.ops.vit_attention import (
 )
 
 __all__ = [
+    "qsa_sparse_paged_attention",
     "fp32_router_gemm",
     "topk_sigmoid",
     "fused_minimax_m3_qknorm_rope_kv_insert",
