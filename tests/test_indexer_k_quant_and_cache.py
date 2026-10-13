@@ -221,7 +221,13 @@ def test_indexer_k_quant_and_cache_matches_reference(
     )
     reference_cache = gems_cache.clone()
 
-    if has_vllm and dtype != torch.float16:
+    # MetaX: the vLLM op is broken on this backend (stock mcoplib ships it as
+    # a silent no-op), so use the torch composition as the reference.
+    use_vllm_ref = (
+        has_vllm and dtype != torch.float16 and flaggems_vllm.vendor_name != "metax"
+    )
+
+    if use_vllm_ref:
         vllm_op(k, reference_cache, slot_mapping, quant_block_size, scale_fmt)
     elif flaggems_vllm.vendor_name == "ascend":
         torch_npu_indexer(k, reference_cache, slot_mapping, quant_block_size, scale_fmt)

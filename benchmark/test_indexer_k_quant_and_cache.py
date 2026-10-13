@@ -176,7 +176,12 @@ def vllm_indexer(k, kv_cache, slot_mapping, quant_block_size, scale_fmt):
 try:
     import vllm._custom_ops as ops  # noqa: F401
 
-    if hasattr(torch.ops._C_cache_ops, "indexer_k_quant_and_cache"):
+    # MetaX: the vLLM op is broken on this backend (stock mcoplib ships it as
+    # a silent no-op), so use the torch composition as the baseline.
+    if (
+        hasattr(torch.ops._C_cache_ops, "indexer_k_quant_and_cache")
+        and flaggems_vllm.vendor_name != "metax"
+    ):
         ref_indexer = vllm_indexer
     else:
         ref_indexer = torch_indexer
