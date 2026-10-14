@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Benchmark scaffold; the FlagGems kernel is not implemented yet."""
+"""Benchmark FlagGems QSA attention against the vLLM Triton implementation."""
 
 import pytest
 import torch

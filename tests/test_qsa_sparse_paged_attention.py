@@ -2,10 +2,9 @@
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
 # Copyright 2026 FlagOS Contributors
 
-"""QSA attention porting skeleton, using vLLM v0.31.0/main as the baseline.
+"""QSA attention comparison, using vLLM v0.31.0/main as the baseline.
 
 Adapted from vLLM tests/models/qwen4_exp/test_qsa_reference.py at f47792af7f.
-The target currently raises NotImplementedError until its kernel is implemented.
 Inputs use synthetic token indices directly, without indexer or block expansion.
 The baseline already applies the output gate.
 """
@@ -17,9 +16,8 @@ import flaggems_vllm
 
 from . import conftest as cfg
 
-pytestmark = pytest.mark.qsa_sparse_paged_attention
 
-
+@pytest.mark.qsa_sparse_paged_attention
 @pytest.mark.parametrize(
     "num_rows, num_query_heads, num_kv_heads, page_size, "
     "use_prefill_config, num_requests, fp8",
@@ -51,7 +49,7 @@ def test_qsa_sparse_paged_attention(
     num_requests: int,
     fp8: bool,
 ) -> None:
-    """Compare the future FlagGems implementation with the vLLM op."""
+    """Compare the FlagGems implementation with the vLLM op."""
     if cfg.QUICK_MODE and num_rows not in (1, 16, 32):
         pytest.skip("outside the quick shape set")
     qsa = pytest.importorskip("vllm.models.qwen4_exp.nvidia.ops.qsa")
