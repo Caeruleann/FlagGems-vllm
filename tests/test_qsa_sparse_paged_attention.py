@@ -17,6 +17,45 @@ import flaggems_vllm
 from . import conftest as cfg
 
 
+def _qsa_sparse_paged_attention_reference(
+    q: torch.Tensor,
+    k_cache: torch.Tensor,
+    v_cache: torch.Tensor,
+    logical_indices: torch.Tensor,
+    block_table: torch.Tensor,
+    token_to_req: torch.Tensor,
+    softmax_scale: float,
+    k_scale: float = 1.0,
+    v_scale: float = 1.0,
+) -> torch.Tensor:
+    """Dense reference for QSA sparse paged attention.
+
+    Mirrors the kernel's dequant: fp8-e4m3 K/V caches are dequantized with the
+    per-tensor k_scale/v_scale host floats; bf16 caches use unit scales.
+    """
+    output = torch.zeros_like(q)
+    repeats = q.shape[1] // k_cache.shape[2]
+    page_size = k_cache.shape[1]
+    for row in range(q.shape[0]):
+        logical = logical_indices[row]
+        logical = logical[logical >= 0].long()
+        if not logical.numel():
+            continue
+        request = token_to_req[row].long()
+        pages = block_table[request, logical // page_size].long()
+        offsets = logical % page_size
+        keys = (k_cache[pages, offsets].float() * k_scale).repeat_interleave(
+            repeats, dim=1
+        )
+        values = (v_cache[pages, offsets].float() * v_scale).repeat_interleave(
+            repeats, dim=1
+        )
+        scores = torch.einsum("hd,khd->hk", q[row].float(), keys)
+        probabilities = torch.softmax(scores * softmax_scale, dim=-1)
+        output[row] = torch.einsum("hk,khd->hd", probabilities, values).to(q.dtype)
+    return output
+
+
 @pytest.mark.qsa_sparse_paged_attention
 @pytest.mark.parametrize(
     "num_rows, num_query_heads, num_kv_heads, page_size, "
@@ -49,7 +88,7 @@ def test_qsa_sparse_paged_attention(
     num_requests: int,
     fp8: bool,
 ) -> None:
-    """Compare the FlagGems implementation with the vLLM op."""
+    """Compare FlagGems with the vLLM op and its PyTorch reference."""
     if cfg.QUICK_MODE and num_rows not in (1, 16, 32):
         pytest.skip("outside the quick shape set")
     qsa = pytest.importorskip("vllm.models.qwen4_exp.nvidia.ops.qsa")
@@ -139,4 +178,18 @@ def test_qsa_sparse_paged_attention(
     assert actual.shape == q.shape
     assert actual.dtype == q.dtype
     assert actual.device == q.device
-    torch.testing.assert_close(actual, expected, rtol=2e-2, atol=2e-2)
+    flaggems_vllm.testing.assert_close(actual, expected, dtype=q.dtype, atol=2e-2)
+
+    torch_expected = _qsa_sparse_paged_attention_reference(
+        q,
+        k_cache,
+        v_cache,
+        logical_indices[:, :-1],  # Exclude the packed count column.
+        block_table,
+        token_to_req,
+        head_dim**-0.5,
+        k_scale=k_scale,
+        v_scale=v_scale,
+    )
+    torch_expected = torch_expected * torch.sigmoid(output_gate)
+    flaggems_vllm.testing.assert_close(actual, torch_expected, dtype=q.dtype, atol=2e-2)
