@@ -4,18 +4,19 @@
 
 """QSA sparse paged attention ported from vLLM f47792af7f.
 
-Launch geometry: the host fixes the split-K count from an H800-tuned table
-(H20-era and other-arch tables are kept for non-H800 devices), while
-BLOCK_N / num_warps / num_stages go through the FlagGems tuned-config
-pipeline (runtime.get_tuned_config + libtuner) with a key on the real
-performance dimensions (rows, heads, GQA ratio, head dim, selection width,
-page size, split count and key cache strides). KV dtype is part of the key
-automatically via tensor dtypes.
+Launch geometry: the split count comes from the backend heuristics system
+(`runtime.get_heuristic_config("qsa_sparse_paged_attention")`), which keeps
+the per-device split policies out of the op. BLOCK_N / num_warps /
+num_stages go through the FlagGems tuned-config pipeline
+(`runtime.get_tuned_config` + `@libtuner`). T is bucketed explicitly via the
+T_BUCKET constexpr so it participates in the outer LibEntry cache key and the
+tuned-config selection. NUM_SPLITS is fixed by the host before any launch;
+the main kernel records, per row, how many splits actually wrote partials,
+and the merge kernel masks its reads by exactly that count, so the two
+kernels cannot disagree about the workspace layout.
 """
 
 from __future__ import annotations
-
-from functools import lru_cache
 
 import torch
 import triton
@@ -23,36 +24,6 @@ import triton.language as tl
 
 from flaggems_vllm import runtime
 from flaggems_vllm.utils import libentry, libtuner
-
-
-@lru_cache(maxsize=1)
-def _is_sm120() -> bool:
-    """True on sm_120 (RTX PRO 6000 Blackwell): selects the sm_120 tuning table."""
-    return (
-        runtime.device.vendor_name == "nvidia"
-        and runtime.torch_device_fn.get_device_capability() == (12, 0)
-    )
-
-
-@lru_cache(maxsize=1)
-def _is_sm90() -> bool:
-    """True on sm_90 (H100/H200/H20): selects the sm_90 tuning table."""
-    return (
-        runtime.device.vendor_name == "nvidia"
-        and runtime.torch_device_fn.get_device_capability() == (9, 0)
-    )
-
-
-@lru_cache(maxsize=1)
-def _is_h800() -> bool:
-    """True on H800 (sm_90): the split table below was retuned on H800."""
-    if not _is_sm90():
-        return False
-    try:
-        name = runtime.torch_device_fn.get_device_name()
-    except Exception:  # noqa: BLE001 - fall back to the generic sm_90 table
-        return False
-    return "H800" in name
 
 
 @triton.jit(do_not_specialize=["num_rows", "num_requests", "num_cache_blocks"])
@@ -65,6 +36,7 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
     token_to_req_ptr,
     partial_output_ptr,
     partial_lse_ptr,
+    split_counts_ptr,
     output_ptr,
     softmax_scale,
     output_scale,
@@ -81,8 +53,6 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
     stride_table_req,
     stride_output_row,
     stride_output_head,
-    stride_output_gate_row,
-    stride_output_gate_head,
     num_rows,
     num_cache_blocks,
     num_requests,
@@ -93,6 +63,7 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
     HEAD_DIM: tl.constexpr,
     NUM_QUERY_HEADS: tl.constexpr,
     NUM_SPLITS: tl.constexpr,
+    T_BUCKET: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
     IS_FP8: tl.constexpr,
@@ -111,9 +82,22 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
     # rows with zero or one tile still get their (zero or gated) final output.
     if split_id > 0 and split_id >= tile_end:
         return
+    if NUM_SPLITS > 1 and split_id == 0:
+        # How many splits wrote mergeable partials for this row: 0 when the
+        # row was finalized directly below. The merge kernel masks its reads
+        # by exactly this value, so it never touches unwritten workspace.
+        tl.store(
+            split_counts_ptr + row,
+            tl.where(tile_end <= 1, 0, tl.minimum(tile_end, NUM_SPLITS)),
+        )
 
     request = tl.load(token_to_req_ptr + row)
     safe_request = tl.minimum(tl.maximum(request, 0), num_requests - 1)
+
+    # The host passes the gate through a no-copy contiguous view normalized to
+    # Q's shape, so its strides are fixed by the shape.
+    stride_output_gate_row = NUM_QUERY_HEADS * HEAD_DIM
+    stride_output_gate_head = HEAD_DIM
 
     head_offsets = tl.arange(0, BLOCK_M)
     dim_offsets = tl.arange(0, HEAD_DIM)
@@ -270,34 +254,29 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
 def _qsa_merge_splitk_kernel(
     partial_output_ptr,
     partial_lse_ptr,
+    split_counts_ptr,
     output_ptr,
     output_gate_ptr,
-    indices_ptr,
     stride_output_row,
     stride_output_head,
-    stride_output_gate_row,
-    stride_output_gate_head,
-    stride_indices_row,
     num_rows,
-    TOPK: tl.constexpr,
     HEAD_DIM: tl.constexpr,
     NUM_QUERY_HEADS: tl.constexpr,
     NUM_SPLITS: tl.constexpr,
     BLOCK_SPLITS: tl.constexpr,
-    BLOCK_N: tl.constexpr,
 ) -> None:
     row = tl.program_id(0)
     head = tl.program_id(1)
-    # Rows with at most one valid tile were finalized directly by split 0 of
-    # the main kernel (including empty selections, which become zeros); there
-    # is nothing to merge for them. The same count also tells how many splits
-    # actually wrote partials, so reads never touch unwritten (stale)
-    # workspace — CUDA-graph replays with different contents stay correct.
-    valid_count = tl.load(indices_ptr + row * stride_indices_row + TOPK)
-    num_valid_tiles = tl.cdiv(tl.minimum(valid_count, TOPK), BLOCK_N)
-    if num_valid_tiles <= 1:
+    # Number of splits that wrote mergeable partials for this row (0 when the
+    # main kernel finalized the row directly, including empty selections).
+    # Reading exactly this count — written by the same launch — guarantees the
+    # merge never reads unwritten or stale workspace.
+    merge_splits = tl.load(split_counts_ptr + row)
+    if merge_splits <= 1:
         return
-    merge_splits = tl.minimum(num_valid_tiles, NUM_SPLITS)
+    # Gate strides are fixed by the normalized contiguous view (see main).
+    stride_output_gate_row = NUM_QUERY_HEADS * HEAD_DIM
+    stride_output_gate_head = HEAD_DIM
     split_offsets = tl.arange(0, BLOCK_SPLITS)
     dim_offsets = tl.arange(0, HEAD_DIM)
     split_mask = split_offsets < merge_splits
@@ -337,16 +316,21 @@ def _qsa_merge_splitk_kernel(
     )
 
 
-# Tuned-config entries. The yaml search space is the union of the H800 scan
-# winners and the previous H20/sm_120 table values, so machines other than
-# H800 can still bench-pick their own best; vendors without a yaml entry fall
-# back to the default config below.
+# Tuned-config entries. The yaml search space covers the H800 scan winners;
+# machines other than H800 bench-pick their own best from the same
+# candidates; vendors without a yaml entry fall back to the default config.
+_QSA_MAIN_CONFIGS = runtime.get_tuned_config("qsa_sparse_paged_attention") or [
+    triton.Config(kwargs={"BLOCK_N": 64}, num_warps=2, num_stages=2)
+]
+# Smallest BLOCK_N the tuner may pick; the host clamps NUM_SPLITS against the
+# tile count at this block size so the grid never exceeds available tiles.
+_MIN_CANDIDATE_BLOCK_N = min(c.kwargs.get("BLOCK_N", 64) for c in _QSA_MAIN_CONFIGS)
+
 _QSA_MAIN_TUNED = libentry()(
     libtuner(
-        configs=runtime.get_tuned_config("qsa_sparse_paged_attention")
-        or [triton.Config(kwargs={"BLOCK_N": 64}, num_warps=2, num_stages=2)],
+        configs=_QSA_MAIN_CONFIGS,
         key=[
-            "num_rows",
+            "T_BUCKET",
             "NUM_QUERY_HEADS",
             "GROUP_SIZE",
             "HEAD_DIM",
@@ -358,21 +342,6 @@ _QSA_MAIN_TUNED = libentry()(
             "stride_k_block",
             "stride_indices_row",
         ],
-        strategy=[
-            "log",
-            "default",
-            "default",
-            "default",
-            "default",
-            "default",
-            "default",
-            "default",
-            "default",
-            "default",
-            "default",
-        ],
-        warmup=10,
-        rep=30,
     )(_qsa_sparse_paged_gqa_splitk_kernel)
 )
 
@@ -380,83 +349,19 @@ _QSA_MERGE_TUNED = libentry()(
     libtuner(
         configs=runtime.get_tuned_config("qsa_sparse_paged_attention_merge")
         or [triton.Config(kwargs={}, num_warps=2, num_stages=1)],
-        key=["NUM_SPLITS", "HEAD_DIM", "TOPK", "BLOCK_N"],
-        strategy=["log", "default", "default", "default"],
-        warmup=10,
-        rep=30,
+        key=["NUM_SPLITS", "HEAD_DIM"],
+        strategy=["log", "default"],
     )(_qsa_merge_splitk_kernel)
 )
 
+# Split policy from the backend heuristics system; resolved once at import
+# (the heuristics table is static backend configuration, never call data).
+_QSA_SPLIT_HEURISTICS = runtime.get_heuristic_config("qsa_sparse_paged_attention")
 
-def _select_sm120_splits(
-    base_programs: int, use_prefill_config: bool, is_fp8: bool
-) -> int:
-    """Split count from the sm_120 (RTX PRO 6000 Blackwell) tuning table."""
-    if base_programs > 2048:
-        return 1
-    if is_fp8:
-        if base_programs <= 24:
-            return 64
-        if base_programs <= 32:
-            return 16
-        if base_programs <= 64:
-            return 8
-        if base_programs <= 256:
-            return 8
-        return 4
-    if base_programs <= 24:
-        return 64
-    if base_programs <= 128:
-        return 8
-    if base_programs <= 256:
-        return 8
-    return 4
-
-
-def _select_sm90_splits(
-    base_programs: int, use_prefill_config: bool, is_fp8: bool
-) -> int:
-    """Split count from the legacy sm_90 (H20) tuning table."""
-    if base_programs > 2048:
-        return 1
-    if is_fp8:
-        if base_programs <= 24:
-            return 64
-        if base_programs <= 64:
-            return 16
-        if base_programs <= 128:
-            return 8
-        if base_programs <= 256:
-            return 8
-        return 4
-    if base_programs <= 32:
-        return 64
-    if base_programs <= 64:
-        return 16
-    if base_programs <= 256:
-        return 8
-    return 4
-
-
-def _select_h800_splits(
-    base_programs: int, use_prefill_config: bool, is_fp8: bool
-) -> int:
-    """Split count retuned on H800 (sm_90) for BF16 decode/prefill.
-
-    From the H800 config scan (selection width 2051, head dim 256): decode
-    sized grids (<=32 programs) want the selection fully split; the 256-512
-    program region wants 2-4 splits; larger grids run single-split. FP8 is
-    not the optimization target and keeps the legacy table.
-    """
-    if is_fp8:
-        return _select_sm90_splits(base_programs, use_prefill_config, is_fp8)
-    if base_programs > 512:
-        return 1
-    if base_programs > 256:
-        return 4
-    if base_programs > 32:
-        return 2
-    return 64
+# Explicit conservative default when the backend has no split policy entry
+# (single split, always correct); the NVIDIA backend installs the real
+# policy through HEURISTICS_CONFIGS.
+_QSA_SPLIT_HEUR_DEFAULT = 1
 
 
 def _select_splits(
@@ -464,313 +369,21 @@ def _select_splits(
     num_kv_heads: int,
     use_prefill_config: bool,
     is_fp8: bool,
+    device_index: int,
 ) -> int:
-    """Target split count for the main kernel (clamped later by tile count)."""
-    base_programs = num_rows * num_kv_heads
-    if _is_h800():
-        return _select_h800_splits(base_programs, use_prefill_config, is_fp8)
-    if _is_sm120():
-        return _select_sm120_splits(base_programs, use_prefill_config, is_fp8)
-    if _is_sm90():
-        return _select_sm90_splits(base_programs, use_prefill_config, is_fp8)
-    return _select_sm120_splits(base_programs, use_prefill_config, is_fp8)
-
-
-class _QsaPlan:
-    """Reusable launch state for one input signature.
-
-    Resolved once through the libtuner-wrapped entries (which performs the
-    tuned-config selection and returns the compiled kernel); subsequent calls
-    with the same metadata replay the compiled kernels directly, skipping the
-    per-argument dispatcher overhead that dominates small-batch latency.
-    """
-
-    __slots__ = (
-        "main_kernel",
-        "main_grid",
-        "main_template",
-        "main_slots",
-        "merge_kernel",
-        "merge_grid",
-        "merge_template",
-        "merge_slots",
-        "num_splits",
-        "partial_shape",
-        "lse_shape",
-        "softmax_scale",
-        "output_scale",
+    """Resolve the target split count from the backend heuristics system."""
+    heuristics = _QSA_SPLIT_HEURISTICS
+    if not heuristics or "NUM_SPLITS" not in heuristics:
+        return _QSA_SPLIT_HEUR_DEFAULT
+    return heuristics["NUM_SPLITS"](
+        {
+            "num_rows": num_rows,
+            "num_kv_heads": num_kv_heads,
+            "use_prefill_config": use_prefill_config,
+            "is_fp8": is_fp8,
+            "device_index": device_index,
+        }
     )
-
-
-# Bounded dict of _QsaPlan keyed by full launch metadata. Validation runs in
-# full on the first call for each signature; the key contains every field the
-# validation depends on, so cache hits imply identical validation outcomes.
-_PLANS: dict = {}
-_MAX_PLANS = 512
-
-
-def _plan_key(
-    q: torch.Tensor,
-    k_cache: torch.Tensor,
-    v_cache: torch.Tensor,
-    logical_indices: torch.Tensor,
-    block_table: torch.Tensor,
-    token_to_req: torch.Tensor,
-    output_gate: torch.Tensor,
-    out: torch.Tensor | None,
-    use_prefill_config: bool,
-    k_scale: float | None,
-    v_scale: float | None,
-) -> tuple:
-    align = 15  # triton specializes pointer divisibility by 16
-    return (
-        q.device,
-        q.shape,
-        q.dtype,
-        q.stride(),
-        q.data_ptr() & align,
-        k_cache.shape,
-        k_cache.dtype,
-        k_cache.stride(),
-        k_cache.data_ptr() & align,
-        v_cache.dtype,
-        v_cache.stride(),
-        v_cache.data_ptr() & align,
-        logical_indices.shape,
-        logical_indices.stride(),
-        logical_indices.data_ptr() & align,
-        block_table.shape,
-        block_table.stride(),
-        block_table.data_ptr() & align,
-        token_to_req.shape,
-        token_to_req.stride(),
-        token_to_req.data_ptr() & align,
-        output_gate.shape,
-        output_gate.stride(),
-        output_gate.data_ptr() & align,
-        use_prefill_config,
-        k_scale,
-        v_scale,
-        (
-            None
-            if out is None
-            else (out.shape, out.dtype, out.stride(), out.data_ptr() & align)
-        ),
-    )
-
-
-def _build_plan(
-    key: tuple,
-    q: torch.Tensor,
-    k_cache: torch.Tensor,
-    v_cache: torch.Tensor,
-    logical_indices: torch.Tensor,
-    block_table: torch.Tensor,
-    token_to_req: torch.Tensor,
-    output_gate: torch.Tensor,
-    out: torch.Tensor | None,
-    use_prefill_config: bool,
-    k_scale: float | None,
-    v_scale: float | None,
-) -> _QsaPlan:
-    """Validate the inputs and resolve the tuned kernels for this signature."""
-    if q.ndim != 3 or k_cache.ndim != 4 or v_cache.shape != k_cache.shape:
-        raise ValueError("QSA sparse attention received invalid Q/K/V shapes")
-    if logical_indices.ndim != 2 or logical_indices.shape[0] != q.shape[0]:
-        raise ValueError("QSA indices must have one row per query")
-    if token_to_req.shape != (q.shape[0],) or block_table.ndim != 2:
-        raise ValueError("QSA sparse attention metadata has invalid shapes")
-    if not all(k_cache.shape[:3]) or not all(block_table.shape):
-        raise ValueError("QSA sparse attention cache and block table must be nonempty")
-    if logical_indices.shape[1] < 2:
-        raise ValueError(
-            "QSA packed indices need selection columns plus the count column"
-        )
-    if q.shape[2] != k_cache.shape[3] or q.shape[1] % k_cache.shape[2]:
-        raise ValueError("QSA sparse attention requires valid grouped-query heads")
-    head_dim = q.shape[2]
-    assert head_dim >= 16 and (head_dim & (head_dim - 1)) == 0
-    assert q.dtype == torch.bfloat16
-    assert k_cache.dtype == v_cache.dtype
-    is_fp8 = k_cache.dtype == torch.float8_e4m3fn
-    if is_fp8:
-        assert k_scale is not None and v_scale is not None
-        # Host pre-multiply: fold the K dequant scale into the attention scale
-        # and pass V's dequant scale as the kernel's output scale.
-        softmax_scale = (head_dim**-0.5) * float(k_scale)
-        output_scale = float(v_scale)
-    else:
-        assert k_cache.dtype == torch.bfloat16
-        softmax_scale = head_dim**-0.5
-        output_scale = 1.0
-    assert logical_indices.dtype == block_table.dtype == torch.int32
-    assert token_to_req.dtype == torch.int32
-    assert q.device == k_cache.device == v_cache.device
-    assert q.device == logical_indices.device == block_table.device
-    assert q.device == token_to_req.device
-    assert q.stride(2) == k_cache.stride(3) == v_cache.stride(3) == 1
-    assert logical_indices.stride(1) == block_table.stride(1) == 1
-    assert token_to_req.stride(0) == 1
-
-    if out is not None:
-        if out.shape != q.shape:
-            raise ValueError("QSA sparse output must match its query")
-        assert out.dtype == q.dtype and out.device == q.device
-        assert out.stride(2) == 1
-    assert output_gate.is_contiguous()
-    if not q.shape[0]:
-        return None  # empty batch: caller returns immediately
-
-    group_size = q.shape[1] // k_cache.shape[2]
-    block_m = triton.next_power_of_2(group_size)
-    selection_width = logical_indices.shape[1] - 1  # trailing column is the count
-    target_splits = _select_splits(
-        q.shape[0], k_cache.shape[2], use_prefill_config, is_fp8
-    )
-    # Never more splits than the smallest candidate BLOCK_N can feed; splits
-    # beyond the effective tile count of the tuned BLOCK_N exit empty in the
-    # kernel (they still write mergeable partials, so results stay correct).
-    num_splits = min(target_splits, triton.cdiv(selection_width, 32))
-
-    num_rows = q.shape[0]
-    num_kv_heads = k_cache.shape[2]
-    out_arg = out if out is not None else torch.empty_like(q)
-    gate_arg = output_gate  # contiguous; strides below match view_as(q)
-
-    # Split=1 writes output directly and compiles out all workspace accesses.
-    if num_splits == 1:
-        partial_output = out_arg
-        partial_lse = out_arg
-        partial_shape = None
-        lse_shape = None
-    else:
-        # FP32 partials preserve accuracy when merging independently normalized
-        # splits.
-        partial_shape = (num_splits, num_rows, q.shape[1], head_dim)
-        lse_shape = (num_splits, num_rows, q.shape[1])
-        partial_output = torch.empty(
-            partial_shape, dtype=torch.float32, device=q.device
-        )
-        partial_lse = torch.empty(lse_shape, dtype=torch.float32, device=q.device)
-
-    main_kwargs = dict(
-        q_ptr=q,
-        k_cache_ptr=k_cache,
-        v_cache_ptr=v_cache,
-        indices_ptr=logical_indices,
-        block_table_ptr=block_table,
-        token_to_req_ptr=token_to_req,
-        partial_output_ptr=partial_output,
-        partial_lse_ptr=partial_lse,
-        output_ptr=out_arg,
-        softmax_scale=softmax_scale,
-        output_scale=output_scale,
-        output_gate_ptr=gate_arg,
-        stride_q_row=q.stride(0),
-        stride_q_head=q.stride(1),
-        stride_k_block=k_cache.stride(0),
-        stride_k_token=k_cache.stride(1),
-        stride_k_head=k_cache.stride(2),
-        stride_v_block=v_cache.stride(0),
-        stride_v_token=v_cache.stride(1),
-        stride_v_head=v_cache.stride(2),
-        stride_indices_row=logical_indices.stride(0),
-        stride_table_req=block_table.stride(0),
-        stride_output_row=out_arg.stride(0),
-        stride_output_head=out_arg.stride(1),
-        stride_output_gate_row=gate_arg.stride(0),
-        stride_output_gate_head=gate_arg.stride(1),
-        num_rows=num_rows,
-        num_cache_blocks=k_cache.shape[0],
-        num_requests=block_table.shape[0],
-        TOPK=selection_width,
-        PAGE_SIZE=k_cache.shape[1],
-        PAGE_TABLE_WIDTH=block_table.shape[1],
-        GROUP_SIZE=group_size,
-        HEAD_DIM=head_dim,
-        NUM_QUERY_HEADS=q.shape[1],
-        NUM_SPLITS=num_splits,
-        BLOCK_M=block_m,
-        IS_FP8=is_fp8,
-    )
-    main_grid = (num_rows, num_kv_heads, num_splits, 1, 1)
-    main_kernel, main_constexprs = _QSA_MAIN_TUNED[main_grid](**main_kwargs)
-    # NOTE: for a contiguous gate, view_as(q) reproduces gate's own strides.
-    main_names = list(_QSA_MAIN_TUNED.signature.parameters.keys())
-    main_template = [
-        main_kwargs[n] if n in main_kwargs else main_constexprs[n] for n in main_names
-    ]
-    main_slots = tuple(
-        main_names.index(n)
-        for n in (
-            "q_ptr",
-            "k_cache_ptr",
-            "v_cache_ptr",
-            "indices_ptr",
-            "block_table_ptr",
-            "token_to_req_ptr",
-            "partial_output_ptr",
-            "partial_lse_ptr",
-            "output_ptr",
-            "output_gate_ptr",
-        )
-    )
-
-    plan = _QsaPlan()
-    plan.main_kernel = main_kernel
-    plan.main_grid = main_grid
-    plan.main_template = main_template
-    plan.main_slots = main_slots
-    plan.merge_kernel = None
-    plan.merge_grid = None
-    plan.merge_template = None
-    plan.merge_slots = None
-    plan.num_splits = num_splits
-    plan.partial_shape = partial_shape
-    plan.lse_shape = lse_shape
-    plan.softmax_scale = softmax_scale
-    plan.output_scale = output_scale
-
-    if num_splits > 1:
-        merge_kwargs = dict(
-            partial_output_ptr=partial_output,
-            partial_lse_ptr=partial_lse,
-            output_ptr=out_arg,
-            output_gate_ptr=gate_arg,
-            indices_ptr=logical_indices,
-            stride_output_row=out_arg.stride(0),
-            stride_output_head=out_arg.stride(1),
-            stride_output_gate_row=gate_arg.stride(0),
-            stride_output_gate_head=gate_arg.stride(1),
-            stride_indices_row=logical_indices.stride(0),
-            num_rows=num_rows,
-            TOPK=selection_width,
-            HEAD_DIM=head_dim,
-            NUM_QUERY_HEADS=q.shape[1],
-            NUM_SPLITS=num_splits,
-            BLOCK_SPLITS=triton.next_power_of_2(num_splits),
-            BLOCK_N=main_constexprs["BLOCK_N"],
-        )
-        merge_grid = (num_rows, q.shape[1], 1, 1, 1)
-        merge_kernel, merge_constexprs = _QSA_MERGE_TUNED[merge_grid](**merge_kwargs)
-        merge_names = list(_QSA_MERGE_TUNED.signature.parameters.keys())
-        plan.merge_kernel = merge_kernel
-        plan.merge_grid = merge_grid
-        plan.merge_template = [
-            merge_kwargs[n] if n in merge_kwargs else merge_constexprs[n]
-            for n in merge_names
-        ]
-        plan.merge_slots = tuple(
-            merge_names.index(n)
-            for n in (
-                "partial_output_ptr",
-                "partial_lse_ptr",
-                "output_ptr",
-                "output_gate_ptr",
-                "indices_ptr",
-            )
-        )
-    return plan
 
 
 def qsa_sparse_paged_attention(
@@ -797,84 +410,193 @@ def qsa_sparse_paged_attention(
     logical_indices is the PACKED selection buffer: [rows, selection_width + 1]
     with the trailing column holding each row's valid-entry count (written by
     the expand kernel; never a token index). The kernel reads it as the
-    tile-loop bound. use_prefill_config only steers the split-count table; see
-    _select_splits.
+    tile-loop bound. use_prefill_config only steers the backend split policy;
+    see runtime.get_heuristic_config("qsa_sparse_paged_attention").
+
+    out= may be any non-overlapping tensor with matching shape/dtype/device;
+    storage shared with an input is rejected because autotuning reruns the
+    kernel with the first-call arguments.
     """
-    key = _plan_key(
+    q_shape = q.shape
+    k_shape = k_cache.shape
+    if q.ndim != 3 or k_cache.ndim != 4 or v_cache.shape != k_shape:
+        raise ValueError("QSA sparse attention received invalid Q/K/V shapes")
+    if logical_indices.ndim != 2 or logical_indices.shape[0] != q_shape[0]:
+        raise ValueError("QSA indices must have one row per query")
+    if token_to_req.shape != (q_shape[0],) or block_table.ndim != 2:
+        raise ValueError("QSA sparse attention metadata has invalid shapes")
+    if not all(k_shape[:3]) or not all(block_table.shape):
+        raise ValueError("QSA sparse attention cache and block table must be nonempty")
+    if logical_indices.shape[1] < 2:
+        raise ValueError(
+            "QSA packed indices need selection columns plus the count column"
+        )
+    if q_shape[2] != k_shape[3] or q_shape[1] % k_shape[2]:
+        raise ValueError("QSA sparse attention requires valid grouped-query heads")
+    head_dim = q_shape[2]
+    assert head_dim >= 16 and (head_dim & (head_dim - 1)) == 0
+    assert q.dtype == torch.bfloat16
+    assert k_cache.dtype == v_cache.dtype
+    is_fp8 = k_cache.dtype == torch.float8_e4m3fn
+    if is_fp8:
+        assert k_scale is not None and v_scale is not None
+        # Host pre-multiply: fold the K dequant scale into the attention scale
+        # and pass V's dequant scale as the kernel's output scale. Computed on
+        # every call so a changed scale always takes effect.
+        softmax_scale = (head_dim**-0.5) * float(k_scale)
+        output_scale = float(v_scale)
+    else:
+        assert k_cache.dtype == torch.bfloat16
+        softmax_scale = head_dim**-0.5
+        output_scale = 1.0
+    assert logical_indices.dtype == block_table.dtype == torch.int32
+    assert token_to_req.dtype == torch.int32
+    device = q.device
+    assert (
+        k_cache.device == v_cache.device == device
+        and logical_indices.device == block_table.device == device
+        and token_to_req.device == device
+    )
+    assert q.stride(2) == k_cache.stride(3) == v_cache.stride(3) == 1
+    assert logical_indices.stride(1) == block_table.stride(1) == 1
+    assert token_to_req.stride(0) == 1
+
+    # Gate contract: exactly one value per (row, head, dim), contiguous so the
+    # no-copy view below is legal. BF16 and FP32 gates are both supported.
+    if output_gate.numel() != q.numel():
+        raise ValueError("QSA output gate must have one value per query element")
+    if output_gate.dtype not in (torch.bfloat16, torch.float32):
+        raise ValueError("QSA output gate must be bfloat16 or float32")
+    assert output_gate.device == device
+    assert output_gate.is_contiguous()
+    # No-copy normalization to Q's shape: for a contiguous [T, Hq*D] gate this
+    # yields exactly the [T, Hq, D] strides the kernel indexes with.
+    output_gate_view = output_gate.view_as(q)
+
+    out_is_caller_provided = out is not None
+    if out is None:
+        out = torch.empty_like(q)
+    else:
+        if out.shape != q_shape:
+            raise ValueError("QSA sparse output must match its query")
+        assert out.dtype == q.dtype and out.device == device
+        assert out.stride(2) == 1
+    num_rows = q_shape[0]
+    if not num_rows:
+        return out
+    if out_is_caller_provided and out.numel():
+        # Autotuning reruns the kernel with the first-call arguments, so an
+        # out tensor that overlaps an input would be corrupted between reruns.
+        out_storage = out.untyped_storage().data_ptr()
+        for tensor in (
+            q,
+            k_cache,
+            v_cache,
+            logical_indices,
+            block_table,
+            token_to_req,
+            output_gate,
+        ):
+            if tensor.untyped_storage().data_ptr() == out_storage:
+                raise ValueError(
+                    "QSA sparse attention out must not share storage with an input"
+                )
+
+    group_size = q_shape[1] // k_shape[2]
+    block_m = triton.next_power_of_2(group_size)
+    selection_width = logical_indices.shape[1] - 1  # trailing column is the count
+    device_index = device.index
+    if device_index is None:
+        device_index = runtime.torch_device_fn.current_device()
+    target_splits = _select_splits(
+        num_rows, k_shape[2], use_prefill_config, is_fp8, device_index
+    )
+    # Never more splits than the smallest candidate BLOCK_N can feed; splits
+    # beyond the effective tile count of the tuned BLOCK_N exit empty in the
+    # kernel (they still write mergeable partials, so results stay correct).
+    num_splits = min(
+        target_splits, triton.cdiv(selection_width, _MIN_CANDIDATE_BLOCK_N)
+    )
+
+    q_stride = q.stride()
+    k_stride = k_cache.stride()
+    v_stride = v_cache.stride()
+    out_stride = out.stride()
+
+    # Split=1 writes output directly and compiles out all workspace accesses.
+    if num_splits == 1:
+        partial_output = out
+        partial_lse = out
+        split_counts = out
+    else:
+        # FP32 partials preserve accuracy when merging independently normalized
+        # splits. Freshly allocated on every call; nothing call-specific is
+        # retained beyond the launch.
+        partial_output = torch.empty(
+            (num_splits, *q_shape), dtype=torch.float32, device=device
+        )
+        partial_lse = torch.empty(
+            (num_splits, num_rows, q_shape[1]),
+            dtype=torch.float32,
+            device=device,
+        )
+        split_counts = torch.empty(num_rows, dtype=torch.int32, device=device)
+
+    _QSA_MAIN_TUNED[(num_rows, k_shape[2], num_splits)](
         q,
         k_cache,
         v_cache,
         logical_indices,
         block_table,
         token_to_req,
-        output_gate,
+        partial_output,
+        partial_lse,
+        split_counts,
         out,
-        use_prefill_config,
-        k_scale,
-        v_scale,
+        softmax_scale,
+        output_scale,
+        output_gate_view,
+        q_stride[0],
+        q_stride[1],
+        k_stride[0],
+        k_stride[1],
+        k_stride[2],
+        v_stride[0],
+        v_stride[1],
+        v_stride[2],
+        logical_indices.stride(0),
+        block_table.stride(0),
+        out_stride[0],
+        out_stride[1],
+        num_rows,
+        k_shape[0],
+        block_table.shape[0],
+        TOPK=selection_width,
+        PAGE_SIZE=k_shape[1],
+        PAGE_TABLE_WIDTH=block_table.shape[1],
+        GROUP_SIZE=group_size,
+        HEAD_DIM=q_shape[2],
+        NUM_QUERY_HEADS=q_shape[1],
+        NUM_SPLITS=num_splits,
+        T_BUCKET=triton.next_power_of_2(num_rows),
+        BLOCK_M=block_m,
+        IS_FP8=is_fp8,
     )
-    plan = _PLANS.get(key)
-    if plan is None:
-        if len(_PLANS) >= _MAX_PLANS:
-            _PLANS.clear()
-        plan = _build_plan(
-            key,
-            q,
-            k_cache,
-            v_cache,
-            logical_indices,
-            block_table,
-            token_to_req,
-            output_gate,
-            out,
-            use_prefill_config,
-            k_scale,
-            v_scale,
-        )
-        if plan is None:
-            # Empty batch: nothing to compute, but the output must still be a
-            # valid tensor of the right shape.
-            return out if out is not None else torch.empty_like(q)
-        _PLANS[key] = plan
-
-    if out is None:
-        out = torch.empty_like(q)
-    if plan.num_splits == 1:
-        partial_output = out
-        partial_lse = out
-    else:
-        partial_output = torch.empty(
-            plan.partial_shape, dtype=torch.float32, device=q.device
-        )
-        partial_lse = torch.empty(plan.lse_shape, dtype=torch.float32, device=q.device)
-
-    main_args = plan.main_template.copy()
-    for slot, tensor in zip(
-        plan.main_slots,
-        (
-            q,
-            k_cache,
-            v_cache,
-            logical_indices,
-            block_table,
-            token_to_req,
-            partial_output,
-            partial_lse,
-            out,
-            output_gate,
-        ),
-    ):
-        main_args[slot] = tensor
-    plan.main_kernel[plan.main_grid](*main_args)
-
-    if plan.num_splits == 1:
+    if num_splits == 1:
         return out
 
-    merge_args = plan.merge_template.copy()
-    for slot, tensor in zip(
-        plan.merge_slots,
-        (partial_output, partial_lse, out, output_gate, logical_indices),
-    ):
-        merge_args[slot] = tensor
-    plan.merge_kernel[plan.merge_grid](*merge_args)
+    _QSA_MERGE_TUNED[(num_rows, q_shape[1])](
+        partial_output,
+        partial_lse,
+        split_counts,
+        out,
+        output_gate_view,
+        out_stride[0],
+        out_stride[1],
+        num_rows,
+        HEAD_DIM=q_shape[2],
+        NUM_QUERY_HEADS=q_shape[1],
+        NUM_SPLITS=num_splits,
+        BLOCK_SPLITS=triton.next_power_of_2(num_splits),
+    )
     return out

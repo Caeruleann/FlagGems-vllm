@@ -22,6 +22,39 @@ import flaggems_vllm
 from . import base
 
 
+def _make_packed_indices(rows, counts, selection_width, context_capacity, index_kind):
+    """Packed [rows, selection_width + 1] indices with a trailing count column.
+
+    index_kind="random": scattered tokens. index_kind="group4": contiguous
+    groups of 4 tokens (QSA-like locality).
+    """
+    device = rows.device
+    logical = torch.full(
+        (rows.numel(), selection_width), -1, device=device, dtype=torch.int32
+    )
+    for r in range(rows.numel()):
+        count = int(counts[r].item())
+        if count <= 0:
+            continue
+        if index_kind == "random":
+            perm = torch.randperm(context_capacity, device=device)[:count]
+        elif index_kind == "group4":
+            n_groups = (count + 3) // 4
+            starts = torch.randint(0, context_capacity - 4, (n_groups,), device=device)
+            perm = (
+                starts[:, None] + torch.arange(4, device=device)[None, :]
+            ).flatten()[:count]
+        else:
+            raise ValueError(f"unknown index_kind: {index_kind}")
+        logical[r, :count] = perm.to(torch.int32)
+    packed = torch.full(
+        (rows.numel(), selection_width + 1), -1, device=device, dtype=torch.int32
+    )
+    packed[:, :selection_width] = logical
+    packed[:, -1] = counts.to(torch.int32)
+    return packed
+
+
 class QSASparsePagedAttentionBenchmark(base.Benchmark):
     def __init__(self, reference):
         super().__init__(
@@ -32,15 +65,18 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
         )
 
     def get_input_iter(self, dtype):
-        for (
-            num_rows,
-            num_query_heads,
-            num_kv_heads,
-            page_size,
-            use_prefill_config,
-            num_requests,
-            fp8,
-        ) in self.shapes:
+        for shape in self.shapes:
+            (
+                num_rows,
+                num_query_heads,
+                num_kv_heads,
+                page_size,
+                use_prefill_config,
+                num_requests,
+                fp8,
+            ) = shape[:7]
+            index_kind = shape[7] if len(shape) > 7 else "random"
+            count_mode = shape[8] if len(shape) > 8 else "mixed"
             torch.manual_seed(2)
             head_dim = 256
             num_pages_per_request = 65
@@ -74,22 +110,33 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
             rows_per_request = (num_rows + num_requests - 1) // num_requests
             token_to_req = rows // rows_per_request
 
-            # Distinct, scattered token indices per query; all fit in its request's cache.
             context_capacity = num_pages_per_request * page_size
-            selected = torch.randperm(context_capacity, device=flaggems_vllm.device)[
-                :selection_width
-            ]
-            selected = (selected[None, :] + rows[:, None]) % context_capacity
-            counts = torch.where(rows % 3 == 1, 17, selection_width - rows % 4)
-            ranks = torch.arange(selection_width, device=flaggems_vllm.device)
-            logical_indices = torch.full(
-                (num_rows, selection_width + 1),
-                -1,
-                device=flaggems_vllm.device,
-                dtype=torch.int32,
+            if count_mode == "mixed":
+                # Legacy regression distribution: mostly long rows, every third
+                # row short (17).
+                counts = torch.where(rows % 3 == 1, 17, selection_width - rows % 4)
+            elif count_mode == "short-long":
+                counts = torch.where(rows % 2 == 0, 17, selection_width)
+            elif count_mode == "short":
+                counts = torch.full(
+                    (num_rows,), 17, device=flaggems_vllm.device, dtype=torch.int32
+                )
+            elif count_mode == "long":
+                counts = torch.full(
+                    (num_rows,),
+                    selection_width,
+                    device=flaggems_vllm.device,
+                    dtype=torch.int32,
+                )
+            else:
+                raise ValueError(f"unknown count_mode: {count_mode}")
+            logical_indices = _make_packed_indices(
+                rows,
+                counts.to(torch.int32),
+                selection_width,
+                context_capacity,
+                index_kind,
             )
-            logical_indices[:, :-1] = torch.where(ranks < counts[:, None], selected, -1)
-            logical_indices[:, -1] = counts
 
             if fp8:
                 # A fixed non-unit pair (k != v) exercises the host-side scale folding

@@ -517,7 +517,7 @@ swiglu:
   shape_desc: "M, 2H (last dim is split in half)"
 
 qsa_sparse_paged_attention:
-  shape_desc: "T, Hq, Hkv, page_size, prefill_config, requests, fp8"
+  shape_desc: "T, Hq, Hkv, page_size, prefill_config, requests, fp8[, index_kind, count_mode]"
   shapes:
     - [1, 24, 2, 1600, true, 2, false]
     - [16, 12, 1, 1600, true, 3, false]
@@ -533,3 +533,9 @@ qsa_sparse_paged_attention:
     - [128, 24, 2, 1568, true, 7, true]
     - [2048, 24, 2, 1600, true, 63, true]
     - [2048, 24, 2, 1600, false, 63, true]
+    # Added distributions (rectification): index locality and L distributions.
+    - [128, 24, 2, 1568, true, 7, false, group4, mixed]
+    - [128, 24, 2, 1568, true, 7, false, random, short]
+    - [128, 24, 2, 1568, true, 7, false, random, long]
+    - [128, 24, 2, 1568, true, 7, false, group4, short-long]
+    - [2048, 24, 2, 1600, true, 63, false, group4, short-long]

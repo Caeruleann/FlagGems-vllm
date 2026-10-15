@@ -1,5 +1,21 @@
 # QSA Sparse Attention H800 优化总结
 
+> **历史报告声明(2026-10-15 整改轮补充)**:本文记录的是 `5f61960` 的优化过程与结果。
+> 该版本在后续审查中被发现正确性与工程问题(见 review.md),已由整改提交修复。
+> 本文保留为历史记录,但以下表述与最终实现不符,应以整改后的实现与
+> `opt_rectify.md` 为准:
+>
+> - "host fast-path 计划缓存(完整元数据键)" —— **已删除**:私有 plan 缓存持有
+>   Tensor 强引用,违反显存生命周期要求;启动统一走框架 libentry/libtuner 入口。
+> - "其他卡保留原 split 表,原表未变" —— **不准确**:整改前实现曾漂移 SM90 FP8
+>   与 SM120 的若干 split 阈值;整改后全部恢复 bc8a9ea 值,统一移入后端
+>   heuristics 体系(`_nvidia/heuristics_config_utils.py`)。
+> - 性能数字(kernel 模式 do_bench)是**含启动间隙影响的计时口径**,不是完整
+>   host 端到端耗时;整改后的三模式(kernel/operator/cudagraph)对比见
+>   `opt_rectify.md` 与 `qsa_benchmark_results/`。
+> - "整 op 耗时"中的 decode 收益部分来自私有缓存的直连启动,**不可复现于整改后
+>   实现**;整改后 decode 的 kernel 模式 SpeedUp 见 `opt_rectify.md`。
+
 对应计划:[opt.md](opt.md)(H800 上 `qsa_sparse_paged_attention` 的 BF16 decode/prefill 优化)。
 执行日期:2026-10-14。验收设备:NVIDIA H800(sm_90,单卡),torch 2.11.0+cu130,triton 3.6.0,vLLM 0.31.0。
 

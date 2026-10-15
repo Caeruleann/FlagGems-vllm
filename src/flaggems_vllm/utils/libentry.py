@@ -22,7 +22,6 @@ import multiprocessing
 import os
 import time
 from abc import abstractmethod
-from collections import OrderedDict
 from functools import cached_property
 from itertools import starmap
 from pathlib import Path
@@ -754,8 +753,25 @@ class LibEntry(triton.KernelInterface):
             for p in self.jit_function.params
             if not p.is_constexpr and p.do_not_specialize
         ]
+        # Hot-path lookups: membership tests run per argument per launch.
+        self.specialize_index_set = frozenset(self.specialize_indices)
+        self.do_not_specialize_index_set = frozenset(self.do_not_specialize_indices)
+        # Optional Hygon tensor specialization, resolved once per entry (the
+        # vendor is fixed for the process).
+        self._hygon_tensor_spec = None
+        if runtime.device.vendor_name == "hygon" and hasattr(triton.backends, "hcu"):
+            try:
+                from triton.backends.hcu.compiler import HIPBackend
+
+                if hasattr(HIPBackend, "get_tensor_specialization"):
+                    self._hygon_tensor_spec = HIPBackend.get_tensor_specialization
+            except Exception:  # noqa: BLE001
+                self._hygon_tensor_spec = None
         self.lock = multiprocessing.Lock()
         self.signature = fn.signature
+        # Fixed for the lifetime of the entry; cached to avoid rebuilding the
+        # parameter-name list on every launch.
+        self.param_names = tuple(self.signature.parameters.keys())
 
     @staticmethod
     def _contains_flagtune_tuner(fn):
@@ -785,35 +801,41 @@ class LibEntry(triton.KernelInterface):
                 cache.clear()
 
     def key(self, spec_args, dns_args, const_args):
-        def spec_arg(arg):
+        hygon_spec = self._hygon_tensor_spec
+        if hygon_spec is None:
+            spec_key = [
+                (
+                    (arg.dtype, arg.data_ptr() % self.divisibility == 0)
+                    if hasattr(arg, "data_ptr")
+                    else (type(arg), arg)
+                )
+                for arg in spec_args
+            ]
+        else:
+            spec_key = [
+                (
+                    (
+                        arg.dtype,
+                        arg.data_ptr() % self.divisibility == 0,
+                        hygon_spec(arg),
+                    )
+                    if hasattr(arg, "data_ptr")
+                    else (type(arg), arg)
+                )
+                for arg in spec_args
+            ]
+        dns_key = []
+        for arg in dns_args:
             if hasattr(arg, "data_ptr"):
-                if runtime.device.vendor_name == "hygon" and hasattr(
-                    triton.backends, "hcu"
-                ):
-                    from triton.backends.hcu.compiler import HIPBackend
-
-                    if hasattr(HIPBackend, "get_tensor_specialization"):
-                        return (
-                            arg.dtype,
-                            arg.data_ptr() % self.divisibility == 0,
-                            HIPBackend.get_tensor_specialization(arg),
-                        )
-                return (arg.dtype, arg.data_ptr() % self.divisibility == 0)
-            return (type(arg), arg)
-
-        def dns_arg(arg):
-            if hasattr(arg, "data_ptr"):
-                return arg.dtype
-            if not isinstance(arg, int):
-                return type(arg)
-            if -(2**31) <= arg and arg <= 2**31 - 1:
-                return "i32"
-            if 2**63 <= arg and arg <= 2**64 - 1:
-                return "u64"
-            return "i64"
-
-        spec_key = [spec_arg(arg) for arg in spec_args]
-        dns_key = [dns_arg(arg) for arg in dns_args]
+                dns_key.append(arg.dtype)
+            elif not isinstance(arg, int):
+                dns_key.append(type(arg))
+            elif -(2**31) <= arg <= 2**31 - 1:
+                dns_key.append("i32")
+            elif 2**63 <= arg <= 2**64 - 1:
+                dns_key.append("u64")
+            else:
+                dns_key.append("i64")
         # const args passed by position
         return tuple(spec_key + dns_key + const_args)
 
@@ -826,14 +848,13 @@ class LibEntry(triton.KernelInterface):
         spec_args = []  # specialize arguments
         dns_args = []  # do not specialize arguments
         const_args = []  # constexpr arguments
-        k_args = OrderedDict()
-        param_names = list(self.signature.parameters.keys())
+        k_args = {}
+        param_names = self.param_names
+        specialize_set = self.specialize_index_set
+        do_not_specialize_set = self.do_not_specialize_index_set
         for i, arg in enumerate(args):
             hashable_arg = arg
-            if (
-                hasattr(arg, "__class__")
-                and arg.__class__.__name__ == "TensorDescriptor"
-            ):
+            if type(arg).__name__ == "TensorDescriptor":
                 # Create a hashable representation of TensorDescriptor
                 hashable_arg = (
                     "TensorDescriptor",
@@ -843,10 +864,10 @@ class LibEntry(triton.KernelInterface):
                     arg.padding if hasattr(arg, "padding") else None,
                     # Add other relevant attributes
                 )
-            if i in self.specialize_indices:
+            if i in specialize_set:
                 k_args[param_names[i]] = arg
                 spec_args.append(hashable_arg)
-            elif i in self.do_not_specialize_indices:
+            elif i in do_not_specialize_set:
                 k_args[param_names[i]] = arg
                 dns_args.append(hashable_arg)
             else:
@@ -960,9 +981,12 @@ class LibEntry(triton.KernelInterface):
                 pre_hook({**hook_nargs, **hook_kwargs})
 
         if major_version == 3 and 3 <= minor_version <= 6:
-            all_args = []
+            # Positional arguments map 1:1 onto the leading parameters (this
+            # ordering is the documented calling convention), so only the
+            # trailing parameters need dict resolution.
+            all_args = list(args)
             missing_keys = []
-            for key in list(self.signature.parameters.keys()):
+            for key in self.param_names[len(args) :]:
                 if key in k_args:
                     all_args.append(k_args[key])
                 elif key in tune_constexprs:
@@ -973,10 +997,10 @@ class LibEntry(triton.KernelInterface):
                     all_args.append(constexprs[key])
                 else:
                     missing_keys.append(key)
-                if len(missing_keys):
-                    raise RuntimeError(
-                        f"[libentry]: probably a bug, the following kernel params where not captured: {missing_keys}"
-                    )
+            if missing_keys:
+                raise RuntimeError(
+                    f"[libentry]: probably a bug, the following kernel params where not captured: {missing_keys}"
+                )
             kernel[grid[0:3]](*all_args)
         else:
             kernel[grid[0:3]](*k_args.values())
