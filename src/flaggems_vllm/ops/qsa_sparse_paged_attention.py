@@ -322,9 +322,13 @@ def _qsa_merge_splitk_kernel(
 _QSA_MAIN_CONFIGS = runtime.get_tuned_config("qsa_sparse_paged_attention") or [
     triton.Config(kwargs={"BLOCK_N": 64}, num_warps=2, num_stages=2)
 ]
-# Smallest BLOCK_N the tuner may pick; the host clamps NUM_SPLITS against the
-# tile count at this block size so the grid never exceeds available tiles.
-_MIN_CANDIDATE_BLOCK_N = min(c.kwargs.get("BLOCK_N", 64) for c in _QSA_MAIN_CONFIGS)
+# Reference tile width for the NUM_SPLITS clamp below. Every split writes one
+# partial per row, so more splits than the tile count at this width only widen
+# the merge kernel's per-row read without adding main-kernel work it can
+# parallelize. Measured on H800 decode shapes (2026-10): clamping at the
+# 64-wide tile count matches vLLM's fixed BLOCK_N=64 policy and cuts the
+# merge time ~25-30% vs clamping at the smallest candidate BLOCK_N (32).
+_SPLIT_CAP_TILE_WIDTH = 64
 
 _QSA_MAIN_TUNED = libentry()(
     libtuner(
@@ -511,12 +515,12 @@ def qsa_sparse_paged_attention(
     target_splits = _select_splits(
         num_rows, k_shape[2], use_prefill_config, is_fp8, device_index
     )
-    # Never more splits than the smallest candidate BLOCK_N can feed; splits
-    # beyond the effective tile count of the tuned BLOCK_N exit empty in the
-    # kernel (they still write mergeable partials, so results stay correct).
-    num_splits = min(
-        target_splits, triton.cdiv(selection_width, _MIN_CANDIDATE_BLOCK_N)
-    )
+    # Clamp splits to the tile count at the reference width: each split then
+    # owns ~2 tiles when the tuner picks BLOCK_N=32, and the merge kernel
+    # never reads more partials per row than this cap allows. Splits beyond
+    # the tuned BLOCK_N's tile count exit empty in the kernel, and
+    # split_counts keeps the merge correct for any clamp outcome.
+    num_splits = min(target_splits, triton.cdiv(selection_width, _SPLIT_CAP_TILE_WIDTH))
 
     q_stride = q.stride()
     k_stride = k_cache.stride()

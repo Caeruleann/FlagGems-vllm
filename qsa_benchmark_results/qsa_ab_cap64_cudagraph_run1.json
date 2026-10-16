@@ -1,0 +1,1062 @@
+{
+  "qsa_sparse_paged_attention": {
+    "details": [
+      {
+        "op_name": "qsa_sparse_paged_attention",
+        "dtype": "torch.bfloat16",
+        "mode": "cudagraph",
+        "level": "core",
+        "result": [
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  1,
+                  24,
+                  256
+                ],
+                [
+                  130,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  130,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  1,
+                  2052
+                ],
+                [
+                  2,
+                  65
+                ],
+                [
+                  1
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  1,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.010192121068636577,
+            "latency": 0.0099643175564115,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.0228619281687281,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  16,
+                  12,
+                  256
+                ],
+                [
+                  195,
+                  1600,
+                  1,
+                  256
+                ],
+                [
+                  195,
+                  1600,
+                  1,
+                  256
+                ],
+                [
+                  16,
+                  2052
+                ],
+                [
+                  3,
+                  65
+                ],
+                [
+                  16
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  16,
+                  12,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.01902954657872518,
+            "latency": 0.016724373499552407,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.1378331498776002,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  32,
+                  6,
+                  256
+                ],
+                [
+                  325,
+                  800,
+                  1,
+                  256
+                ],
+                [
+                  325,
+                  800,
+                  1,
+                  256
+                ],
+                [
+                  32,
+                  2052
+                ],
+                [
+                  5,
+                  65
+                ],
+                [
+                  32
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  32,
+                  6,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.029755726252516657,
+            "latency": 0.030499567856659762,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9756114051307555,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  128,
+                  24,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  128,
+                  2052
+                ],
+                [
+                  7,
+                  65
+                ],
+                [
+                  128
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  128,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.21408922244340944,
+            "latency": 0.16690165587145872,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.2827267729943481,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  257,
+                  6,
+                  256
+                ],
+                [
+                  845,
+                  800,
+                  1,
+                  256
+                ],
+                [
+                  845,
+                  800,
+                  1,
+                  256
+                ],
+                [
+                  257,
+                  2052
+                ],
+                [
+                  13,
+                  65
+                ],
+                [
+                  257
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  257,
+                  6,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.17761293370672998,
+            "latency": 0.1456395564255891,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.2195377277015869,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  513,
+                  6,
+                  256
+                ],
+                [
+                  1105,
+                  784,
+                  1,
+                  256
+                ],
+                [
+                  1105,
+                  784,
+                  1,
+                  256
+                ],
+                [
+                  513,
+                  2052
+                ],
+                [
+                  17,
+                  65
+                ],
+                [
+                  513
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  513,
+                  6,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.3389274629495912,
+            "latency": 0.304518404006958,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.1129950061798135,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  700,
+                  6,
+                  256
+                ],
+                [
+                  1495,
+                  800,
+                  1,
+                  256
+                ],
+                [
+                  1495,
+                  800,
+                  1,
+                  256
+                ],
+                [
+                  700,
+                  2052
+                ],
+                [
+                  23,
+                  65
+                ],
+                [
+                  700
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  700,
+                  6,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.9747805368332636,
+            "latency": 0.641294328789962,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.5200205164336105,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  1024,
+                  24,
+                  256
+                ],
+                [
+                  2145,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  2145,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  1024,
+                  2052
+                ],
+                [
+                  33,
+                  65
+                ],
+                [
+                  1024
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  1024,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 2.3637381962367465,
+            "latency": 1.534619111281175,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.5402767884621107,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  2048,
+                  24,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  2048,
+                  2052
+                ],
+                [
+                  63,
+                  65
+                ],
+                [
+                  2048
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  2048,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 3.712283406938825,
+            "latency": 2.452508396572537,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.513667970363268,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  2048,
+                  24,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  2048,
+                  2052
+                ],
+                [
+                  63,
+                  65
+                ],
+                [
+                  2048
+                ]
+              ],
+              {
+                "use_prefill_config": false,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  2048,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 2.390899181365967,
+            "latency": 2.4105559587478638,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 0.9918455419752598,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  1,
+                  24,
+                  256
+                ],
+                [
+                  130,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  130,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  1,
+                  2052
+                ],
+                [
+                  2,
+                  65
+                ],
+                [
+                  1
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 0.5,
+                "v_scale": 2.0,
+                "output_gate": [
+                  1,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.014095589900628116,
+            "latency": 0.010859561351037795,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.2979888823300465,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  128,
+                  24,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  128,
+                  2052
+                ],
+                [
+                  7,
+                  65
+                ],
+                [
+                  128
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 0.5,
+                "v_scale": 2.0,
+                "output_gate": [
+                  128,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.28439250173448005,
+            "latency": 0.19388103485107422,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4668402299014465,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  2048,
+                  24,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  2048,
+                  2052
+                ],
+                [
+                  63,
+                  65
+                ],
+                [
+                  2048
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 0.5,
+                "v_scale": 2.0,
+                "output_gate": [
+                  2048,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 3.9083551406860355,
+            "latency": 2.254714647928874,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.7334145339749114,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  2048,
+                  24,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  2048,
+                  2052
+                ],
+                [
+                  63,
+                  65
+                ],
+                [
+                  2048
+                ]
+              ],
+              {
+                "use_prefill_config": false,
+                "k_scale": 0.5,
+                "v_scale": 2.0,
+                "output_gate": [
+                  2048,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 7.409520149230957,
+            "latency": 4.26937198638916,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.7355058713208054,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  128,
+                  24,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  128,
+                  2052
+                ],
+                [
+                  7,
+                  65
+                ],
+                [
+                  128
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  128,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.3663245609828404,
+            "latency": 0.22960877091917273,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.595429301399791,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  128,
+                  24,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  128,
+                  2052
+                ],
+                [
+                  7,
+                  65
+                ],
+                [
+                  128
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  128,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.030944277096345937,
+            "latency": 0.016684506131314683,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.8546714450401076,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  128,
+                  24,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  128,
+                  2052
+                ],
+                [
+                  7,
+                  65
+                ],
+                [
+                  128
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  128,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.41494094624238853,
+            "latency": 0.34762432098388674,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.193647628186585,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  128,
+                  24,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  455,
+                  1568,
+                  2,
+                  256
+                ],
+                [
+                  128,
+                  2052
+                ],
+                [
+                  7,
+                  65
+                ],
+                [
+                  128
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  128,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 0.2187399660420214,
+            "latency": 0.18297599224334066,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.1954571928273412,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          },
+          {
+            "legacy_shape": null,
+            "shape_detail": [
+              [
+                [
+                  2048,
+                  24,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  4095,
+                  1600,
+                  2,
+                  256
+                ],
+                [
+                  2048,
+                  2052
+                ],
+                [
+                  63,
+                  65
+                ],
+                [
+                  2048
+                ]
+              ],
+              {
+                "use_prefill_config": true,
+                "k_scale": 1.0,
+                "v_scale": 1.0,
+                "output_gate": [
+                  2048,
+                  24,
+                  256
+                ]
+              }
+            ],
+            "latency_base": 2.8219039705064564,
+            "latency": 1.9084144939075816,
+            "gbps_base": null,
+            "gbps": null,
+            "speedup": 1.4786640845136614,
+            "accuracy": null,
+            "tflops": null,
+            "utilization": null,
+            "compared_speedup": null,
+            "error_msg": null
+          }
+        ]
+      }
+    ],
+    "result": "passed",
+    "test_case": "benchmark/test_qsa_sparse_paged_attention.py::test_qsa_sparse_paged_attention_benchmark",
+    "reason": null
+  }
+}

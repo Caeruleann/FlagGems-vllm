@@ -91,7 +91,7 @@ merge 的 255/18(Gems)对 156/0(vLLM)即审查指出的混淆项,下文 3b 分�
 4. **短行**:R2 直写+早退收益确认(short 控制 cudagraph 1.4–2.1×)。
 5. **索引局部性**:group4 与 random 在当前案例无差异;仅能说"当前案例收益有限",不排除其它分布(如实索引器输出)存在局部性影响,需真实分布数据再评估。
 
-## 5. 下一轮建议(按证据优先级,均未实施)
+## 5. 下一轮建议(按证据优先级;第 1 条已于 2026-10-16 实施,见 §7)
 
 1. **S 与 BLOCK_N 宽度的联动裁剪(针对结论 1)**:把 host splits 上限从"最小候选 BLOCK_N=32 的 tile 数"改为与预期 tile 宽度联动(例如按 64 宽 tile 裁剪得 S≤33),或在后端策略层对 decode 桶收窄目标 splits;随后**整体重调 main 并 main+merge 链复测**(tuner 会在新 S 下重选 BLOCK_N;评价标准是整链,不是 main 单项)。风险:短行场景的早退收益不受影响(机制保留),但长行的 main 并行度需复测。
 2. **workspace 单次分配 + 类型视图**(针对结论 3 的 +2.4 µs 与分配总量 11 µs):三项合成一次 `torch.empty`(字节对齐后 view 出 fp32 partial/lse 与 int32 counts,全部 no-copy)。预期省 ~3 µs/调用;需补生命周期与 Graph 测试(视图为同存储,不违反"每次调用新分配"——存储仍逐调用新建)。
@@ -104,3 +104,29 @@ merge 的 255/18(Gems)对 156/0(vLLM)即审查指出的混淆项,下文 3b 分�
 - `tools/qsa_merge_config_exp.py`(merge 四臂实验)
 - `qsa_small_t_results/`(v2 重采 + `merge_config_exp.json` + 整包 tarball)
 - 本报告(v1 已替换)
+
+## 7. 修复实施:cap64(2026-10-16)
+
+§5 第 1 条已实施。host NUM_SPLITS 上限由「最小候选 BLOCK_N(32) 的 tile 数」改为「64 参考 tile 宽的 tile 数」(`_SPLIT_CAP_TILE_WIDTH = 64`,op 内注释含依据),与 vLLM 固定 BLOCK_N=64 的 `min(target, cdiv(width, 64))` 语义对齐。width=2051 时:S 64 → 33(BF16 base_programs≤32、FP8 ≤24 桶,即 T=1/16/32 等 decode 案例);T≥128 各桶 target ≤ 8,不受影响。
+
+### 证据(定配置对照:harness 裸 kernel 扫描,同 GPU 背靠背,merge 固定 w2/s1)
+
+| 案例 | vLLM (ms) | best@S=64 (ms) | best@S=33 (ms) | 整链变化 | speedup@64→33 |
+| --- | --- | --- | --- | --- | --- |
+| BF16 T=32 (ps=800) | 0.0419 | 0.0495 (b64/w2/s1) | 0.0421 (b32/w4/s2) | −15% | 0.846 → 0.995 |
+| BF16 T=16 (ps=1600) | 0.0379 | 0.0323 (b64/w2/s1) | 0.0294 (b64/w2/s1) | −9% | 1.177 → 1.291 |
+| BF16 T=1 (ps=1600) | 0.0360 | 0.0186 | 0.0188 | 持平 | 1.933 → 1.918 |
+| FP8 T=1 (ps=1600) | 0.0393 | 0.0191 | 0.0188 | −2% | 2.061 → 2.093 |
+
+同配置分阶段(T=32,b32/w4/s2):main 0.0395→0.0350(空 split 发射减半),merge 0.0151→0.0112(−26%,每行读 64→33 路 partial)——结论 1 的归因闭环。T=1 的 merge 只有 24 CTA,宽度效应可忽略,与该案例整链持平自洽。目标案例 BF16 T=32 由此前明显落后(0.846–0.95,随模式/调优噪声波动)提升到与 vLLM 持平(≈0.99)。
+
+### 测量纪律(本轮教训)
+
+- 首次「归档旧结果 vs 新跑结果」对比出现大量 S 未变案例的 ±0.1–0.35 摆动:vLLM 基线在不同 GPU/时钟状态下自身漂移 32–86%,且清缓存后 libtuner 重调在 µs 级案例的选配置噪声与效果量同量级。**跨时段/跨 GPU 的 speedup 对比无效**;有效口径只有:① 同环境背靠背 A/B;② 定配置裸 kernel 对照(上表)。
+- 同环境 A/B 归档:`qsa_benchmark_results/qsa_ab_{oldcap,cap64}_{kernel,operator,cudagraph}_run{1,2}.json`。A/B(含重调噪声)方向与对照实验一致:cudagraph T=32 0.951→0.980、T=1 1.002→1.023;kernel 模式个别案例反向源于 libtuner 实选非扫描最优(如 T=32 S=33 实选 b64/w8/s2,扫描最优 b32/w4/s2,差 ~13%)——生产机首调存在同样噪声,候选集已覆盖各最优项。
+- 扫描脚本:`tools/qsa_config_scan.py`(已同步 split_counts 签名)。
+
+### 回归与剩余项
+
+- `tests/test_qsa_sparse_paged_attention.py` + `tests/test_libentry.py` 全量通过(159 项);graph 双向/重放新鲜度不受影响;小宽度用例 width≤64 → S=1 直写路径,行为不变。
+- §5 第 2 条(workspace 单次分配 + 类型视图,预期 ~3 µs/调用)仍未实施。
