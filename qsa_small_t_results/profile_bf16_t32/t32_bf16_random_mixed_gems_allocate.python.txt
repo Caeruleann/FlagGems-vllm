@@ -1,0 +1,99 @@
+         57001 function calls in 0.039 seconds
+
+   Ordered by: internal time
+   List reduced from 57 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      400    0.007    0.000    0.023    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py:842(run)
+      200    0.004    0.000    0.040    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py:389(qsa_sparse_paged_attention)
+      400    0.003    0.000    0.005    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py:803(key)
+      600    0.003    0.000    0.003    0.000 {built-in method torch.empty}
+      200    0.002    0.000    0.002    0.000 {built-in method __triton_launcher.launch}
+    13800    0.002    0.000    0.002    0.000 {method 'append' of 'list' objects}
+      400    0.002    0.000    0.008    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:547(runner)
+      800    0.001    0.000    0.003    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:1142(__call__)
+      400    0.001    0.000    0.024    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:400(<lambda>)
+     7600    0.001    0.000    0.001    0.000 {built-in method builtins.hasattr}
+     2400    0.001    0.000    0.001    0.000 {method 'stride' of 'torch._C.TensorBase' objects}
+      200    0.001    0.000    0.001    0.000 {built-in method torch.empty_like}
+     1000    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/language/core.py:368(_unwrap_if_constexpr)
+     5600    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+      400    0.001    0.000    0.004    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:836(launch)
+      200    0.001    0.000    0.040    0.000 /workspace/FlagGems-vllm/tools/qsa_small_t_debug.py:429(<lambda>)
+      400    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:533(launch_metadata)
+     3200    0.001    0.000    0.001    0.000 {method 'data_ptr' of 'torch._C.TensorBase' objects}
+      800    0.001    0.000    0.001    0.000 {built-in method torch._C._cuda_getDevice}
+      800    0.000    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:1146(current_device)
+      400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:674(get_device_properties)
+      400    0.000    0.000    0.005    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:823(__call__)
+     1200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:450(_lazy_init)
+     1200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:401(is_initialized)
+      800    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/knobs.py:498(__call__)
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:544(__getitem__)
+      600    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/__init__.py:97(next_power_of_2)
+      200    0.000    0.000    0.002    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/runtime/backend/_nvidia/heuristics_config_utils.py:71(_qsa_device_class)
+      200    0.000    0.000    0.000    0.000 {method 'view_as' of 'torch._C.TensorBase' objects}
+      200    0.000    0.000    0.003    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py:367(_select_splits)
+      200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:656(get_device_capability)
+      400    0.000    0.000    0.000    0.000 {built-in method torch.cuda._get_device_properties}
+     1200    0.000    0.000    0.000    0.000 {built-in method torch._C._cuda_isInBadFork}
+      200    0.000    0.000    0.002    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/runtime/backend/_nvidia/heuristics_config_utils.py:84(qsa_sparse_num_splits_heur)
+      800    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+      200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:641(get_device_name)
+      800    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:1099(device_count)
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:152(_is_compiled)
+      800    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/driver.py:47(active)
+
+
+
+
+===== cumulative =====
+         57001 function calls in 0.039 seconds
+
+   Ordered by: cumulative time
+   List reduced from 57 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      200    0.001    0.000    0.040    0.000 /workspace/FlagGems-vllm/tools/qsa_small_t_debug.py:429(<lambda>)
+      200    0.004    0.000    0.040    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py:389(qsa_sparse_paged_attention)
+      400    0.001    0.000    0.024    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:400(<lambda>)
+      400    0.007    0.000    0.023    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py:842(run)
+      400    0.002    0.000    0.008    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:547(runner)
+      400    0.000    0.000    0.005    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:823(__call__)
+      400    0.003    0.000    0.005    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py:803(key)
+      400    0.001    0.000    0.004    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:836(launch)
+      800    0.001    0.000    0.003    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:1142(__call__)
+      600    0.003    0.000    0.003    0.000 {built-in method torch.empty}
+      200    0.000    0.000    0.003    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py:367(_select_splits)
+      200    0.000    0.000    0.002    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/runtime/backend/_nvidia/heuristics_config_utils.py:84(qsa_sparse_num_splits_heur)
+      200    0.000    0.000    0.002    0.000 /workspace/FlagGems-vllm/src/flaggems_vllm/runtime/backend/_nvidia/heuristics_config_utils.py:71(_qsa_device_class)
+      200    0.002    0.000    0.002    0.000 {built-in method __triton_launcher.launch}
+    13800    0.002    0.000    0.002    0.000 {method 'append' of 'list' objects}
+      800    0.000    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:1146(current_device)
+      400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:674(get_device_properties)
+     1000    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/language/core.py:368(_unwrap_if_constexpr)
+      200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:656(get_device_capability)
+     1200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:450(_lazy_init)
+     7600    0.001    0.000    0.001    0.000 {built-in method builtins.hasattr}
+     2400    0.001    0.000    0.001    0.000 {method 'stride' of 'torch._C.TensorBase' objects}
+      200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:641(get_device_name)
+      200    0.001    0.000    0.001    0.000 {built-in method torch.empty_like}
+      400    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:533(launch_metadata)
+     5600    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+     1200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:401(is_initialized)
+     3200    0.001    0.000    0.001    0.000 {method 'data_ptr' of 'torch._C.TensorBase' objects}
+      800    0.001    0.000    0.001    0.000 {built-in method torch._C._cuda_getDevice}
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:1099(device_count)
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:544(__getitem__)
+      800    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/knobs.py:498(__call__)
+      600    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/__init__.py:97(next_power_of_2)
+      200    0.000    0.000    0.000    0.000 {method 'view_as' of 'torch._C.TensorBase' objects}
+      400    0.000    0.000    0.000    0.000 {built-in method torch.cuda._get_device_properties}
+     1200    0.000    0.000    0.000    0.000 {built-in method torch._C._cuda_isInBadFork}
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:152(_is_compiled)
+      800    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/_utils.py:517(_get_device_index)
+      800    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+
+

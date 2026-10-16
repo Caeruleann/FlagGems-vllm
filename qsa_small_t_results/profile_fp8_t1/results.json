@@ -1,0 +1,604 @@
+{
+  "started_at_utc": "2026-10-16T02:24:46.336566+00:00",
+  "options": {
+    "out_dir": "/tmp/qsa_small_t/profile_fp8_t1",
+    "rows": [
+      1
+    ],
+    "kv_dtypes": [
+      "fp8"
+    ],
+    "out_modes": [
+      "allocate"
+    ],
+    "modes": [
+      "operator",
+      "cudagraph"
+    ],
+    "rep_ms": 20,
+    "warmup_ms": 5,
+    "repeats": 5,
+    "index_kind": "random",
+    "count_mode": "mixed",
+    "profile": true
+  },
+  "environment": {
+    "python": "3.12.3 (main, Jan 22 2026, 20:57:42) [GCC 13.3.0]",
+    "torch": "2.11.0+cu130",
+    "triton": "3.6.0",
+    "torch_cuda": "13.0",
+    "gpu": "NVIDIA H800",
+    "capability": [
+      9,
+      0
+    ],
+    "git_head": "3e60d062660740b6942ea674eeb103ef32cdf22f",
+    "git_status": "?? a.txt\n?? b.txt\n?? c.txt\n?? d.txt\n?? opt.md\n?? qsa_small_t_debug_guide.md\n?? review.md\n?? tools/qsa_small_t_debug.py",
+    "source": {
+      "gems": {
+        "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py",
+        "size": 22723,
+        "mtime": "2026-10-15T10:54:51.221453+00:00",
+        "md5_12": "cad19a78627c"
+      },
+      "vllm": {
+        "path": "/usr/local/lib/python3.12/dist-packages/vllm/models/qwen4_exp/nvidia/ops/qsa.py",
+        "size": 37935,
+        "mtime": "2026-10-13T09:02:07.055810+00:00",
+        "md5_12": "0997e4a4e30a"
+      },
+      "collector": {
+        "path": "/workspace/FlagGems-vllm/tools/qsa_small_t_debug.py",
+        "size": 20010,
+        "mtime": "2026-10-16T02:22:34.545163+00:00",
+        "md5_12": "afe8e79a1552"
+      },
+      "libentry": {
+        "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py",
+        "size": 36705,
+        "mtime": "2026-10-15T10:54:51.445453+00:00",
+        "md5_12": "5af47e87bffa"
+      },
+      "benchmark": {
+        "path": "/workspace/FlagGems-vllm/benchmark/test_qsa_sparse_paged_attention.py",
+        "size": 6356,
+        "mtime": "2026-10-15T10:32:44.918032+00:00",
+        "md5_12": "e49eddbf60c8"
+      },
+      "tune_configs": {
+        "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/runtime/backend/_nvidia/tune_configs.yaml",
+        "size": 20258,
+        "mtime": "2026-10-14T06:54:44.945442+00:00",
+        "md5_12": "fafefeb6f632"
+      },
+      "heuristics": {
+        "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/runtime/backend/_nvidia/heuristics_config_utils.py",
+        "size": 15778,
+        "mtime": "2026-10-15T10:54:51.157453+00:00",
+        "md5_12": "a7ae3c92fdd9"
+      }
+    },
+    "selected_env": {
+      "CUDA_VISIBLE_DEVICES": "0",
+      "DNN_VENDOR": null,
+      "TRITON_CACHE_DIR": null
+    },
+    "custom_tuning_database": false,
+    "nvidia_smi_before": "Fri Oct 16 02:24:46 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   71C    P0            136W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   31C    P0            128W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   44C    P0             76W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+",
+    "nvidia_smi_after": "Fri Oct 16 02:24:49 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   70C    P0            143W /  700W |     958MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   29C    P0             69W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   44C    P0             76W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+"
+  },
+  "cases": [
+    {
+      "name": "t1_fp8_random_mixed",
+      "shape_spec": [
+        1,
+        24,
+        2,
+        1600,
+        true,
+        2,
+        true,
+        "random",
+        "mixed"
+      ],
+      "input_metadata": [
+        {
+          "shape": [
+            1,
+            24,
+            256
+          ],
+          "dtype": "torch.bfloat16",
+          "strides": [
+            6144,
+            256,
+            1
+          ],
+          "numel": 6144,
+          "device": "cuda:0",
+          "data_ptr_mod16": 0
+        },
+        {
+          "shape": [
+            130,
+            1600,
+            2,
+            256
+          ],
+          "dtype": "torch.float8_e4m3fn",
+          "strides": [
+            819200,
+            512,
+            256,
+            1
+          ],
+          "numel": 106496000,
+          "device": "cuda:0",
+          "data_ptr_mod16": 0
+        },
+        {
+          "shape": [
+            130,
+            1600,
+            2,
+            256
+          ],
+          "dtype": "torch.float8_e4m3fn",
+          "strides": [
+            819200,
+            512,
+            256,
+            1
+          ],
+          "numel": 106496000,
+          "device": "cuda:0",
+          "data_ptr_mod16": 0
+        },
+        {
+          "shape": [
+            1,
+            2052
+          ],
+          "dtype": "torch.int32",
+          "strides": [
+            2052,
+            1
+          ],
+          "numel": 2052,
+          "device": "cuda:0",
+          "data_ptr_mod16": 0
+        },
+        {
+          "shape": [
+            2,
+            65
+          ],
+          "dtype": "torch.int32",
+          "strides": [
+            65,
+            1
+          ],
+          "numel": 130,
+          "device": "cuda:0",
+          "data_ptr_mod16": 0
+        },
+        {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int32",
+          "strides": [
+            1
+          ],
+          "numel": 1,
+          "device": "cuda:0",
+          "data_ptr_mod16": 0
+        }
+      ],
+      "gate": {
+        "shape": [
+          1,
+          24,
+          256
+        ],
+        "dtype": "torch.bfloat16",
+        "strides": [
+          6144,
+          256,
+          1
+        ],
+        "numel": 6144,
+        "device": "cuda:0",
+        "data_ptr_mod16": 0
+      },
+      "counts": [
+        2051
+      ],
+      "launches": {
+        "vllm_allocate": {
+          "first_call_with_metadata_probe_ms": 1220.799358561635,
+          "entries": {
+            "main_entry": [
+              {
+                "args_tail": [
+                  256,
+                  6144,
+                  256,
+                  1,
+                  130,
+                  2
+                ],
+                "grid": [
+                  1,
+                  2,
+                  33
+                ],
+                "constexprs": {
+                  "warmup": false,
+                  "TOPK": 2051,
+                  "PAGE_SIZE": 1600,
+                  "PAGE_TABLE_WIDTH": 65,
+                  "GROUP_SIZE": 12,
+                  "HEAD_DIM": 256,
+                  "NUM_QUERY_HEADS": 24,
+                  "NUM_SPLITS": 33,
+                  "NUM_TILES": 33,
+                  "BLOCK_M": 16,
+                  "BLOCK_N": 64,
+                  "IS_FP8": true,
+                  "num_warps": 2,
+                  "num_stages": 2
+                },
+                "n_regs": 255,
+                "n_spills": 72,
+                "shared": 43520,
+                "num_warps_effective": 2
+              }
+            ],
+            "merge_entry": [
+              {
+                "args_tail": [
+                  "tensor([[[ 2.2656,  1.3516, -1.4453,  ...,  0.6250, -0.4512,  0.9375],\n         [ 1.0156,  0.7305,  0.6641,  ...,  0.5273,  1.1406,  2.5625],\n         [ 0.7812, -2.2031, -1.3047,  ..., -0.4766,  1.0312, -1.4062],\n         ...,\n         [ 1.8438,  0.1514, -0.0403,  ..., -0.8398, -0.9922,  1.0391],\n         [ 0.6367, -2.3906,  0.2148,  ..., -1.1172, -0.0630,  0.7461],\n         [ 1.5391,  0.0640,  0.0092,  ...,  0.0386, -1.3984, -1.2031]]],\n       device='cuda:0', dtype=torch.bfloat16)",
+                  6144,
+                  256,
+                  6144,
+                  256,
+                  1
+                ],
+                "grid": [
+                  1,
+                  24
+                ],
+                "constexprs": {
+                  "warmup": false,
+                  "HEAD_DIM": 256,
+                  "NUM_QUERY_HEADS": 24,
+                  "NUM_SPLITS": 33,
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1
+                },
+                "n_regs": 156,
+                "n_spills": 0,
+                "shared": 256,
+                "num_warps_effective": 2
+              }
+            ]
+          }
+        },
+        "gems_allocate": {
+          "first_call_with_metadata_probe_ms": 64.17744047939777,
+          "entries": {
+            "main_entry": [
+              {
+                "args_tail": [
+                  65,
+                  6144,
+                  256,
+                  1,
+                  130,
+                  2
+                ],
+                "grid": [
+                  1,
+                  2,
+                  64
+                ],
+                "constexprs": {
+                  "warmup": false,
+                  "TOPK": 2051,
+                  "PAGE_SIZE": 1600,
+                  "PAGE_TABLE_WIDTH": 65,
+                  "GROUP_SIZE": 12,
+                  "HEAD_DIM": 256,
+                  "NUM_QUERY_HEADS": 24,
+                  "NUM_SPLITS": 64,
+                  "T_BUCKET": 1,
+                  "BLOCK_M": 16,
+                  "IS_FP8": true
+                },
+                "n_regs": 110,
+                "n_spills": 0,
+                "shared": 44032,
+                "num_warps_effective": 8
+              }
+            ],
+            "merge_entry": [
+              {
+                "args_tail": [
+                  "tensor([33], device='cuda:0', dtype=torch.int32)",
+                  "tensor([[[-3.2640e+03, -3.2959e-02, -7.6740e-27,  ...,  2.5195e-01,\n           7.3524e+32, -8.8379e-02],\n         [ 3.4142e-04,  5.9326e-02, -7.9872e-30,  ...,  1.9238e-01,\n          -3.8664e+22,  1.1963e-01],\n         [ 1.5272e-27, -4.1406e-01, -2.1338e-05,  ..., -2.0801e-01,\n           3.4139e-15, -1.3770e-01],\n         ...,\n         [ 1.7969e-01, -2.4658e-02, -5.7361e+31,  ...,  2.9297e-01,\n           2.9731e+15,  3.4180e-02],\n         [ 3.3120e+03, -3.8818e-02, -1.3024e-09,  ..., -9.5703e-02,\n           1.4320e+03, -1.1328e-01],\n         [ 1.2904e-22, -8.9355e-02, -7.0430e-16,  ...,  3.3594e-01,\n          -2.5941e+19,  1.6602e-01]]], device='cuda:0', dtype=torch.bfloat16)",
+                  "tensor([[[ 2.2656,  1.3516, -1.4453,  ...,  0.6250, -0.4512,  0.9375],\n         [ 1.0156,  0.7305,  0.6641,  ...,  0.5273,  1.1406,  2.5625],\n         [ 0.7812, -2.2031, -1.3047,  ..., -0.4766,  1.0312, -1.4062],\n         ...,\n         [ 1.8438,  0.1514, -0.0403,  ..., -0.8398, -0.9922,  1.0391],\n         [ 0.6367, -2.3906,  0.2148,  ..., -1.1172, -0.0630,  0.7461],\n         [ 1.5391,  0.0640,  0.0092,  ...,  0.0386, -1.3984, -1.2031]]],\n       device='cuda:0', dtype=torch.bfloat16)",
+                  6144,
+                  256,
+                  1
+                ],
+                "grid": [
+                  1,
+                  24
+                ],
+                "constexprs": {
+                  "warmup": false,
+                  "HEAD_DIM": 256,
+                  "NUM_QUERY_HEADS": 24,
+                  "NUM_SPLITS": 64,
+                  "BLOCK_SPLITS": 64
+                },
+                "n_regs": 255,
+                "n_spills": 18,
+                "shared": 256,
+                "num_warps_effective": 2
+              }
+            ]
+          }
+        }
+      },
+      "correctness": {
+        "allocate": "passed_vllm_comparison"
+      }
+    }
+  ],
+  "samples": [
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 91.12605452537537
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 92.05358776640385
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 91.90702335314548
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.38319303772667
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.7001785536607
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.60520840276239
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 91.51603548954695
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 90.21185428263193
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 90.02067496121856
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.50464647735646
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 14.208351517771627
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 11.064539301580716
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 11.06465288570949
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 13.918856576997406
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 13.918213432815474
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 11.065245872765928
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 11.067288781180599
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 13.914586892768519
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 13.915564164076702
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 11.090938534055438
+    }
+  ],
+  "status": "complete"
+}

@@ -1,0 +1,3 @@
+kernel,count,median_us,total_us
+_qsa_merge_splitk_kernel,5,3.68,18.432
+_qsa_sparse_paged_gqa_splitk_kernel,5,24.864,125.759
