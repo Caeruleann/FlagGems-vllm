@@ -130,3 +130,17 @@ merge 的 255/18(Gems)对 156/0(vLLM)即审查指出的混淆项,下文 3b 分�
 
 - `tests/test_qsa_sparse_paged_attention.py` + `tests/test_libentry.py` 全量通过(159 项);graph 双向/重放新鲜度不受影响;小宽度用例 width≤64 → S=1 直写路径,行为不变。
 - §5 第 2 条(workspace 单次分配 + 类型视图,预期 ~3 µs/调用)仍未实施。
+
+### 当前一致快照(2026-10-16 下午,GPU0,健康调优缓存,各 2 轮)
+
+命令:`pytest -q -s benchmark/test_qsa_sparse_paged_attention.py --level core --mode {kernel,cudagraph} --iter 20 --warmup 5`、operator 用 `--iter 200 --warmup 50`;原始 JSON:`qsa_benchmark_results/qsa_final_<mode>_run{1,2}.json`。
+
+| 模式 | 几何平均(38 行) | 最小值 | <1.0 的行 |
+| --- | --- | --- | --- |
+| kernel | 1.219 | 0.958 (BF16 T=1) | T=1/T=16/T=32(0.96–1.00) |
+| operator | 1.241 | 0.908 (BF16 T=2048 pre=0,rep2 0.983) | T=16/T=32/FP8 T=1/T=128 短行变体(0.98±0.01) |
+| cudagraph | **1.291** | 0.986 (BF16 T=32) | 仅 T=32 一行 0.986–0.997 |
+
+要点:BF16 T=128 组 1.21–1.52、T=2048 pre=1 1.34–1.44、FP8 1.42–1.66、短行变体最高 1.65;T=700/T=513 为 1.08–1.27,低于归档的 1.28–1.34——经 harness 定配置核实,两案例**已在当日可达最优**(T=700 最优配置 b128/w4/s2 当日实测 0.440 ms,benchmark 实测 0.442 ms),差异来自环境漂移(同一配置归档日实测 0.328 ms,+34%,而 vLLM 基线同期仅漂 5–8%;不同时段对两个 kernel 的影响不同,比值随之漂移),非 cap64 回归。
+
+另注意:libtuner 首调存在 µs 级误选噪声(本轮 T=128 曾从 b128/w4/s2 误选为 b64/w2/s1,sp 1.38→1.26,删 key 重调即恢复);跨时段/跨机对比务必用同环境背靠背。
