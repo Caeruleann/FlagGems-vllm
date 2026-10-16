@@ -1,16 +1,16 @@
 ---------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
                                    Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
 ---------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
-                Activity Buffer Request        91.17%       1.925ms        91.17%       1.925ms       1.925ms       0.000us         0.00%       0.000us       0.000us             1  
-                       cuLaunchKernelEx         3.12%      65.787us         3.12%      65.787us       6.579us       0.000us         0.00%       0.000us       0.000us            10  
-                            aten::empty         2.33%      49.277us         2.33%      49.277us       3.285us       0.000us         0.00%       0.000us       0.000us            15  
-                    aten::empty_strided         1.48%      31.281us         1.48%      31.281us       6.256us       0.000us         0.00%       0.000us       0.000us             5  
-                  cudaDeviceSynchronize         0.84%      17.741us         0.84%      17.741us       8.870us       0.000us         0.00%       0.000us       0.000us             2  
-                          aten::view_as         0.38%       8.085us         0.69%      14.573us       2.915us       0.000us         0.00%       0.000us       0.000us             5  
-                       aten::empty_like         0.37%       7.744us         1.85%      39.025us       7.805us       0.000us         0.00%       0.000us       0.000us             5  
-                             aten::view         0.31%       6.488us         0.31%       6.488us       1.298us       0.000us         0.00%       0.000us       0.000us             5  
-    _qsa_sparse_paged_gqa_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us     122.814us        79.99%     122.814us      24.563us             5  
-               _qsa_merge_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      30.720us        20.01%      30.720us       6.144us             5  
+                Activity Buffer Request        77.77%       1.829ms        77.77%       1.829ms       1.829ms       0.000us         0.00%       0.000us       0.000us             1  
+                  cudaDeviceSynchronize        15.06%     354.072us        15.06%     354.072us     177.036us       0.000us         0.00%       0.000us       0.000us             2  
+                       cuLaunchKernelEx         2.76%      64.823us         2.76%      64.823us       6.482us       0.000us         0.00%       0.000us       0.000us            10  
+                            aten::empty         2.10%      49.294us         2.10%      49.294us       3.286us       0.000us         0.00%       0.000us       0.000us            15  
+                    aten::empty_strided         1.36%      31.995us         1.36%      31.995us       6.399us       0.000us         0.00%       0.000us       0.000us             5  
+                          aten::view_as         0.36%       8.459us         0.65%      15.171us       3.034us       0.000us         0.00%       0.000us       0.000us             5  
+                       aten::empty_like         0.32%       7.520us         1.68%      39.515us       7.903us       0.000us         0.00%       0.000us       0.000us             5  
+                             aten::view         0.29%       6.712us         0.29%       6.712us       1.342us       0.000us         0.00%       0.000us       0.000us             5  
+    _qsa_sparse_paged_gqa_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us     129.596us        79.80%     129.596us      25.919us             5  
+               _qsa_merge_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      32.800us        20.20%      32.800us       6.560us             5  
 ---------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
-Self CPU time total: 2.112ms
-Self CUDA time total: 153.534us
+Self CPU time total: 2.352ms
+Self CUDA time total: 162.396us

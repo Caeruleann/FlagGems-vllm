@@ -1,7 +1,7 @@
 {
-  "started_at_utc": "2026-10-16T02:23:20.938973+00:00",
+  "started_at_utc": "2026-10-16T02:51:31.799496+00:00",
   "options": {
-    "out_dir": "/tmp/qsa_small_t/run1",
+    "out_dir": "/tmp/qsa_small_t2/run1",
     "rows": [
       1,
       16,
@@ -37,8 +37,8 @@
       9,
       0
     ],
-    "git_head": "3e60d062660740b6942ea674eeb103ef32cdf22f",
-    "git_status": "?? a.txt\n?? b.txt\n?? c.txt\n?? d.txt\n?? opt.md\n?? qsa_small_t_debug_guide.md\n?? review.md\n?? tools/qsa_small_t_debug.py",
+    "git_head": "87c8d230eee2c09cafbecbcf915c059e9f7b716e",
+    "git_status": "M tools/qsa_small_t_debug.py\n?? a.txt\n?? b.txt\n?? c.txt\n?? d.txt\n?? opt.md\n?? qsa_small_t_debug_guide.md\n?? review.md",
     "source": {
       "gems": {
         "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py",
@@ -54,9 +54,9 @@
       },
       "collector": {
         "path": "/workspace/FlagGems-vllm/tools/qsa_small_t_debug.py",
-        "size": 20010,
-        "mtime": "2026-10-16T02:22:34.545163+00:00",
-        "md5_12": "afe8e79a1552"
+        "size": 20577,
+        "mtime": "2026-10-16T02:51:27.208407+00:00",
+        "md5_12": "036705878152"
       },
       "libentry": {
         "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py",
@@ -89,8 +89,8 @@
       "TRITON_CACHE_DIR": null
     },
     "custom_tuning_database": false,
-    "nvidia_smi_before": "Fri Oct 16 02:23:21 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   63C    P0            128W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   33C    P0            200W /  700W |    1224MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   44C    P0             76W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   29C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   28C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   32C    P0            129W /  700W |     862MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+",
-    "nvidia_smi_after": "Fri Oct 16 02:24:17 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   74C    P0            212W /  700W |     916MiB /  81559MiB |     52%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   30C    P0             69W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   44C    P0             76W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   29C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   28C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+"
+    "nvidia_smi_before": "Fri Oct 16 02:51:32 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   66C    P0            131W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   31C    P0            152W /  700W |    1222MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   42C    P0             75W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+",
+    "nvidia_smi_after": "Fri Oct 16 02:51:49 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   77C    P0            216W /  700W |     852MiB /  81559MiB |     11%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   31C    P0            123W /  700W |     896MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   42C    P0             75W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+"
   },
   "cases": [
     {
@@ -221,7 +221,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 1098.2173923403025,
+          "first_call_with_metadata_probe_ms": 1115.7149150967598,
           "entries": {
             "main_entry": [
               {
@@ -292,7 +292,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 64.09218534827232,
+          "first_call_with_metadata_probe_ms": 64.12355229258537,
           "entries": {
             "main_entry": [
               {
@@ -320,7 +320,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 1,
                   "BLOCK_M": 16,
-                  "IS_FP8": false
+                  "IS_FP8": false,
+                  "num_warps": 8,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 92,
                 "n_spills": 0,
@@ -347,7 +351,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 24,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -358,7 +365,7 @@
           }
         },
         "vllm_preallocated": {
-          "first_call_with_metadata_probe_ms": 3.800487145781517,
+          "first_call_with_metadata_probe_ms": 5.819782614707947,
           "entries": {
             "main_entry": [
               {
@@ -429,7 +436,7 @@
           }
         },
         "gems_preallocated": {
-          "first_call_with_metadata_probe_ms": 3.519924357533455,
+          "first_call_with_metadata_probe_ms": 5.315965041518211,
           "entries": {
             "main_entry": [
               {
@@ -457,7 +464,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 1,
                   "BLOCK_M": 16,
-                  "IS_FP8": false
+                  "IS_FP8": false,
+                  "num_warps": 8,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 92,
                 "n_spills": 0,
@@ -484,7 +495,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 24,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -628,7 +642,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 4.960861057043076,
+          "first_call_with_metadata_probe_ms": 5.656201392412186,
           "entries": {
             "main_entry": [
               {
@@ -699,7 +713,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 7.350871339440346,
+          "first_call_with_metadata_probe_ms": 8.713940158486366,
           "entries": {
             "main_entry": [
               {
@@ -727,7 +741,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 1,
                   "BLOCK_M": 16,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 8,
+                  "num_stages": 3,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 110,
                 "n_spills": 0,
@@ -754,7 +772,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 24,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -765,7 +786,7 @@
           }
         },
         "vllm_preallocated": {
-          "first_call_with_metadata_probe_ms": 3.4294668585062027,
+          "first_call_with_metadata_probe_ms": 4.263937473297119,
           "entries": {
             "main_entry": [
               {
@@ -836,7 +857,7 @@
           }
         },
         "gems_preallocated": {
-          "first_call_with_metadata_probe_ms": 3.8166139274835587,
+          "first_call_with_metadata_probe_ms": 3.8024652749300003,
           "entries": {
             "main_entry": [
               {
@@ -864,7 +885,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 1,
                   "BLOCK_M": 16,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 8,
+                  "num_stages": 3,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 110,
                 "n_spills": 0,
@@ -891,7 +916,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 24,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1050,7 +1078,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 12.064101174473763,
+          "first_call_with_metadata_probe_ms": 11.61821186542511,
           "entries": {
             "main_entry": [
               {
@@ -1121,7 +1149,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 21.84418961405754,
+          "first_call_with_metadata_probe_ms": 21.290387958288193,
           "entries": {
             "main_entry": [
               {
@@ -1149,7 +1177,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 16,
                   "BLOCK_M": 16,
-                  "IS_FP8": false
+                  "IS_FP8": false,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 143,
                 "n_spills": 0,
@@ -1176,7 +1208,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 12,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1187,7 +1222,7 @@
           }
         },
         "vllm_preallocated": {
-          "first_call_with_metadata_probe_ms": 13.097187504172325,
+          "first_call_with_metadata_probe_ms": 8.882932364940643,
           "entries": {
             "main_entry": [
               {
@@ -1258,7 +1293,7 @@
           }
         },
         "gems_preallocated": {
-          "first_call_with_metadata_probe_ms": 15.11266641318798,
+          "first_call_with_metadata_probe_ms": 14.916572719812393,
           "entries": {
             "main_entry": [
               {
@@ -1286,7 +1321,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 16,
                   "BLOCK_M": 16,
-                  "IS_FP8": false
+                  "IS_FP8": false,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 143,
                 "n_spills": 0,
@@ -1313,7 +1352,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 12,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1472,7 +1514,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 1263.2947508245707,
+          "first_call_with_metadata_probe_ms": 11.152619495987892,
           "entries": {
             "main_entry": [
               {
@@ -1543,7 +1585,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 38052.66081728041,
+          "first_call_with_metadata_probe_ms": 21.15977741777897,
           "entries": {
             "main_entry": [
               {
@@ -1571,7 +1613,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 16,
                   "BLOCK_M": 16,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 128
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1598,7 +1644,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 12,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1609,7 +1658,7 @@
           }
         },
         "vllm_preallocated": {
-          "first_call_with_metadata_probe_ms": 9.30553674697876,
+          "first_call_with_metadata_probe_ms": 9.323334321379662,
           "entries": {
             "main_entry": [
               {
@@ -1680,7 +1729,7 @@
           }
         },
         "gems_preallocated": {
-          "first_call_with_metadata_probe_ms": 15.257470309734344,
+          "first_call_with_metadata_probe_ms": 17.545228824019432,
           "entries": {
             "main_entry": [
               {
@@ -1708,7 +1757,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 16,
                   "BLOCK_M": 16,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 128
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1735,7 +1788,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 12,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -1910,7 +1966,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 11.827627196907997,
+          "first_call_with_metadata_probe_ms": 11.872384697198868,
           "entries": {
             "main_entry": [
               {
@@ -1981,7 +2037,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 25.104869157075882,
+          "first_call_with_metadata_probe_ms": 21.944653242826462,
           "entries": {
             "main_entry": [
               {
@@ -2009,7 +2065,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 32,
                   "BLOCK_M": 8,
-                  "IS_FP8": false
+                  "IS_FP8": false,
+                  "num_warps": 4,
+                  "num_stages": 2,
+                  "num_ctas": 1,
+                  "BLOCK_N": 32
                 },
                 "n_regs": 85,
                 "n_spills": 0,
@@ -2036,7 +2096,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 6,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -2047,7 +2110,7 @@
           }
         },
         "vllm_preallocated": {
-          "first_call_with_metadata_probe_ms": 15.629041939973831,
+          "first_call_with_metadata_probe_ms": 9.171558544039726,
           "entries": {
             "main_entry": [
               {
@@ -2118,7 +2181,7 @@
           }
         },
         "gems_preallocated": {
-          "first_call_with_metadata_probe_ms": 15.569593757390976,
+          "first_call_with_metadata_probe_ms": 15.116119757294655,
           "entries": {
             "main_entry": [
               {
@@ -2146,7 +2209,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 32,
                   "BLOCK_M": 8,
-                  "IS_FP8": false
+                  "IS_FP8": false,
+                  "num_warps": 4,
+                  "num_stages": 2,
+                  "num_ctas": 1,
+                  "BLOCK_N": 32
                 },
                 "n_regs": 85,
                 "n_spills": 0,
@@ -2173,7 +2240,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 6,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -2348,7 +2418,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 12.775251641869545,
+          "first_call_with_metadata_probe_ms": 12.320395559072495,
           "entries": {
             "main_entry": [
               {
@@ -2419,7 +2489,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 22.83301204442978,
+          "first_call_with_metadata_probe_ms": 22.6149745285511,
           "entries": {
             "main_entry": [
               {
@@ -2447,7 +2517,11 @@
                   "NUM_SPLITS": 16,
                   "T_BUCKET": 32,
                   "BLOCK_M": 8,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 191,
                 "n_spills": 0,
@@ -2474,7 +2548,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 6,
                   "NUM_SPLITS": 16,
-                  "BLOCK_SPLITS": 16
+                  "BLOCK_SPLITS": 16,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 44,
                 "n_spills": 0,
@@ -2485,7 +2562,7 @@
           }
         },
         "vllm_preallocated": {
-          "first_call_with_metadata_probe_ms": 9.601665660738945,
+          "first_call_with_metadata_probe_ms": 9.115133434534073,
           "entries": {
             "main_entry": [
               {
@@ -2556,7 +2633,7 @@
           }
         },
         "gems_preallocated": {
-          "first_call_with_metadata_probe_ms": 14.570623636245728,
+          "first_call_with_metadata_probe_ms": 14.083009213209152,
           "entries": {
             "main_entry": [
               {
@@ -2584,7 +2661,11 @@
                   "NUM_SPLITS": 16,
                   "T_BUCKET": 32,
                   "BLOCK_M": 8,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 191,
                 "n_spills": 0,
@@ -2611,7 +2692,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 6,
                   "NUM_SPLITS": 16,
-                  "BLOCK_SPLITS": 16
+                  "BLOCK_SPLITS": 16,
+                  "num_warps": 4,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 44,
                 "n_spills": 0,
@@ -2639,7 +2723,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.65967669167856
+      "latency_us": 91.0134394727056
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2651,7 +2735,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.89542173080041
+      "latency_us": 91.81321326161728
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2663,7 +2747,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.37794804510645
+      "latency_us": 91.26540917064507
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2675,7 +2759,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 89.23389345594921
+      "latency_us": 90.32223283885473
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2687,7 +2771,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 89.80642773748673
+      "latency_us": 90.30098807437258
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2699,7 +2783,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 90.75344740589964
+      "latency_us": 91.80063018633884
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2711,7 +2795,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.76436343479678
+      "latency_us": 91.6598019776521
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2723,7 +2807,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 89.70276909585324
+      "latency_us": 89.56942997292845
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2735,7 +2819,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 89.10544907923827
+      "latency_us": 89.94344797433985
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2747,7 +2831,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.00236816377175
+      "latency_us": 91.51682540585722
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2759,7 +2843,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 33.24799984693527
+      "latency_us": 33.952001482248306
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2771,7 +2855,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 34.143999218940735
+      "latency_us": 34.912001341581345
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2783,7 +2867,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 33.00799988210201
+      "latency_us": 33.984001725912094
     },
     {
       "case": "t1_bf16_random_mixed",
@@ -2795,10 +2879,730 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 31.936001032590866
+      "latency_us": 33.440001308918
     },
     {
       "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 33.535998314619064
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 34.55999866127968
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 34.40000116825104
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 33.743999898433685
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 33.11999887228012
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 111.1999973654747
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.263918626188028
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 10.351318945275978
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 10.331478455792302
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.326530252184186
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.304621701101656
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 10.353010579159386
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 10.347833546499412
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.053269520491183
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.077975959662933
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 10.174446314283944
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 169.60568995360867
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 175.44958567203474
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 144.10266652703285
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 104.964216888854
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 104.98986805077665
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 110.66654483780606
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 110.68900280139026
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 104.37630645349516
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 104.06970977783203
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 110.8873802334515
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 51.96800082921982
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 57.472001761198044
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 57.00800009071827
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 51.791999489068985
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 51.58400163054466
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 57.18399956822395
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 56.32000043988228
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 52.17599868774414
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 51.35999992489815
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 56.44800141453743
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.17865044939006
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 10.254987432986876
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 9.917432143364422
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.185809717291878
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 10.184693887743647
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 10.08814719557031
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 10.088824142109265
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 9.98004674911499
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 9.989988385585317
+    },
+    {
+      "case": "t1_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 10.122146184851484
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 108.76443399035412
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 111.0503863957193
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 110.80029550232464
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 107.84223730511526
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 107.86022780076513
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 111.0119703120755
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 110.53023969425875
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 108.96714936409678
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 108.08146564486606
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.54993350859041
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 32.83200040459633
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 34.304000437259674
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 33.47200155258179
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 32.255999743938446
+    },
+    {
+      "case": "t1_fp8_random_mixed",
       "out_mode": "allocate",
       "mode": "kernel",
       "trial": 2,
@@ -2810,726 +3614,6 @@
       "latency_us": 32.496001571416855
     },
     {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 33.1839993596077
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 33.695999532938
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 32.14399889111519
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 32.9120010137558
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 33.535998314619064
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.16439546595563
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 10.220249804357689
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 10.118250114222366
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.024705938264436
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.023366696763746
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 10.11579399256362
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 10.115618082746188
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.02777681737987
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.027607282002768
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 10.117306088914678
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.25126318305942
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 91.05053658668811
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.51905362866819
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.22233665758563
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.03051418856698
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.86975647557166
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.77701505292882
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.31769590582583
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.34221859467335
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.53290723273473
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 28.031999245285988
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 32.19199925661087
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 32.06399828195572
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 27.31199935078621
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 27.23200060427189
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 31.408000737428665
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 30.832000076770782
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 27.248000726103783
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 27.39199995994568
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 31.136000528931618
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.157478266748887
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 10.245359539985657
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 10.169484566167458
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.023697929562262
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.022280372191814
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 10.182288155626894
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 10.167553340117944
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.024377759897483
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 10.02326564512391
-    },
-    {
-      "case": "t1_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 10.169679522514343
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 88.67896561111722
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.51065050786542
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.16429165793207
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 88.10817783961267
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 88.80290153779481
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.30602688406721
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.52793210652207
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 87.87655216806075
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 88.18631045793364
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.49037412093702
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 30.7839997112751
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 32.416000962257385
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 31.71199932694435
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 31.968001276254654
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 31.647998839616776
-    },
-    {
       "case": "t1_fp8_random_mixed",
       "out_mode": "allocate",
       "mode": "kernel",
@@ -3539,7 +3623,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.19199925661087
+      "latency_us": 34.2399999499321
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3551,7 +3635,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 31.647998839616776
+      "latency_us": 32.92800113558769
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3563,7 +3647,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 31.488001346588135
+      "latency_us": 32.99200162291527
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3575,7 +3659,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 30.751999467611313
+      "latency_us": 32.655999064445496
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3587,7 +3671,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.71199932694435
+      "latency_us": 34.68799963593483
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3599,7 +3683,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 14.20585077200363
+      "latency_us": 14.107357652693832
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3611,7 +3695,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 10.997926116620421
+      "latency_us": 11.303046824400905
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3623,7 +3707,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 10.99727988243103
+      "latency_us": 11.303340036844471
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3635,7 +3719,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 13.922320008277893
+      "latency_us": 13.922040559807604
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3647,7 +3731,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 13.925869261200104
+      "latency_us": 13.910857390384287
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3659,7 +3743,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 10.92481673980246
+      "latency_us": 11.124145181685531
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3671,7 +3755,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 10.922320485115051
+      "latency_us": 11.125587281726656
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3683,7 +3767,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 13.794353195265227
+      "latency_us": 14.06319596659598
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3695,7 +3779,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 13.85972287395213
+      "latency_us": 14.1370182687586
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3707,7 +3791,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 10.970136257990491
+      "latency_us": 11.22833291689555
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3719,7 +3803,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 85.09323840409937
+      "latency_us": 86.71971506812946
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3731,7 +3815,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 104.53666524066553
+      "latency_us": 114.600955439894
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3743,7 +3827,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.14729211280483
+      "latency_us": 91.62828285732995
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3755,7 +3839,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 85.25185738549088
+      "latency_us": 86.22585492997081
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3767,7 +3851,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 85.36683367424874
+      "latency_us": 86.00461647738165
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3779,7 +3863,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 90.88055981743722
+      "latency_us": 91.47909379774524
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3791,7 +3875,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.19867411240068
+      "latency_us": 91.48997908577007
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3803,7 +3887,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 85.67454378035936
+      "latency_us": 85.61513359435122
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3815,7 +3899,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 85.68504647393922
+      "latency_us": 85.78856333429592
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3827,61 +3911,13 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.00714867765254
+      "latency_us": 91.55069926270733
     },
     {
       "case": "t1_fp8_random_mixed",
       "out_mode": "preallocated",
       "mode": "kernel",
       "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 28.28799933195114
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 32.03200176358223
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 31.840000301599503
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 28.224000707268715
-    },
-    {
-      "case": "t1_fp8_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 2,
       "order": [
         "vllm",
         "gems"
@@ -3893,13 +3929,61 @@
       "case": "t1_fp8_random_mixed",
       "out_mode": "preallocated",
       "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 32.96000137925148
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 33.15199911594391
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 28.432000428438187
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 28.063999488949776
+    },
+    {
+      "case": "t1_fp8_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
       "trial": 2,
       "order": [
         "vllm",
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.968001276254654
+      "latency_us": 33.376000821590424
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3911,7 +3995,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 31.87200054526329
+      "latency_us": 33.55199843645096
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3923,7 +4007,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 27.712000533938408
+      "latency_us": 28.44800055027008
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3935,7 +4019,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 27.488000690937042
+      "latency_us": 28.335999697446823
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3947,7 +4031,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.568000093102455
+      "latency_us": 33.02399814128876
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3959,7 +4043,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 14.194832464154258
+      "latency_us": 14.20332653687732
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3971,7 +4055,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 11.162583405772844
+      "latency_us": 11.37893905445021
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3983,7 +4067,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 11.02679967880249
+      "latency_us": 11.157065180677865
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -3995,7 +4079,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 14.233033622851213
+      "latency_us": 13.890009571388722
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -4007,7 +4091,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 13.872399926185608
+      "latency_us": 13.913153455807612
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -4019,7 +4103,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 11.10440163157094
+      "latency_us": 11.179716900141552
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -4031,7 +4115,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 11.15077551530332
+      "latency_us": 11.159026433551121
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -4043,7 +4127,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 13.980692395797142
+      "latency_us": 13.88388351329322
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -4055,7 +4139,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 13.974037935148994
+      "latency_us": 13.907262422506093
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -4067,7 +4151,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 11.154543436490572
+      "latency_us": 11.153154766436705
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4079,7 +4163,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.98260973890622
+      "latency_us": 89.89060229628626
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4091,7 +4175,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.81176069056153
+      "latency_us": 92.33832599655274
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4103,7 +4187,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.7568226545555
+      "latency_us": 91.63214714937313
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4115,7 +4199,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 90.06956510198941
+      "latency_us": 90.06661612813065
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4127,7 +4211,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.25278639920215
+      "latency_us": 90.24463901200245
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4139,7 +4223,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.82855814882794
+      "latency_us": 92.09979797088647
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4151,7 +4235,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 92.04232272632579
+      "latency_us": 91.71610927199298
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4163,7 +4247,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 89.95498726029454
+      "latency_us": 90.1312486808977
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4175,7 +4259,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.19083686565098
+      "latency_us": 90.35179892214396
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4187,7 +4271,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.62837784447356
+      "latency_us": 91.88964176252023
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4199,7 +4283,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 33.88800099492073
+      "latency_us": 33.824000507593155
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4209,384 +4293,384 @@
       "order": [
         "vllm",
         "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 35.53599864244461
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 35.13599932193756
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 33.45600143074989
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 33.47200155258179
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 34.94400158524513
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 35.071998834609985
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 32.816000282764435
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 33.47200155258179
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 35.2960005402565
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 19.123604664435753
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 16.838297564932642
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 16.372340790768888
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.53349759028508
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.544416253765426
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 16.35744723867863
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 16.352248315366438
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.61838707749132
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.63469396318708
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 16.539496845669216
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 87.21416160254411
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 92.12090241673745
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 91.78399435571721
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 86.99178327748805
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 87.05031359568238
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 92.6387154414684
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 92.32103500677192
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 86.76184572764402
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 86.65808112488182
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.91427149890382
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 31.231999397277832
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 34.623999148607254
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
       ],
       "provider": "gems",
       "latency_us": 34.4959981739521
     },
     {
       "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 34.832000732421875
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 33.695999532938
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 33.984001725912094
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 34.25600007176399
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 34.671999514102936
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 33.440001308918
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 33.904001116752625
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 34.432001411914825
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.951055942437588
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 16.66966639459133
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 16.59824013710022
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.818383521222053
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.90079975128174
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 16.597877351605163
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 16.58166127327161
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.820831681242083
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.782960176467896
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 16.374481641329254
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.53420145096986
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.92097264408265
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.86637936056928
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 85.82208097351264
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 85.9614781508542
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.48350873481796
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.49468402129908
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 86.06417211650431
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 85.79255176746116
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.75379930436611
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 30.46399913728237
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 33.15199911594391
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 32.96000137925148
-    },
-    {
-      "case": "t16_bf16_random_mixed",
       "out_mode": "preallocated",
       "mode": "kernel",
       "trial": 1,
@@ -4595,7 +4679,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 30.46399913728237
+      "latency_us": 30.432000756263733
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4607,7 +4691,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 30.527999624609947
+      "latency_us": 30.880000442266464
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4619,7 +4703,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.92800113558769
+      "latency_us": 34.703999757766724
     },
     {
       "case": "t16_bf16_random_mixed",
@@ -4629,366 +4713,306 @@
       "order": [
         "gems",
         "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 33.15199911594391
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 30.41600063443184
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 30.527999624609947
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 32.83200040459633
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.9595388678404
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 16.695295590810822
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 16.51418148869216
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.671770415237646
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.65859031677246
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 16.485469681876044
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 16.474828575596664
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.67836887396655
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 18.657786174885274
-    },
-    {
-      "case": "t16_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "cudagraph",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 16.53271096611991
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 90.5758125408915
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.73287200851318
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.68560370422423
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 89.42304951388662
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 89.3852936670832
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 90.3479363999249
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 90.35372308322361
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 95.01487242453025
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 90.0556477382011
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "operator",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 91.00532502328095
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 34.78400036692619
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 0,
-      "order": [
-        "vllm",
-        "gems"
       ],
       "provider": "gems",
       "latency_us": 34.36800092458725
     },
     {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 34.432001411914825
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 33.08799862861633
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 33.07199850678444
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 32.70399942994118
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
       "mode": "kernel",
       "trial": 3,
       "order": [
         "gems",
         "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 30.688000842928886
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 30.527999624609947
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 34.55999866127968
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 19.03890420312751
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 16.956377704188508
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 16.894956645758256
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 19.117385149002075
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.619664784135487
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 16.470448703181987
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 16.500311194306214
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.652271877214744
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 18.658823242374492
+    },
+    {
+      "case": "t16_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "cudagraph",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 16.411357593042244
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.84728317175593
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.23512371710152
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 91.44996707352043
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.5063991949057
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.67001728403072
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.13074440485353
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 91.13666601479053
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.41712194537541
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 89.43497546409306
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "operator",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 91.90263226628304
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 32.00000151991844
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
       ],
       "provider": "gems",
       "latency_us": 32.86400064826012
@@ -4997,13 +5021,73 @@
       "case": "t16_fp8_random_mixed",
       "out_mode": "allocate",
       "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 32.43200108408928
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 31.90400078892708
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 31.968001276254654
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 32.896000891923904
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 33.215999603271484
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
       "trial": 3,
       "order": [
         "gems",
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 32.75199979543686
+      "latency_us": 32.655999064445496
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5015,23 +5099,23 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 32.71999955177307
-    },
-    {
-      "case": "t16_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
       "latency_us": 32.88000077009201
     },
     {
       "case": "t16_fp8_random_mixed",
       "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 33.28000009059906
+    },
+    {
+      "case": "t16_fp8_random_mixed",
+      "out_mode": "allocate",
       "mode": "cudagraph",
       "trial": 0,
       "order": [
@@ -5039,7 +5123,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 19.62950018544992
+      "latency_us": 19.740913725141343
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5051,7 +5135,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 16.437587283906485
+      "latency_us": 16.377795715721287
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5063,7 +5147,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 16.428882036453636
+      "latency_us": 16.2780406523724
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5075,7 +5159,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 19.665928597145893
+      "latency_us": 19.591879006007208
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5087,7 +5171,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 19.694487253824867
+      "latency_us": 19.631611490712583
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5099,7 +5183,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 16.30114292611881
+      "latency_us": 16.28954337938183
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5111,7 +5195,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 16.30276900071364
+      "latency_us": 16.1379790797676
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5123,7 +5207,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 19.385908460859117
+      "latency_us": 19.450891448790767
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5135,7 +5219,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 19.358626519790803
+      "latency_us": 19.56059204207526
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5147,7 +5231,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 16.28635101711627
+      "latency_us": 16.15689999145987
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5159,7 +5243,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 86.7879808806687
+      "latency_us": 87.11632026333204
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5171,7 +5255,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 90.59220601141062
+      "latency_us": 91.90382541350598
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5183,7 +5267,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 90.67149842596803
+      "latency_us": 91.9975239682842
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5195,7 +5279,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 86.97637139323228
+      "latency_us": 86.33456647742626
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5207,7 +5291,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 86.07989129347679
+      "latency_us": 86.4431566121627
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5219,7 +5303,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 90.86509094093785
+      "latency_us": 91.7515035267848
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5231,7 +5315,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.01952183181825
+      "latency_us": 92.48034151458236
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5243,7 +5327,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 86.8615968262448
+      "latency_us": 86.8367539210753
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5255,7 +5339,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 86.44809889974016
+      "latency_us": 86.27697431221209
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5267,7 +5351,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 90.3636032009717
+      "latency_us": 92.17877296885108
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5279,7 +5363,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 30.62400035560131
+      "latency_us": 30.751999467611313
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5291,7 +5375,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.287999987602234
+      "latency_us": 34.12799909710884
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5303,7 +5387,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 32.6399989426136
+      "latency_us": 34.304000437259674
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5315,7 +5399,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 30.49599938094616
+      "latency_us": 30.608000233769417
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5327,7 +5411,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 30.46399913728237
+      "latency_us": 30.592000111937523
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5339,7 +5423,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.3840007185936
+      "latency_us": 33.824000507593155
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5351,7 +5435,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 32.607998698949814
+      "latency_us": 34.511998295784
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5363,7 +5447,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 30.527999624609947
+      "latency_us": 30.672000721096992
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5375,7 +5459,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 30.49599938094616
+      "latency_us": 30.719999223947525
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5387,7 +5471,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.808000057935715
+      "latency_us": 34.55999866127968
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5399,7 +5483,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 19.67929391299977
+      "latency_us": 19.748687142073507
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5411,7 +5495,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 16.448161818764426
+      "latency_us": 16.421360412830023
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5423,7 +5507,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 16.300186592062524
+      "latency_us": 16.414448922994186
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5435,7 +5519,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 19.460784453971712
+      "latency_us": 19.470653801320868
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5447,7 +5531,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 19.5628461929468
+      "latency_us": 19.424990245274135
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5459,7 +5543,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 16.314343370572484
+      "latency_us": 16.24857703435052
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5471,7 +5555,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 16.16727282302548
+      "latency_us": 16.279679536819454
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5483,7 +5567,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 19.44577577637463
+      "latency_us": 19.328846381260796
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5495,7 +5579,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 19.499650279295096
+      "latency_us": 19.334653226455842
     },
     {
       "case": "t16_fp8_random_mixed",
@@ -5507,7 +5591,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 16.210170846488605
+      "latency_us": 16.226871808369953
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5519,7 +5603,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 91.05005121046258
+      "latency_us": 91.46994253730072
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5531,7 +5615,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.44417559489224
+      "latency_us": 92.72988982401887
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5543,7 +5627,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.59933070878725
+      "latency_us": 92.77206463891952
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5555,7 +5639,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 90.86797038069018
+      "latency_us": 91.2633115126763
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5567,7 +5651,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 91.79520043166909
+      "latency_us": 91.48552893630921
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5579,7 +5663,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.51471730990288
+      "latency_us": 92.44701759830403
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5591,7 +5675,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.38337462335019
+      "latency_us": 92.36005084809436
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5603,7 +5687,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 90.7931593246758
+      "latency_us": 91.08137017414894
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5615,7 +5699,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.82616256770267
+      "latency_us": 91.59582876722224
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5627,7 +5711,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.4704514207778
+      "latency_us": 92.34390454366803
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5639,67 +5723,67 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 40.47999903559685
+      "latency_us": 40.04799947142601
     },
     {
       "case": "t32_bf16_random_mixed",
       "out_mode": "allocate",
       "mode": "kernel",
       "trial": 0,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "gems",
+      "latency_us": 40.44799879193306
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 40.68800061941147
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 1,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 39.84000161290169
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 40.192000567913055
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 2,
       "order": [
         "vllm",
         "gems"
       ],
       "provider": "gems",
       "latency_us": 40.70400074124336
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "gems",
-      "latency_us": 40.52799940109253
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 1,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 40.031999349594116
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 40.383998304605484
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 2,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 40.54399952292442
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5723,7 +5807,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 40.28800129890442
+      "latency_us": 39.824001491069794
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5735,7 +5819,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 40.12800008058548
+      "latency_us": 39.872001856565475
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5747,7 +5831,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 40.54399952292442
+      "latency_us": 40.608000010252
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5759,7 +5843,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 29.509333272775017
+      "latency_us": 29.623000572125115
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5771,7 +5855,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.090286313271037
+      "latency_us": 31.24640749387092
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5783,7 +5867,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 30.780898064983134
+      "latency_us": 30.879752005937803
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5795,7 +5879,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 29.20008068762455
+      "latency_us": 29.22035636702133
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5807,7 +5891,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 29.20852820885363
+      "latency_us": 29.176870158299263
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5819,7 +5903,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 30.957919359207153
+      "latency_us": 30.871416131655373
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5831,7 +5915,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 30.938424245275634
+      "latency_us": 30.86112829355093
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5843,7 +5927,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 29.266723927031173
+      "latency_us": 29.188724379465366
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5855,7 +5939,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 29.202939296255305
+      "latency_us": 29.170111351206824
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5867,7 +5951,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 30.645855923288874
+      "latency_us": 30.820690524515683
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5879,7 +5963,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 87.41574389721029
+      "latency_us": 87.76896230295195
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5891,7 +5975,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.28803707611789
+      "latency_us": 92.33654275828718
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5903,7 +5987,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.35090488385647
+      "latency_us": 92.21956133842468
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5915,7 +5999,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 87.71238738999647
+      "latency_us": 87.67856472342677
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5927,7 +6011,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 87.04647573117677
+      "latency_us": 86.95452318837245
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5939,7 +6023,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.26519286854668
+      "latency_us": 93.00386974293936
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5951,7 +6035,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.21782483255609
+      "latency_us": 92.7856941100048
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5963,7 +6047,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 87.38334431792751
+      "latency_us": 87.04774536010696
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5975,7 +6059,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 87.4641518562268
+      "latency_us": 87.04178815424756
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5987,7 +6071,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.70199355369881
+      "latency_us": 92.20626829944042
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -5999,7 +6083,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 40.800001472234726
+      "latency_us": 40.04799947142601
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6011,7 +6095,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 40.800001472234726
+      "latency_us": 40.47999903559685
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6023,7 +6107,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 40.78400135040283
+      "latency_us": 40.511999279260635
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6035,7 +6119,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 40.41599854826927
+      "latency_us": 39.84000161290169
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6047,7 +6131,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 40.383998304605484
+      "latency_us": 39.824001491069794
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6059,7 +6143,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 40.65600037574768
+      "latency_us": 40.49599915742874
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6069,6 +6153,42 @@
       "order": [
         "gems",
         "vllm"
+      ],
+      "provider": "gems",
+      "latency_us": 40.511999279260635
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 3,
+      "order": [
+        "gems",
+        "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 39.77600112557411
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
+      ],
+      "provider": "vllm",
+      "latency_us": 39.85600173473358
+    },
+    {
+      "case": "t32_bf16_random_mixed",
+      "out_mode": "preallocated",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
       ],
       "provider": "gems",
       "latency_us": 40.57599976658821
@@ -6076,42 +6196,6 @@
     {
       "case": "t32_bf16_random_mixed",
       "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 3,
-      "order": [
-        "gems",
-        "vllm"
-      ],
-      "provider": "vllm",
-      "latency_us": 40.192000567913055
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "vllm",
-      "latency_us": 40.16000032424927
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "preallocated",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
-      "provider": "gems",
-      "latency_us": 40.64000025391579
-    },
-    {
-      "case": "t32_bf16_random_mixed",
-      "out_mode": "preallocated",
       "mode": "cudagraph",
       "trial": 0,
       "order": [
@@ -6119,7 +6203,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 29.71996003715553
+      "latency_us": 29.61822884592844
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6131,7 +6215,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.004344146263783
+      "latency_us": 31.32471536335192
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6143,7 +6227,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 30.812425661813187
+      "latency_us": 31.00833296775818
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6155,7 +6239,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 29.105961322784424
+      "latency_us": 29.31640574321655
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6167,7 +6251,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 29.12494131163055
+      "latency_us": 29.295527876304288
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6179,7 +6263,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 30.668748253807028
+      "latency_us": 30.929083625475563
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6191,7 +6275,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 30.678914419969722
+      "latency_us": 30.88016683856646
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6203,7 +6287,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 29.104000128409712
+      "latency_us": 29.178174954016235
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6215,7 +6299,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 29.087609779543993
+      "latency_us": 29.172971410658754
     },
     {
       "case": "t32_bf16_random_mixed",
@@ -6227,7 +6311,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.486351465441516
+      "latency_us": 30.87719568272227
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6239,7 +6323,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 91.10798278162557
+      "latency_us": 91.4238127214568
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6251,7 +6335,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.95098451748015
+      "latency_us": 92.48033165931702
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6263,7 +6347,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 92.00347403248588
+      "latency_us": 92.18319344915737
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6275,7 +6359,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 90.0649668081947
+      "latency_us": 91.51868036259775
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6287,7 +6371,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.17544133322579
+      "latency_us": 90.95612791628619
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6299,7 +6383,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.26017415305463
+      "latency_us": 92.61382534014469
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6311,7 +6395,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.47881253345592
+      "latency_us": 92.60972951605021
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6323,7 +6407,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 90.59964213520288
+      "latency_us": 91.22560732066631
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6335,7 +6419,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.16426885203951
+      "latency_us": 91.28665251116598
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6347,7 +6431,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.31171272037933
+      "latency_us": 92.08190820965112
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6359,7 +6443,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 70.44799998402596
+      "latency_us": 69.92000341415405
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6371,7 +6455,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 48.06400090456009
+      "latency_us": 47.648001462221146
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6383,7 +6467,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 48.287998884916306
+      "latency_us": 47.66400158405304
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6395,7 +6479,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 71.32799923419952
+      "latency_us": 70.88000327348709
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6407,7 +6491,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 71.26399874687195
+      "latency_us": 70.83200290799141
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6419,7 +6503,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 48.48000034689903
+      "latency_us": 48.0320006608963
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6431,7 +6515,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 48.51200059056282
+      "latency_us": 48.128001391887665
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6441,6 +6525,18 @@
       "order": [
         "gems",
         "vllm"
+      ],
+      "provider": "vllm",
+      "latency_us": 70.94399631023407
+    },
+    {
+      "case": "t32_fp8_random_mixed",
+      "out_mode": "allocate",
+      "mode": "kernel",
+      "trial": 4,
+      "order": [
+        "vllm",
+        "gems"
       ],
       "provider": "vllm",
       "latency_us": 71.08799740672112
@@ -6454,20 +6550,8 @@
         "vllm",
         "gems"
       ],
-      "provider": "vllm",
-      "latency_us": 71.24799862504005
-    },
-    {
-      "case": "t32_fp8_random_mixed",
-      "out_mode": "allocate",
-      "mode": "kernel",
-      "trial": 4,
-      "order": [
-        "vllm",
-        "gems"
-      ],
       "provider": "gems",
-      "latency_us": 48.48000034689903
+      "latency_us": 48.22399839758873
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6479,7 +6563,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 56.94163034832667
+      "latency_us": 57.584848353471706
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6491,7 +6575,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.95274679154312
+      "latency_us": 31.696333239475884
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6503,7 +6587,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 32.00661284582955
+      "latency_us": 31.77789683194504
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6515,7 +6599,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 55.90988282234438
+      "latency_us": 54.40913195385359
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6527,7 +6611,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 55.57059757600581
+      "latency_us": 53.39797923439427
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6539,7 +6623,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.05872206163655
+      "latency_us": 31.557522449396586
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6551,7 +6635,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 31.952327611495036
+      "latency_us": 31.724187376585654
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6563,7 +6647,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 56.26175055901209
+      "latency_us": 55.48146632329332
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6575,7 +6659,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 56.24858956587942
+      "latency_us": 55.512887460214124
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6587,7 +6671,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.00395820067101
+      "latency_us": 31.779774641379337
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6599,7 +6683,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 88.54639666681072
+      "latency_us": 86.27942712732063
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6611,7 +6695,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 92.04267013457513
+      "latency_us": 91.88284196995741
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6623,7 +6707,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.90058587370693
+      "latency_us": 92.24252046450324
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6635,7 +6719,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 86.60268118913226
+      "latency_us": 86.36692615404522
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6647,7 +6731,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 86.87741252817685
+      "latency_us": 85.86357177803352
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6659,7 +6743,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.92479774355888
+      "latency_us": 92.03462728432247
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6671,7 +6755,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.87852518390055
+      "latency_us": 92.15942307098491
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6683,7 +6767,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 86.45447503243174
+      "latency_us": 86.20489779469018
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6695,7 +6779,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 86.46256414947995
+      "latency_us": 86.41567546874285
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6707,7 +6791,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 92.20328955155499
+      "latency_us": 92.02045567383041
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6719,7 +6803,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 70.56000083684921
+      "latency_us": 70.39999961853027
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6731,7 +6815,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 47.87199944257736
+      "latency_us": 47.58400097489357
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6743,7 +6827,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 47.968000173568726
+      "latency_us": 47.55200073122978
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6755,7 +6839,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 70.43199986219406
+      "latency_us": 69.95199993252754
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6767,7 +6851,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 70.30399888753891
+      "latency_us": 70.12799754738808
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6779,7 +6863,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 48.16000163555145
+      "latency_us": 47.648001462221146
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6791,7 +6875,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 48.14400151371956
+      "latency_us": 47.759998589754105
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6803,7 +6887,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 70.94399631023407
+      "latency_us": 70.54400071501732
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6815,7 +6899,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 70.78400254249573
+      "latency_us": 70.68800181150436
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6827,7 +6911,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 48.16000163555145
+      "latency_us": 47.807998955249786
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6839,7 +6923,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 57.254097449085705
+      "latency_us": 55.93332058282068
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6851,7 +6935,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 32.065313290327026
+      "latency_us": 32.20473409323168
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6863,7 +6947,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 32.15748283463686
+      "latency_us": 31.766350736323083
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6875,7 +6959,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 55.000272611292395
+      "latency_us": 54.0935206413269
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6887,7 +6971,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 54.65694937375512
+      "latency_us": 55.3167755924054
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6899,7 +6983,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.545436076628853
+      "latency_us": 31.821582466363907
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6911,7 +6995,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 31.936246920854614
+      "latency_us": 31.760500123103455
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6923,7 +7007,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 56.21834234757857
+      "latency_us": 56.93908965233529
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6935,7 +7019,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 55.265869585995745
+      "latency_us": 57.04039218379002
     },
     {
       "case": "t32_fp8_random_mixed",
@@ -6947,7 +7031,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 31.655384944035454
+      "latency_us": 31.597821500288877
     }
   ],
   "status": "complete"

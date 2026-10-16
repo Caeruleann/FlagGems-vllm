@@ -1,7 +1,7 @@
 {
-  "started_at_utc": "2026-10-16T02:24:46.336566+00:00",
+  "started_at_utc": "2026-10-16T02:52:21.236371+00:00",
   "options": {
-    "out_dir": "/tmp/qsa_small_t/profile_fp8_t1",
+    "out_dir": "/tmp/qsa_small_t2/profile_fp8_t1",
     "rows": [
       1
     ],
@@ -32,8 +32,8 @@
       9,
       0
     ],
-    "git_head": "3e60d062660740b6942ea674eeb103ef32cdf22f",
-    "git_status": "?? a.txt\n?? b.txt\n?? c.txt\n?? d.txt\n?? opt.md\n?? qsa_small_t_debug_guide.md\n?? review.md\n?? tools/qsa_small_t_debug.py",
+    "git_head": "87c8d230eee2c09cafbecbcf915c059e9f7b716e",
+    "git_status": "M tools/qsa_small_t_debug.py\n?? a.txt\n?? b.txt\n?? c.txt\n?? d.txt\n?? opt.md\n?? qsa_small_t_debug_guide.md\n?? review.md",
     "source": {
       "gems": {
         "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/ops/qsa_sparse_paged_attention.py",
@@ -49,9 +49,9 @@
       },
       "collector": {
         "path": "/workspace/FlagGems-vllm/tools/qsa_small_t_debug.py",
-        "size": 20010,
-        "mtime": "2026-10-16T02:22:34.545163+00:00",
-        "md5_12": "afe8e79a1552"
+        "size": 20577,
+        "mtime": "2026-10-16T02:51:27.208407+00:00",
+        "md5_12": "036705878152"
       },
       "libentry": {
         "path": "/workspace/FlagGems-vllm/src/flaggems_vllm/utils/libentry.py",
@@ -84,8 +84,8 @@
       "TRITON_CACHE_DIR": null
     },
     "custom_tuning_database": false,
-    "nvidia_smi_before": "Fri Oct 16 02:24:46 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   71C    P0            136W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   31C    P0            128W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   44C    P0             76W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+",
-    "nvidia_smi_after": "Fri Oct 16 02:24:49 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   70C    P0            143W /  700W |     958MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   29C    P0             69W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   44C    P0             76W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+"
+    "nvidia_smi_before": "Fri Oct 16 02:52:21 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   73C    P0            154W /  700W |    1170MiB /  81559MiB |     19%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   30C    P0            122W /  700W |     620MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   42C    P0             75W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+",
+    "nvidia_smi_after": "Fri Oct 16 02:52:24 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 13.1     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H800                    Off |   00000000:1A:00.0 Off |                    0 |\n| N/A   73C    P0            162W /  700W |    2123MiB /  81559MiB |      6%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   1  NVIDIA H800                    Off |   00000000:5D:00.0 Off |                    0 |\n| N/A   26C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   2  NVIDIA H800                    Off |   00000000:6E:00.0 Off |                    0 |\n| N/A   30C    P0            122W /  700W |     876MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   3  NVIDIA H800                    Off |   00000000:7E:00.0 Off |                    0 |\n| N/A   42C    P0             75W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   4  NVIDIA H800                    Off |   00000000:B8:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   5  NVIDIA H800                    Off |   00000000:CC:00.0 Off |                    0 |\n| N/A   27C    P0             72W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   6  NVIDIA H800                    Off |   00000000:D7:00.0 Off |                    0 |\n| N/A   28C    P0             71W /  700W |      88MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n|   7  NVIDIA H800                    Off |   00000000:E1:00.0 Off |                    0 |\n| N/A   38C    P0             74W /  700W |       1MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+"
   },
   "cases": [
     {
@@ -216,7 +216,7 @@
       ],
       "launches": {
         "vllm_allocate": {
-          "first_call_with_metadata_probe_ms": 1220.799358561635,
+          "first_call_with_metadata_probe_ms": 1108.472527936101,
           "entries": {
             "main_entry": [
               {
@@ -287,7 +287,7 @@
           }
         },
         "gems_allocate": {
-          "first_call_with_metadata_probe_ms": 64.17744047939777,
+          "first_call_with_metadata_probe_ms": 66.90802797675133,
           "entries": {
             "main_entry": [
               {
@@ -315,7 +315,11 @@
                   "NUM_SPLITS": 64,
                   "T_BUCKET": 1,
                   "BLOCK_M": 16,
-                  "IS_FP8": true
+                  "IS_FP8": true,
+                  "num_warps": 8,
+                  "num_stages": 3,
+                  "num_ctas": 1,
+                  "BLOCK_N": 64
                 },
                 "n_regs": 110,
                 "n_spills": 0,
@@ -342,7 +346,10 @@
                   "HEAD_DIM": 256,
                   "NUM_QUERY_HEADS": 24,
                   "NUM_SPLITS": 64,
-                  "BLOCK_SPLITS": 64
+                  "BLOCK_SPLITS": 64,
+                  "num_warps": 2,
+                  "num_stages": 1,
+                  "num_ctas": 1
                 },
                 "n_regs": 255,
                 "n_spills": 18,
@@ -369,7 +376,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 91.12605452537537
+      "latency_us": 94.71211316330093
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -381,7 +388,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 92.05358776640385
+      "latency_us": 94.28234449748336
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -393,7 +400,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.90702335314548
+      "latency_us": 95.77005709472455
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -405,7 +412,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 89.38319303772667
+      "latency_us": 93.26842662535216
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -417,7 +424,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 89.7001785536607
+      "latency_us": 94.40707175859383
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -429,7 +436,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.60520840276239
+      "latency_us": 94.28481731949182
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -441,7 +448,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 91.51603548954695
+      "latency_us": 95.71577896151625
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -453,7 +460,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 90.21185428263193
+      "latency_us": 94.66308568205152
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -465,7 +472,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 90.02067496121856
+      "latency_us": 96.08123112808575
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -477,7 +484,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 91.50464647735646
+      "latency_us": 97.13215487343925
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -489,7 +496,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 14.208351517771627
+      "latency_us": 13.821679672212092
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -501,7 +508,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 11.064539301580716
+      "latency_us": 13.111537153070623
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -513,7 +520,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 11.06465288570949
+      "latency_us": 16.60275082343181
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -525,7 +532,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 13.918856576997406
+      "latency_us": 22.031233696166627
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -537,7 +544,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 13.918213432815474
+      "latency_us": 16.268326311695333
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -549,7 +556,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 11.065245872765928
+      "latency_us": 12.64481946646449
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -561,7 +568,7 @@
         "vllm"
       ],
       "provider": "gems",
-      "latency_us": 11.067288781180599
+      "latency_us": 10.784583805251295
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -573,7 +580,7 @@
         "vllm"
       ],
       "provider": "vllm",
-      "latency_us": 13.914586892768519
+      "latency_us": 15.708178161126883
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -585,7 +592,7 @@
         "gems"
       ],
       "provider": "vllm",
-      "latency_us": 13.915564164076702
+      "latency_us": 15.736524687438715
     },
     {
       "case": "t1_fp8_random_mixed",
@@ -597,7 +604,7 @@
         "gems"
       ],
       "provider": "gems",
-      "latency_us": 11.090938534055438
+      "latency_us": 12.76882853640978
     }
   ],
   "status": "complete"

@@ -181,13 +181,21 @@ class observe_entries:
                 record = {"args_tail": jsonable(list(args[-6:]))}
                 grid = kwargs.get("grid")
                 record["grid"] = None if callable(grid) else jsonable(list(grid))
-                constexprs = {
+                call_constexprs = {
                     key: value
                     for key, value in kwargs.items()
                     if isinstance(value, (int, float, bool, str))
                 }
-                record["constexprs"] = jsonable(constexprs)
                 result = _original(*args, **kwargs)
+                # LibEntry.run returns (compiled_kernel, constexprs) where
+                # constexprs includes the tuned META values chosen by the
+                # libtuner (e.g. BLOCK_N / num_stages) plus the caller's
+                # constexpr kwargs; JITFunction.run returns the compiled
+                # kernel alone, so only call-site constexprs are known.
+                tuned_constexprs = {}
+                if isinstance(result, tuple) and len(result) == 2:
+                    tuned_constexprs = dict(result[1] or {})
+                record["constexprs"] = jsonable({**call_constexprs, **tuned_constexprs})
                 compiled = result[0] if isinstance(result, tuple) else result
                 for attr in ("n_regs", "n_spills"):
                     record[attr] = getattr(compiled, attr, None)

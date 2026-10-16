@@ -1,18 +1,18 @@
 ---------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
                                    Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
 ---------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
-                Activity Buffer Request        83.93%       1.985ms        83.93%       1.985ms       1.985ms       0.000us         0.00%       0.000us       0.000us             1  
-                             cudaMalloc         7.29%     172.522us         7.29%     172.522us     172.522us       0.000us         0.00%       0.000us       0.000us             1  
-                            aten::empty         2.96%      69.947us        94.27%       2.230ms     148.633us       0.000us         0.00%       0.000us       0.000us            15  
-                       cuLaunchKernelEx         2.65%      62.682us         2.65%      62.682us       6.268us       0.000us         0.00%       0.000us       0.000us            10  
-                    aten::empty_strided         1.31%      30.976us         1.31%      30.976us       6.195us       0.000us         0.00%       0.000us       0.000us             5  
-                  cudaDeviceSynchronize         0.77%      18.196us         0.77%      18.196us       9.098us       0.000us         0.00%       0.000us       0.000us             2  
-                          aten::view_as         0.36%       8.461us         0.65%      15.275us       3.055us       0.000us         0.00%       0.000us       0.000us             5  
-                       aten::empty_like         0.35%       8.365us         1.66%      39.341us       7.868us       0.000us         0.00%       0.000us       0.000us             5  
-                             aten::view         0.29%       6.814us         0.29%       6.814us       1.363us       0.000us         0.00%       0.000us       0.000us             5  
-                  cudaStreamIsCapturing         0.09%       2.155us         0.09%       2.155us       2.155us       0.000us         0.00%       0.000us       0.000us             1  
-    _qsa_sparse_paged_gqa_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      33.855us        62.12%      33.855us       6.771us             5  
-               _qsa_merge_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      20.641us        37.88%      20.641us       4.128us             5  
+                Activity Buffer Request        75.40%       1.785ms        75.40%       1.785ms       1.785ms       0.000us         0.00%       0.000us       0.000us             1  
+                  cudaDeviceSynchronize         9.48%     224.312us         9.48%     224.312us     112.156us       0.000us         0.00%       0.000us       0.000us             2  
+                             cudaMalloc         7.42%     175.587us         7.42%     175.587us     175.587us       0.000us         0.00%       0.000us       0.000us             1  
+                            aten::empty         2.83%      67.038us        85.74%       2.030ms     135.313us       0.000us         0.00%       0.000us       0.000us            15  
+                       cuLaunchKernelEx         2.52%      59.738us         2.52%      59.738us       5.974us       0.000us         0.00%       0.000us       0.000us            10  
+                    aten::empty_strided         1.28%      30.330us         1.28%      30.330us       6.066us       0.000us         0.00%       0.000us       0.000us             5  
+                       aten::empty_like         0.38%       9.113us         1.67%      39.443us       7.889us       0.000us         0.00%       0.000us       0.000us             5  
+                          aten::view_as         0.32%       7.665us         0.60%      14.182us       2.836us       0.000us         0.00%       0.000us       0.000us             5  
+                             aten::view         0.28%       6.517us         0.28%       6.517us       1.303us       0.000us         0.00%       0.000us       0.000us             5  
+                  cudaStreamIsCapturing         0.09%       2.073us         0.09%       2.073us       2.073us       0.000us         0.00%       0.000us       0.000us             1  
+    _qsa_sparse_paged_gqa_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      35.070us        60.95%      35.070us       7.014us             5  
+               _qsa_merge_splitk_kernel         0.00%       0.000us         0.00%       0.000us       0.000us      22.465us        39.05%      22.465us       4.493us             5  
 ---------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
-Self CPU time total: 2.365ms
-Self CUDA time total: 54.496us
+Self CPU time total: 2.367ms
+Self CUDA time total: 57.535us

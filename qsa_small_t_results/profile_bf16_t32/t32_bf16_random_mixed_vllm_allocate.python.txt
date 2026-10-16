@@ -1,27 +1,27 @@
-         42001 function calls in 0.034 seconds
+         42001 function calls in 0.032 seconds
 
    Ordered by: internal time
    List reduced from 62 to 40 due to restriction <40>
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-      200    0.005    0.000    0.036    0.000 /usr/local/lib/python3.12/dist-packages/vllm/models/qwen4_exp/nvidia/ops/qsa.py:594(qsa_sparse_paged_attention)
+      200    0.005    0.000    0.035    0.000 /usr/local/lib/python3.12/dist-packages/vllm/models/qwen4_exp/nvidia/ops/qsa.py:594(qsa_sparse_paged_attention)
       400    0.005    0.000    0.021    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:739(run)
       400    0.002    0.000    0.002    0.000 {built-in method torch.empty}
      7600    0.002    0.000    0.002    0.000 {built-in method triton._C.libtriton.native_specialize_impl}
-      200    0.002    0.000    0.002    0.000 {built-in method __triton_launcher.launch}
      5000    0.002    0.000    0.002    0.000 {method 'stride' of 'torch._C.TensorBase' objects}
+      200    0.001    0.000    0.001    0.000 {built-in method __triton_launcher.launch}
       400    0.001    0.000    0.022    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:400(<lambda>)
-      600    0.001    0.000    0.003    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:1142(__call__)
+      600    0.001    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:1142(__call__)
       200    0.001    0.000    0.001    0.000 {built-in method torch.empty_like}
       400    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:605(compute_cache_key)
+     1200    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}
       400    0.001    0.000    0.004    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:836(launch)
       800    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/language/core.py:368(_unwrap_if_constexpr)
-     1200    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}
       400    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/compiler/compiler.py:533(launch_metadata)
      4000    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
-      400    0.001    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/_distributed.py:59(is_lite_mode)
+      400    0.000    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/_distributed.py:59(is_lite_mode)
       400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:181(_registered_callbacks)
-      200    0.000    0.000    0.036    0.000 /workspace/FlagGems-vllm/tools/qsa_small_t_debug.py:429(<lambda>)
+      200    0.000    0.000    0.036    0.000 /workspace/FlagGems-vllm/tools/qsa_small_t_debug.py:437(<lambda>)
       400    0.000    0.000    0.005    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:823(__call__)
       400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:176(_registered_components)
       200    0.000    0.000    0.001    0.000 <string>:2(dynamic_func)
@@ -34,45 +34,45 @@
       400    0.000    0.000    0.000    0.000 <frozen os>:762(encode)
      1200    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
       200    0.000    0.000    0.000    0.000 {method 'view_as' of 'torch._C.TensorBase' objects}
-     1000    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
       400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:186(_call_registered)
-      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/__init__.py:97(next_power_of_2)
+     1000    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
       400    0.000    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:203(apply_compile_options)
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/__init__.py:97(next_power_of_2)
       400    0.000    0.000    0.001    0.000 <frozen os>:779(getenv)
       800    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
-      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:401(is_initialized)
-      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:450(_lazy_init)
       400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/_distributed.py:196(validate_node_launch_bindings)
-      400    0.000    0.000    0.000    0.000 {built-in method torch._C._cuda_getCurrentRawStream}
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:450(_lazy_init)
+      400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:401(is_initialized)
+      400    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
 
 
 
 
 ===== cumulative =====
-         42001 function calls in 0.034 seconds
+         42001 function calls in 0.032 seconds
 
    Ordered by: cumulative time
    List reduced from 62 to 40 due to restriction <40>
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-      200    0.000    0.000    0.036    0.000 /workspace/FlagGems-vllm/tools/qsa_small_t_debug.py:429(<lambda>)
-      200    0.005    0.000    0.036    0.000 /usr/local/lib/python3.12/dist-packages/vllm/models/qwen4_exp/nvidia/ops/qsa.py:594(qsa_sparse_paged_attention)
+      200    0.000    0.000    0.036    0.000 /workspace/FlagGems-vllm/tools/qsa_small_t_debug.py:437(<lambda>)
+      200    0.005    0.000    0.035    0.000 /usr/local/lib/python3.12/dist-packages/vllm/models/qwen4_exp/nvidia/ops/qsa.py:594(qsa_sparse_paged_attention)
       400    0.001    0.000    0.022    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:400(<lambda>)
       400    0.005    0.000    0.021    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:739(run)
       400    0.000    0.000    0.005    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:823(__call__)
       400    0.001    0.000    0.004    0.000 /usr/local/lib/python3.12/dist-packages/triton/backends/nvidia/driver.py:836(launch)
-      600    0.001    0.000    0.003    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:1142(__call__)
+      600    0.001    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:1142(__call__)
       400    0.002    0.000    0.002    0.000 {built-in method torch.empty}
      7600    0.002    0.000    0.002    0.000 {built-in method triton._C.libtriton.native_specialize_impl}
-      200    0.002    0.000    0.002    0.000 {built-in method __triton_launcher.launch}
-      400    0.001    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/_distributed.py:59(is_lite_mode)
+      400    0.000    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/_distributed.py:59(is_lite_mode)
      5000    0.002    0.000    0.002    0.000 {method 'stride' of 'torch._C.TensorBase' objects}
       400    0.000    0.000    0.002    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:203(apply_compile_options)
       200    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/vllm/models/qwen4_exp/nvidia/ops/qsa.py:546(_select_config)
+      200    0.001    0.000    0.001    0.000 {built-in method __triton_launcher.launch}
       400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:186(_call_registered)
       400    0.000    0.000    0.001    0.000 <frozen os>:779(getenv)
-      400    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:605(compute_cache_key)
       400    0.000    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/flagtree/_flagprism.py:181(_registered_callbacks)
+      400    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/runtime/jit.py:605(compute_cache_key)
       400    0.000    0.000    0.001    0.000 <frozen _collections_abc>:804(get)
       800    0.001    0.000    0.001    0.000 /usr/local/lib/python3.12/dist-packages/triton/language/core.py:368(_unwrap_if_constexpr)
       200    0.000    0.000    0.001    0.000 <string>:2(dynamic_func)
@@ -94,6 +94,6 @@
      1000    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
       400    0.000    0.000    0.000    0.000 /usr/local/lib/python3.12/dist-packages/triton/__init__.py:97(next_power_of_2)
       800    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
-      400    0.000    0.000    0.000    0.000 {built-in method torch._C._cuda_getCurrentRawStream}
+      400    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
 
 
