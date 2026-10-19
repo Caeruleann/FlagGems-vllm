@@ -23,22 +23,18 @@ _MAX_ONE_TILE_N = 2048
 # QSA sparse paged attention: split-count policy.
 #
 # Tables hold the TARGET split count (before clamping by the selection tile
-# count), keyed on base_programs = num_rows * num_kv_heads. Device routing is
-# by compute capability plus, within sm_90, the device name (H800 vs other
-# Hopper parts such as H20/H200 share sm_90 and must not share thresholds).
-#
-# Provenance:
-# - legacy sm_90 / sm_120 / generic tables are restored unchanged from the
-#   pre-optimization op (commit bc8a9ea);
-# - the H800 BF16 table was retuned on H800 (2026-10); H800 keeps the legacy
-#   sm_90 FP8 table (FP8 was explicitly out of the retune scope).
+# count), keyed on base_programs = num_rows * num_kv_heads. Only H800 is
+# tested and validated (2026-10), so a single H800-tuned policy applies to
+# all NVIDIA devices without hardware routing: BF16 from the H800 retune,
+# FP8 keeping the pre-optimization op's sm_90 table (FP8 was explicitly out
+# of the retune scope). Reintroduce per-device tables here when other
+# devices are measured.
 # ---------------------------------------------------------------------------
 
 _INF = 1 << 62
 
-_QSA_H800_BF16_SPLITS = ((32, 64), (256, 2), (512, 4), (_INF, 1))
-_QSA_LEGACY_SM90_BF16_SPLITS = ((32, 64), (64, 16), (256, 8), (2048, 4), (_INF, 1))
-_QSA_LEGACY_SM90_FP8_SPLITS = (
+_QSA_BF16_SPLITS = ((32, 64), (256, 2), (512, 4), (_INF, 1))
+_QSA_FP8_SPLITS = (
     (24, 64),
     (32, 16),
     (64, 8),
@@ -47,63 +43,17 @@ _QSA_LEGACY_SM90_FP8_SPLITS = (
     (2048, 4),
     (_INF, 1),
 )
-_QSA_SM120_BF16_SPLITS = ((24, 64), (64, 8), (128, 8), (256, 8), (512, 4), (_INF, 4))
-_QSA_SM120_FP8_SPLITS = (
-    (24, 64),
-    (32, 8),
-    (64, 8),
-    (128, 4),
-    (256, 4),
-    (512, 4),
-    (_INF, 2),
-)
-_QSA_GENERIC_SPLITS = (
-    (24, 64),
-    (32, 16),
-    (64, 8),
-    (128, 4),
-    (256, 8),
-    (512, 4),
-    (_INF, 1),
-)
-
-
-def _qsa_device_class(device_index):
-    try:
-        capability = torch.cuda.get_device_capability(device_index)
-        name = torch.cuda.get_device_name(device_index)
-    except Exception:  # noqa: BLE001 - non-CUDA or unknown device
-        return "generic"
-    if capability == (12, 0):
-        return "sm120"
-    if capability == (9, 0):
-        return "h800" if "H800" in name else "sm90"
-    return "generic"
 
 
 def qsa_sparse_num_splits_heur(args):
     """Target split count for qsa_sparse_paged_attention (host-side policy).
 
-    args: num_rows, num_kv_heads, use_prefill_config, is_fp8, device_index.
-    The result is clamped against the selection tile count by the op.
+    args: num_rows, num_kv_heads, is_fp8 (use_prefill_config currently has no
+    effect under the single H800 policy). The result is clamped against the
+    selection tile count by the op.
     """
     base_programs = args["num_rows"] * args["num_kv_heads"]
-    is_fp8 = args["is_fp8"]
-    prefill = args["use_prefill_config"]
-    device_class = _qsa_device_class(args["device_index"])
-    if device_class == "h800":
-        table = _QSA_LEGACY_SM90_FP8_SPLITS if is_fp8 else _QSA_H800_BF16_SPLITS
-    elif device_class == "sm90":
-        table = _QSA_LEGACY_SM90_FP8_SPLITS if is_fp8 else _QSA_LEGACY_SM90_BF16_SPLITS
-    elif device_class == "sm120":
-        if base_programs > 2048:
-            # sm120 pre-optimization table: prefill 2, decode 1 (fp8) / 2 (bf16).
-            if is_fp8 and not prefill:
-                return 1
-            return 2
-        table = _QSA_SM120_FP8_SPLITS if is_fp8 else _QSA_SM120_BF16_SPLITS
-    else:
-        table = _QSA_GENERIC_SPLITS
+    table = _QSA_FP8_SPLITS if args["is_fp8"] else _QSA_BF16_SPLITS
     for upper_bound, splits in table:
         if base_programs <= upper_bound:
             return splits

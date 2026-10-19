@@ -144,3 +144,27 @@ merge 的 255/18(Gems)对 156/0(vLLM)即审查指出的混淆项,下文 3b 分�
 要点:BF16 T=128 组 1.21–1.52、T=2048 pre=1 1.34–1.44、FP8 1.42–1.66、短行变体最高 1.65;T=700/T=513 为 1.08–1.27,低于归档的 1.28–1.34——经 harness 定配置核实,两案例**已在当日可达最优**(T=700 最优配置 b128/w4/s2 当日实测 0.440 ms,benchmark 实测 0.442 ms),差异来自环境漂移(同一配置归档日实测 0.328 ms,+34%,而 vLLM 基线同期仅漂 5–8%;不同时段对两个 kernel 的影响不同,比值随之漂移),非 cap64 回归。
 
 另注意:libtuner 首调存在 µs 级误选噪声(本轮 T=128 曾从 b128/w4/s2 误选为 b64/w2/s1,sp 1.38→1.26,删 key 重调即恢复);跨时段/跨机对比务必用同环境背靠背。
+
+## 8. decode 小组攻关:merge 依赖消除 + host 修剪(2026-10-16 晚,工作区未提交)
+
+触发:用户验收口径(`CUDA_VISIBLE_DEVICES=6 pytest benchmark/test_qsa_sparse_paged_attention.py -s`,kernel 模式默认参数)下 BF16 T=1=0.964、T=32=0.956,要求 ≥1.0。
+
+### 归因(profiler 级)
+
+- kernel 模式 = `do_bench(整 op)`,微内核下测的是 host 流水线暴露;T=1 纯 kernel 两侧已持平(8.14 vs 8.22 µs),T=32 kernel 侧差 4.1 µs(main +3.0、merge +1.1)。
+- merge 差距来源:split_counts 标量加载的**控制/数据依赖**串行在 lse/partial 大加载之前;vLLM 的 mask 只依赖 constexpr NUM_SPLITS,加载立即发射。
+- host 两侧持平(~94 µs);`_qsa_device_class` 每次调用查询设备属性,约 1–2 µs。
+
+### 改动(3 项)
+
+1. **merge 加载边界改 constexpr**:lse/partial 加载按 `split_offsets < NUM_SPLITS`(分配边界,常数)发射,split_counts 的值改在加载后用 `tl.where` 应用(lse→-inf、partial→0.0,NaN 位模式无法传播);`merge_splits <= 1` 直写行早退保留。不变量从「merge 只读已写」改为「读取恒在分配界内、越界值在参与计算前被证明丢弃」。merge:T=32 −1.3 µs、T=1 −1.5 µs。
+2. **split 策略去硬件路由**(用户指示:目前只测 H800):删除 `_qsa_device_class` 及 sm90/sm120/generic 表,单一 H800 策略(BF16 用 H800 重调表,FP8 沿用原 sm90 表),彻底省掉每次调用的设备查询(取代当天下午的缓存方案);op 侧不再传递 device_index。其它设备恢复路由时需重新实测。
+3. **T=32 调优重选**:删 key 重调,实选 b64/w8/s2(GPU6 实测最优,整链 0.0362 ms vs vLLM 0.0381)。
+
+### 否决项(已实测)
+
+- workspace 单次分配 + 类型视图(§5 第 2 条):host 实测**反而慢 7–9 µs/调用**——3 次 `torch.empty` 比 1 次 empty + slice/view(dtype)/view(shape) 链便宜。结论改为不采纳,代码已回退(注释留存)。
+
+### 结果(用户验收口径,GPU6,一行不落)
+
+19 行全部 ≥ 1.0,几何平均 **1.284**:T=1 1.107、T=16 1.161、T=32 1.070、T=128 组 1.17–1.38、T=257 1.19、T=513 1.29、T=700 1.33、T=1024 1.31、T=2048 1.36/1.00、FP8 1.15–1.64。回归 159/159 通过(exit=0);black/isort/flake8 干净。改动留在工作区,提交与否由用户决定。

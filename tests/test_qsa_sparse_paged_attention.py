@@ -1203,78 +1203,36 @@ def test_qsa_sparse_paged_attention_lifecycle() -> None:
 
 @pytest.mark.qsa_sparse_paged_attention
 def test_qsa_sparse_paged_attention_split_policy_static() -> None:
-    """Split policy tables match the authorized values per device class.
+    """Split policy table matches the authorized values.
 
-    Strategy check only (no performance claim): monkeypatches the device
-    classifier and compares against reference values — H800 BF16 from the H800
-    retune, everything else restored from the pre-optimization op (bc8a9ea).
+    Strategy check only (no performance claim): single H800-tuned policy —
+    BF16 from the H800 retune, FP8 restored from the pre-optimization op
+    (bc8a9ea). Hardware routing was removed 2026-10 (only H800 is tested).
     """
     heuristics = pytest.importorskip(
         "flaggems_vllm.runtime.backend._nvidia.heuristics_config_utils"
     )
 
-    def splits(device_class, bp, prefill, fp8):
-        original = heuristics._qsa_device_class
-        heuristics._qsa_device_class = lambda index: device_class
-        try:
-            return heuristics.qsa_sparse_num_splits_heur(
-                {
-                    "num_rows": bp,
-                    "num_kv_heads": 1,
-                    "use_prefill_config": prefill,
-                    "is_fp8": fp8,
-                    "device_index": 0,
-                }
-            )
-        finally:
-            heuristics._qsa_device_class = original
+    def splits(bp, fp8):
+        return heuristics.qsa_sparse_num_splits_heur(
+            {
+                "num_rows": bp,
+                "num_kv_heads": 1,
+                "use_prefill_config": False,
+                "is_fp8": fp8,
+            }
+        )
 
-    # H800 BF16 (retuned on H800): bp<=32 -> 64, <=256 -> 2, <=512 -> 4, >512 -> 1
-    assert [splits("h800", bp, False, False) for bp in (2, 32, 256, 512, 513)] == [
-        64,
-        64,
-        2,
-        4,
-        1,
-    ]
-    # H800 FP8 keeps the legacy sm90 fp8 policy.
-    assert [
-        splits("h800", bp, False, True) for bp in (24, 32, 64, 128, 256, 2048, 4096)
-    ] == [
+    # BF16 (retuned on H800): bp<=32 -> 64, <=256 -> 2, <=512 -> 4, >512 -> 1
+    assert [splits(bp, False) for bp in (2, 32, 256, 512, 513)] == [64, 64, 2, 4, 1]
+    # FP8 keeps the legacy sm90 policy, including boundaries 64 -> 8,
+    # 128 -> 4, 256 -> 8 and the bp > 2048 -> 1 region.
+    assert [splits(bp, True) for bp in (24, 32, 64, 128, 256, 2048, 4096)] == [
         64,
         16,
         8,
         4,
         8,
-        4,
-        1,
-    ]
-    # Legacy sm90 (H20 etc.) restored from bc8a9ea, including FP8 boundaries
-    # 64 -> 8 and 128 -> 4 and the bp > 2048 -> 1 region.
-    assert [splits("sm90", bp, False, False) for bp in (32, 64, 256, 2048, 4096)] == [
-        64,
-        16,
-        8,
-        4,
-        1,
-    ]
-    assert [splits("sm90", bp, False, True) for bp in (64, 128)] == [8, 4]
-    # sm120 restored, including prefill bp>2048: bf16 2, fp8 2 (prefill) / 1 (decode).
-    assert [splits("sm120", bp, False, False) for bp in (24, 64, 512, 4096)] == [
-        64,
-        8,
-        4,
-        2,
-    ]
-    assert [splits("sm120", 4096, True, True), splits("sm120", 4096, False, True)] == [
-        2,
-        1,
-    ]
-    # Generic fallback (non-sm90/sm120) restored from bc8a9ea.
-    assert [splits("generic", bp, False, False) for bp in (24, 32, 128, 512, 4096)] == [
-        64,
-        16,
-        4,
         4,
         1,
     ]

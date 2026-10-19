@@ -12,8 +12,9 @@ num_stages go through the FlagGems tuned-config pipeline
 T_BUCKET constexpr so it participates in the outer LibEntry cache key and the
 tuned-config selection. NUM_SPLITS is fixed by the host before any launch;
 the main kernel records, per row, how many splits actually wrote partials,
-and the merge kernel masks its reads by exactly that count, so the two
-kernels cannot disagree about the workspace layout.
+and the merge kernel applies exactly that count (early exit at <= 1, plus
+tl.where discard on the loads) so the two kernels cannot disagree about the
+workspace layout.
 """
 
 from __future__ import annotations
@@ -269,8 +270,8 @@ def _qsa_merge_splitk_kernel(
     head = tl.program_id(1)
     # Number of splits that wrote mergeable partials for this row (0 when the
     # main kernel finalized the row directly, including empty selections).
-    # Reading exactly this count — written by the same launch — guarantees the
-    # merge never reads unwritten or stale workspace.
+    # Written by the same launch; rows at or above this count are discarded
+    # below before they can contribute, so stale workspace never leaks in.
     merge_splits = tl.load(split_counts_ptr + row)
     if merge_splits <= 1:
         return
@@ -279,25 +280,33 @@ def _qsa_merge_splitk_kernel(
     stride_output_gate_head = HEAD_DIM
     split_offsets = tl.arange(0, BLOCK_SPLITS)
     dim_offsets = tl.arange(0, HEAD_DIM)
+    # Loads are bounded by the constexpr NUM_SPLITS (the allocated workspace
+    # size, always in-bounds) so they do not serialize behind the split_counts
+    # load; the count is applied afterwards with tl.where, which provably
+    # discards every value at or above merge_splits before it can contribute
+    # (lse -> -inf, partial -> 0.0, so NaN bit patterns cannot propagate).
+    bounds_mask = split_offsets < NUM_SPLITS
     split_mask = split_offsets < merge_splits
-    lse = tl.load(
+    lse_raw = tl.load(
         partial_lse_ptr + (split_offsets * num_rows + row) * NUM_QUERY_HEADS + head,
-        mask=split_mask,
+        mask=bounds_mask,
         other=-float("inf"),
     )
+    split_rows = split_offsets.to(tl.int64) * num_rows + row
+    partial_raw = tl.load(
+        partial_output_ptr
+        + (split_rows[:, None] * NUM_QUERY_HEADS + head) * HEAD_DIM
+        + dim_offsets[None, :],
+        mask=bounds_mask[:, None],
+        other=0.0,
+    )
+    lse = tl.where(split_mask, lse_raw, -float("inf"))
     lse_max = tl.max(lse, axis=0)
     has_values = lse_max > -float("inf")
     shifted = tl.where(split_mask & has_values, lse - lse_max, -float("inf"))
     weights = tl.math.exp2(shifted)
     denominator = tl.sum(weights, axis=0)
-    split_rows = split_offsets.to(tl.int64) * num_rows + row
-    partial_output = tl.load(
-        partial_output_ptr
-        + (split_rows[:, None] * NUM_QUERY_HEADS + head) * HEAD_DIM
-        + dim_offsets[None, :],
-        mask=split_mask[:, None],
-        other=0.0,
-    )
+    partial_output = tl.where(split_mask[:, None], partial_raw, 0.0)
     merged = tl.sum(partial_output * weights[:, None], axis=0)
     merged = tl.where(denominator > 0, merged / denominator, 0.0)
     # Preserve the unfused path's BF16 attention-output rounding before
@@ -373,7 +382,6 @@ def _select_splits(
     num_kv_heads: int,
     use_prefill_config: bool,
     is_fp8: bool,
-    device_index: int,
 ) -> int:
     """Resolve the target split count from the backend heuristics system."""
     heuristics = _QSA_SPLIT_HEURISTICS
@@ -385,7 +393,6 @@ def _select_splits(
             "num_kv_heads": num_kv_heads,
             "use_prefill_config": use_prefill_config,
             "is_fp8": is_fp8,
-            "device_index": device_index,
         }
     )
 
@@ -509,12 +516,7 @@ def qsa_sparse_paged_attention(
     group_size = q_shape[1] // k_shape[2]
     block_m = triton.next_power_of_2(group_size)
     selection_width = logical_indices.shape[1] - 1  # trailing column is the count
-    device_index = device.index
-    if device_index is None:
-        device_index = runtime.torch_device_fn.current_device()
-    target_splits = _select_splits(
-        num_rows, k_shape[2], use_prefill_config, is_fp8, device_index
-    )
+    target_splits = _select_splits(num_rows, k_shape[2], use_prefill_config, is_fp8)
     # Clamp splits to the tile count at the reference width: each split then
     # owns ~2 tiles when the tuner picks BLOCK_N=32, and the merge kernel
     # never reads more partials per row than this cap allows. Splits beyond
@@ -535,7 +537,9 @@ def qsa_sparse_paged_attention(
     else:
         # FP32 partials preserve accuracy when merging independently normalized
         # splits. Freshly allocated on every call; nothing call-specific is
-        # retained beyond the launch.
+        # retained beyond the launch. (A single-allocation + views variant was
+        # measured 7-9 µs/call SLOWER on the host path: three torch.empty calls
+        # are cheaper than empty + slice + view(dtype) + view(shape) chains.)
         partial_output = torch.empty(
             (num_splits, *q_shape), dtype=torch.float32, device=device
         )
