@@ -1,0 +1,261 @@
+{
+ "experiment": "ablation: pre-optimization op (bc8a9ea) + ONLY H800 config retune & split policy (H800 table + cap64), vs current production (full optimizations), vs vLLM reference",
+ "date": "2026-10-19",
+ "device": "H800 (CUDA_VISIBLE_DEVICES=6)",
+ "timing": "triton.testing.do_bench(whole op call), median, warmup=1000ms, rep=100ms (acceptance defaults), kernel-mode equivalent",
+ "arms": {
+  "vllm_ms": "vLLM reference op latency (ms)",
+  "abl_ms": "old kernel structure + per-shape best of 27 swept configs (BLOCK_N x warps x stages), NUM_SPLITS from H800 policy with cap64, merge fixed w2/s1, plain-jit host path",
+  "prod_ms": "current production op latency (ms)",
+  "abl_speedup": "vllm_ms / abl_ms",
+  "prod_speedup": "vllm_ms / prod_ms",
+  "struct_marginal": "abl_ms / prod_ms (>1: structure adds gain; <1: oracle-config/tuner noise or structural cost)",
+  "max_diff": "max |abl_out - prod_out| correctness check"
+ },
+ "script": "tools/qsa_tuning_split_ablation.py",
+ "summary_14_shapes": {
+  "geomean_abl_speedup": 1.2686,
+  "geomean_prod_speedup": 1.2917,
+  "geomean_struct_marginal": 1.0182
+ },
+ "rows": [
+  {
+   "shape": "bf16 T=1 pre=1",
+   "splits": 64,
+   "best_cfg": [
+    128,
+    2,
+    1
+   ],
+   "sweep_ms": 0.03392000123858452,
+   "vllm_ms": 0.03791999816894531,
+   "abl_ms": 0.034432001411914825,
+   "prod_ms": 0.032496001571416855,
+   "abl_speedup": 1.1013010169029414,
+   "prod_speedup": 1.1669127380366497,
+   "struct_marginal": 1.0595765554800087,
+   "max_diff": 0.00048828125
+  },
+  {
+   "shape": "bf16 T=16 pre=1",
+   "splits": 64,
+   "best_cfg": [
+    128,
+    2,
+    2
+   ],
+   "sweep_ms": 0.035232000052928925,
+   "vllm_ms": 0.0395519994199276,
+   "abl_ms": 0.03526400029659271,
+   "prod_ms": 0.03407999873161316,
+   "abl_speedup": 1.12159707030598,
+   "prod_speedup": 1.1605634064545467,
+   "struct_marginal": 1.034741831251339,
+   "max_diff": 0.00048828125
+  },
+  {
+   "shape": "bf16 T=32 pre=1",
+   "splits": 64,
+   "best_cfg": [
+    64,
+    8,
+    2
+   ],
+   "sweep_ms": 0.03612799942493439,
+   "vllm_ms": 0.040192000567913055,
+   "abl_ms": 0.03667199984192848,
+   "prod_ms": 0.03680000081658363,
+   "abl_speedup": 1.0959860586048549,
+   "prod_speedup": 1.0921739042408076,
+   "struct_marginal": 0.9965217127224228,
+   "max_diff": 6.103515625e-05
+  },
+  {
+   "shape": "bf16 T=128 pre=1",
+   "splits": 2,
+   "best_cfg": [
+    64,
+    2,
+    3
+   ],
+   "sweep_ms": 0.14825600385665894,
+   "vllm_ms": 0.20848000049591064,
+   "abl_ms": 0.14820799976587296,
+   "prod_ms": 0.15199999511241913,
+   "abl_speedup": 1.4066717101995205,
+   "prod_speedup": 1.371578994734302,
+   "struct_marginal": 0.9750526613915901,
+   "max_diff": 0.0009765625
+  },
+  {
+   "shape": "bf16 T=257 pre=1",
+   "splits": 4,
+   "best_cfg": [
+    64,
+    4,
+    2
+   ],
+   "sweep_ms": 0.15014399588108063,
+   "vllm_ms": 0.17945599555969238,
+   "abl_ms": 0.15039999783039093,
+   "prod_ms": 0.15248000621795654,
+   "abl_speedup": 1.1931914770508738,
+   "prod_speedup": 1.1769149281327813,
+   "struct_marginal": 0.9863588122852486,
+   "max_diff": 0.0
+  },
+  {
+   "shape": "bf16 T=513 pre=1",
+   "splits": 1,
+   "best_cfg": [
+    128,
+    4,
+    2
+   ],
+   "sweep_ms": 0.25655999779701233,
+   "vllm_ms": 0.3298240005970001,
+   "abl_ms": 0.2569119930267334,
+   "prod_ms": 0.25756800174713135,
+   "abl_speedup": 1.2838014944778375,
+   "prod_speedup": 1.2805317367054252,
+   "struct_marginal": 0.9974530659245399,
+   "max_diff": 0.0
+  },
+  {
+   "shape": "bf16 T=700 pre=1",
+   "splits": 1,
+   "best_cfg": [
+    128,
+    4,
+    2
+   ],
+   "sweep_ms": 0.3377920091152191,
+   "vllm_ms": 0.4490559995174408,
+   "abl_ms": 0.3378239870071411,
+   "prod_ms": 0.33878400921821594,
+   "abl_speedup": 1.3292602561935556,
+   "prod_speedup": 1.3254934923100132,
+   "struct_marginal": 0.9971662705884785,
+   "max_diff": 0.0
+  },
+  {
+   "shape": "bf16 T=1024 pre=1",
+   "splits": 1,
+   "best_cfg": [
+    128,
+    4,
+    2
+   ],
+   "sweep_ms": 0.9815040230751038,
+   "vllm_ms": 1.290224015712738,
+   "abl_ms": 0.9816159904003143,
+   "prod_ms": 0.9876160025596619,
+   "abl_speedup": 1.3143877324029427,
+   "prod_speedup": 1.3064025009404356,
+   "struct_marginal": 0.9939247519847826,
+   "max_diff": 0.001953125
+  },
+  {
+   "shape": "bf16 T=2048 pre=1",
+   "splits": 1,
+   "best_cfg": [
+    64,
+    2,
+    3
+   ],
+   "sweep_ms": 1.8965280055999756,
+   "vllm_ms": 2.5882558822631836,
+   "abl_ms": 1.8972159624099731,
+   "prod_ms": 1.8959200382232666,
+   "abl_speedup": 1.3642389340723258,
+   "prod_speedup": 1.3651714366016878,
+   "struct_marginal": 1.0006835331451642,
+   "max_diff": 0.0
+  },
+  {
+   "shape": "bf16 T=2048 pre=0",
+   "splits": 1,
+   "best_cfg": [
+    64,
+    2,
+    2
+   ],
+   "sweep_ms": 1.8984479904174805,
+   "vllm_ms": 1.8987520337104797,
+   "abl_ms": 1.898959994316101,
+   "prod_ms": 1.9005280137062073,
+   "abl_speedup": 0.9998904871054451,
+   "prod_speedup": 0.9990655333765567,
+   "struct_marginal": 0.9991749559181459,
+   "max_diff": 0.0
+  },
+  {
+   "shape": "fp8 T=1 pre=1",
+   "splits": 64,
+   "best_cfg": [
+    32,
+    2,
+    1
+   ],
+   "sweep_ms": 0.03376000002026558,
+   "vllm_ms": 0.03846399858593941,
+   "abl_ms": 0.0350399985909462,
+   "prod_ms": 0.03311999887228012,
+   "abl_speedup": 1.0977168987637436,
+   "prod_speedup": 1.1613526538532573,
+   "struct_marginal": 1.0579710079722564,
+   "max_diff": 0.00048828125
+  },
+  {
+   "shape": "fp8 T=128 pre=1",
+   "splits": 8,
+   "best_cfg": [
+    32,
+    4,
+    2
+   ],
+   "sweep_ms": 0.15624000132083893,
+   "vllm_ms": 0.2128639966249466,
+   "abl_ms": 0.1539199948310852,
+   "prod_ms": 0.1337279975414276,
+   "abl_speedup": 1.3829522074669225,
+   "prod_speedup": 1.5917683696639773,
+   "struct_marginal": 1.1509930430492112,
+   "max_diff": 0.0009765625
+  },
+  {
+   "shape": "fp8 T=2048 pre=1",
+   "splits": 1,
+   "best_cfg": [
+    64,
+    4,
+    3
+   ],
+   "sweep_ms": 1.728063941001892,
+   "vllm_ms": 2.8801920413970947,
+   "abl_ms": 1.7278399467468262,
+   "prod_ms": 1.726912021636963,
+   "abl_speedup": 1.6669321986795795,
+   "prod_speedup": 1.6678278947105378,
+   "struct_marginal": 1.0005373320112647,
+   "max_diff": 0.0009765625
+  },
+  {
+   "shape": "fp8 T=2048 pre=0",
+   "splits": 1,
+   "best_cfg": [
+    32,
+    4,
+    2
+   ],
+   "sweep_ms": 1.7044479846954346,
+   "vllm_ms": 2.784511923789978,
+   "abl_ms": 1.7515519857406616,
+   "prod_ms": 1.721504032611847,
+   "abl_speedup": 1.5897398115834505,
+   "prod_speedup": 1.6174878891020354,
+   "struct_marginal": 1.017454477340507,
+   "max_diff": 0.0
+  }
+ ]
+}

@@ -172,3 +172,36 @@ merge 的 255/18(Gems)对 156/0(vLLM)即审查指出的混淆项,下文 3b 分�
 ### 原始数据归档(2026-10-19)
 
 验收命令补跑并记录:`CUDA_VISIBLE_DEVICES=6 python -m pytest -q -s benchmark/test_qsa_sparse_paged_attention.py --record json --output qsa_benchmark_results/qsa_accept_gpu6_kernel.json`(即用户验收命令 + record,kernel 模式 comprehensive 级,19 行)。原始 JSON:`qsa_benchmark_results/qsa_accept_gpu6_kernel.json`。复跑结果:几何平均 **1.284**(与上轮一致),最小值 0.999(T=2048 pre=0,上轮 1.000,漂移 0.1%,在 §7 测量纪律记载的 ±2% 噪声带内),其余各行与上表一致。
+
+## 9. 消融:仅「调参 + split」的收益(2026-10-19,GPU6 同环境三臂)
+
+问题:总收益(几何平均 ~1.28)里,只改并行参数(BLOCK_N/warps/stages)与 split 策略(H800 表 + cap64)能拿多少,结构改动(空 split 早退/直写、merge 依赖消除、host 修剪)边际多少?
+
+口径:预优化代码(`git show bc8a9ea:.../qsa_sparse_paged_attention.py`,无 libtuner、无空 split 机制、merge 按 constexpr NUM_SPLITS 全读、plain-jit 启动)+ 每形状扫描 (BLOCK_N×warps×stages) 27 候选取最优 + NUM_SPLITS 按 H800 表并经 cap64 与旧 host「不超 tile 数」不变量裁剪;merge 固定 w2/s1。三臂同会话背靠背:该消融臂 / 现生产版 / vLLM,计时 = 验收口径(do_bench median,warmup=1000ms,rep=100ms)。脚本 `tools/qsa_tuning_split_ablation.py`(自包含,运行时从 git 提取 bc8a9ea 旧算子);14 个核心 shape 的三臂实测数据归档于 `qsa_benchmark_results/qsa_ablation_tuning_split_gpu6.json`(14 行几何平均:消融 1.269 / 全量 1.292 / 结构边际 1.018),含 5 个分布变体的全量原始数据在 `/tmp/qsa_ablation/ablation_result.json`;每行消融臂与生产版输出 max|diff| ≤ 0.002。
+
+| 行 | splits | 消融最优配置 | vLLM ms | 仅调参+split (SpeedUp) | 全量 (SpeedUp) | 结构边际 |
+| --- | --- | --- | --- | --- | --- | --- |
+| BF16 T=1 | 33(臂内 17) | b128/w2/s1 | 0.0379 | 0.0344 (1.101) | 0.0325 (1.167) | +6.0% |
+| BF16 T=16 | 33(17) | b128/w2/s2 | 0.0396 | 0.0353 (1.122) | 0.0341 (1.161) | +3.5% |
+| BF16 T=32 | 33 | b64/w8/s2 | 0.0402 | 0.0367 (1.096) | 0.0368 (1.092) | −0.3% |
+| BF16 T=128 | 2 | b64/w2/s3 | 0.2085 | 0.1482 (1.407) | 0.1520 (1.372) | −2.5% |
+| BF16 T=257 | 4 | b64/w4/s2 | 0.1795 | 0.1504 (1.193) | 0.1525 (1.177) | −1.4% |
+| BF16 T=513/700/1024 | 1 | b128/w4/s2 | – | 1.284/1.329/1.314 | 1.281/1.325/1.306 | −0.3%~−0.6% |
+| BF16 T=2048 pre | 1 | b64/w2/s3 | 2.5883 | 1.8972 (1.364) | 1.8959 (1.365) | +0.1% |
+| BF16 T=2048 dec | 1 | b64/w2/s2 | 1.8988 | 1.8990 (1.000) | 1.9005 (0.999) | −0.1% |
+| FP8 T=1 | 33(17) | b32/w2/s1 | 0.0385 | 0.0350 (1.098) | 0.0331 (1.161) | +5.8% |
+| FP8 T=128 | 8 | b32/w4/s2 | 0.2129 | 0.1539 (1.383) | 0.1337 (1.592) | **+15.1%** |
+| FP8 T=2048 pre/dec | 1 | – | – | 1.667 / 1.590 | 1.668 / 1.617 | +0.1% / +1.7% |
+| T=128 group4-mixed | 2 | b64/w2/s3 | 0.2083 | 1.389 | 1.368 | −1.5% |
+| T=128 random-short | 2 | b64/w2/s3 | 0.0407 | 1.133 | 1.208 | +6.6% |
+| T=128 random-long | 2 | b32/w4/s2 | 0.2732 | 1.357 | 1.294 | −4.6% |
+| T=128 group4-short-long | 2 | b64/w2/s3 | 0.1607 | 1.346 | 1.203 | −10.6% |
+| T=2048 group4-short-long | 1 | b64/w2/s2 | 2.0466 | 1.383 | 1.382 | −0.1% |
+
+**几何平均(19 行,同会话):仅调参+split = 1.281;全量 = 1.291;结构边际 = 1.008。** log 域占比 ≈ 97% / 3%。
+
+解读:
+1. **绝大部分收益来自 H800 重调配置 + H800 split 表 + cap64**,与既有瓶颈结论一致:prefill 区主 kernel 是 DRAM 受限,配置选对即拿满;splits=1 的行(T≥513)结构机制全部不触发,边际 ±0.6% 以内。
+2. 结构改动净边际 +0.8%,分布不均:decode T=1/T=16 +3.5~6.0%(merge 去依赖 + host 修剪,与 §8 归因一致)、FP8 T=128 +15.1%(空 split 早退 + fp8 路径)、random-short +6.6%(短行直写);T=128 多个分布变体 −1.5%~−10.6%。
+3. 负边际行的注意点:消融臂拿的是逐形状 oracle 扫描配置,生产臂是 libtuner 实选(已知存在 µs 级误选噪声,§7),负值不全是结构成本;T=128 group4-short-long −10.6% 若复现可删 key 重调确认。
+4. 口径声明:消融臂跑旧代码 plain-jit host 路径(无 LibEntry 开销),对微内核行略有利;v1 试验记录中「调参+split + LibEntry host」decode 仅 0.74–0.81(opt_summary.md §4 R1a),即结构工作中的 host 部分是把 LibEntry 框架成本压回 decode 可接受区间的前提,单看 kernel 收益会低估其必要性。
