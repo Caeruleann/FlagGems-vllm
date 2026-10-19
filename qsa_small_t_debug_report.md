@@ -167,4 +167,8 @@ merge 的 255/18(Gems)对 156/0(vLLM)即审查指出的混淆项,下文 3b 分�
 
 ### 结果(用户验收口径,GPU6,一行不落)
 
-19 行全部 ≥ 1.0,几何平均 **1.284**:T=1 1.107、T=16 1.161、T=32 1.070、T=128 组 1.17–1.38、T=257 1.19、T=513 1.29、T=700 1.33、T=1024 1.31、T=2048 1.36/1.00、FP8 1.15–1.64。回归 159/159 通过(exit=0);black/isort/flake8 干净。改动留在工作区,提交与否由用户决定。
+19 行全部 ≥ 1.0,几何平均 **1.284**:T=1 1.107、T=16 1.161、T=32 1.070、T=128 组 1.17–1.38、T=257 1.19、T=513 1.29、T=700 1.33、T=1024 1.31、T=2048 1.36/1.00、FP8 1.15–1.64。回归 159/159 通过(exit=0);black/isort/flake8 干净。已提交为 `029880f`。
+
+### 原始数据归档(2026-10-19)
+
+验收命令补跑并记录:`CUDA_VISIBLE_DEVICES=6 python -m pytest -q -s benchmark/test_qsa_sparse_paged_attention.py --record json --output qsa_benchmark_results/qsa_accept_gpu6_kernel.json`(即用户验收命令 + record,kernel 模式 comprehensive 级,19 行)。原始 JSON:`qsa_benchmark_results/qsa_accept_gpu6_kernel.json`。复跑结果:几何平均 **1.284**(与上轮一致),最小值 0.999(T=2048 pre=0,上轮 1.000,漂移 0.1%,在 §7 测量纪律记载的 ±2% 噪声带内),其余各行与上表一致。
