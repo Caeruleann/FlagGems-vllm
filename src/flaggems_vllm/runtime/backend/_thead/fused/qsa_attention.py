@@ -9,7 +9,7 @@ import torch
 from flaggems_vllm.ops.qwen4.qsa_attention import _qsa_sparse_paged_attention
 
 
-def qsa_sparse_paged_attention(
+def qwen4_qsa_sparse_paged_attention(
     q: torch.Tensor,
     k_cache: torch.Tensor,
     v_cache: torch.Tensor,

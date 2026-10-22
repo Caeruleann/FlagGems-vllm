@@ -750,7 +750,7 @@ def _qsa_sparse_paged_attention(
     return out
 
 
-def qsa_sparse_paged_attention(
+def qwen4_qsa_sparse_paged_attention(
     q: torch.Tensor,
     k_cache: torch.Tensor,
     v_cache: torch.Tensor,
@@ -777,4 +777,4 @@ def qsa_sparse_paged_attention(
     )
 
 
-__all__ = ["qsa_sparse_paged_attention", "qsa_sparse_split_count"]
+__all__ = ["qwen4_qsa_sparse_paged_attention", "qsa_sparse_split_count"]

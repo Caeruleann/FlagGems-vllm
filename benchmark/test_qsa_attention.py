@@ -4,7 +4,7 @@ from functools import partial
 import pytest
 import torch
 
-from flaggems_vllm import qsa_sparse_paged_attention
+from flaggems_vllm import qwen4_qsa_sparse_paged_attention
 
 from . import base
 from .qwen4_references import sparse_reference
@@ -43,8 +43,8 @@ def inputs(shape, dtype, device, *, splits):
 def test_sparse_attention_perf(splits):
     SparseBenchmark(
         input_fn=partial(inputs, splits=splits),
-        op_name="qsa_sparse_paged_attention",
+        op_name="qwen4_qsa_sparse_paged_attention",
         torch_op=sparse_reference,
-        gems_op=qsa_sparse_paged_attention,
+        gems_op=qwen4_qsa_sparse_paged_attention,
         dtypes=[torch.bfloat16, torch.float16],
     ).run()

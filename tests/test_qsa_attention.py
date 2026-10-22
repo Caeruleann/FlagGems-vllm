@@ -106,7 +106,7 @@ def _workspace(case: dict[str, torch.Tensor], splits: int):
 
 
 def _run(ops, case, out, *, workspace=None):
-    return ops.qsa_sparse_paged_attention(
+    return ops.qwen4_qsa_sparse_paged_attention(
         case["q"],
         case["k"],
         case["v"],
@@ -197,7 +197,7 @@ def test_qsa_split_rows64_invalid_requests_pages_and_gate_extremes():
     # +80 rounds sigmoid to one, so the gated output must equal the same
     # kernel's ungated result for that valid row.
     ungated = torch.empty_like(case["q"])
-    ops.qsa_sparse_paged_attention(
+    ops.qwen4_qsa_sparse_paged_attention(
         case["q"],
         case["k"],
         case["v"],
@@ -319,9 +319,9 @@ def test_qsa_tile_floor(monkeypatch, group, splits, vendor):
     if vendor:
         if ops.vendor_name != "thead":
             pytest.skip("PPU specialization requires the thead backend")
-        function = ops.qsa_sparse_paged_attention
+        function = ops.qwen4_qsa_sparse_paged_attention
     else:
-        function = generic_ops.qsa_sparse_paged_attention
+        function = generic_ops.qwen4_qsa_sparse_paged_attention
     launches = []
     monkeypatch.setattr(generic_ops, "_is_triton_device", lambda tensor: True)
     monkeypatch.setattr(
@@ -363,21 +363,24 @@ def test_qsa_tile_floor(monkeypatch, group, splits, vendor):
 
 
 def test_qsa_vendor_export_and_abi():
-    assert inspect.signature(ops.qsa_sparse_paged_attention) == inspect.signature(
-        generic_ops.qsa_sparse_paged_attention
+    assert inspect.signature(ops.qwen4_qsa_sparse_paged_attention) == inspect.signature(
+        generic_ops.qwen4_qsa_sparse_paged_attention
     )
     if ops.vendor_name == "thead":
         backend = importlib.import_module(
             "flaggems_vllm.runtime.backend._thead.fused.qsa_attention"
         )
-        assert ops.qsa_sparse_paged_attention is backend.qsa_sparse_paged_attention
+        assert (
+            ops.qwen4_qsa_sparse_paged_attention
+            is backend.qwen4_qsa_sparse_paged_attention
+        )
 
 
 def test_qsa_cpu_remains_unsupported():
     query = torch.empty((1, 3, 256), dtype=torch.bfloat16, device="cpu")
     cache = torch.empty((1, 16, 1, 256), dtype=query.dtype, device="cpu")
     with pytest.raises(NotImplementedError, match="accelerator"):
-        ops.qsa_sparse_paged_attention(
+        ops.qwen4_qsa_sparse_paged_attention(
             query,
             cache,
             cache,
