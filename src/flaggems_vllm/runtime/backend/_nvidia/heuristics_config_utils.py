@@ -19,6 +19,46 @@ _MIN_TILE_N = 64
 _MAX_TILE_N_PER_ROW = 4096
 _MAX_ONE_TILE_N = 2048
 
+# ---------------------------------------------------------------------------
+# QSA sparse paged attention: split-count policy.
+#
+# Tables hold the TARGET split count (before clamping by the selection tile
+# count), keyed on base_programs = num_rows * num_kv_heads. Only H800 is
+# tested and validated (2026-10), so a single H800-tuned policy applies to
+# all NVIDIA devices without hardware routing: BF16 from the H800 retune,
+# FP8 keeping the pre-optimization op's sm_90 table (FP8 was explicitly out
+# of the retune scope). Reintroduce per-device tables here when other
+# devices are measured.
+# ---------------------------------------------------------------------------
+
+_INF = 1 << 62
+
+_QSA_BF16_SPLITS = ((32, 64), (256, 2), (512, 4), (_INF, 1))
+_QSA_FP8_SPLITS = (
+    (24, 64),
+    (32, 16),
+    (64, 8),
+    (128, 4),
+    (256, 8),
+    (2048, 4),
+    (_INF, 1),
+)
+
+
+def qsa_sparse_num_splits_heur(args):
+    """Target split count for qsa_sparse_paged_attention (host-side policy).
+
+    args: num_rows, num_kv_heads, is_fp8 (use_prefill_config currently has no
+    effect under the single H800 policy). The result is clamped against the
+    selection tile count by the op.
+    """
+    base_programs = args["num_rows"] * args["num_kv_heads"]
+    table = _QSA_FP8_SPLITS if args["is_fp8"] else _QSA_BF16_SPLITS
+    for upper_bound, splits in table:
+        if base_programs <= upper_bound:
+            return splits
+    return 1
+
 
 def simple_elementwise_blocksize_heur(args):
     return 1024
@@ -450,6 +490,9 @@ HEURISTICS_CONFIGS = {
         "TILE_N": mean_heur_tile_n_non_inner,
         "ONE_TILE_PER_CTA": mean_heur_one_tile_per_cta,
         "num_warps": softmax_heur_num_warps_non_inner,
+    },
+    "qsa_sparse_paged_attention": {
+        "NUM_SPLITS": qsa_sparse_num_splits_heur,
     },
     "softmax_inner": {
         "TILE_N": softmax_heur_tile_n_inner,
