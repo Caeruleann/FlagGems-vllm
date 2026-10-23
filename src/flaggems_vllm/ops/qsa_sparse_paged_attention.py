@@ -4,16 +4,23 @@
 
 """QSA sparse paged attention ported from vLLM f47792af7f.
 
-Launch geometry: the split count comes from the backend heuristics system
+Launch geometry: both the split count and the main kernel's
+BLOCK_N / num_warps / num_stages come from the backend heuristics system
 (`runtime.get_heuristic_config("qsa_sparse_paged_attention")`), which keeps
-the per-device split policies out of the op. BLOCK_N / num_warps / num_stages
-come from `_select_launch_config` (bucketed on next_pow2(num_rows), in the
-style of the upstream port's config tables); both kernels are launched
-directly (no libentry/libtuner on the host path). NUM_SPLITS is fixed by the
-host before any launch; the main kernel records, per row, how many splits
-actually wrote partials, and the merge kernel applies exactly that count
-(early exit at <= 1, plus tl.where discard on the loads) so the two kernels
-cannot disagree about the workspace layout.
+the per-device policies out of the op. Both kernels are launched directly
+(no libentry/libtuner on the host path).
+
+Autotune exemption (AGENTS.md rule 3): the launch tables are static H800
+sweep winners (2026-10); on microsecond-scale decode shapes libtuner's
+per-call dispatch and tuning-DB selection noise cost more than per-shape
+adaptation earns, and H800 is the only validated device. Re-tune by
+re-running the sweep and editing the backend tables. The tune_configs.yaml
+candidate lists for this op were removed with the libtuner path.
+
+NUM_SPLITS is fixed by the host before any launch; the main kernel records,
+per row, how many splits actually wrote partials, and the merge kernel
+applies exactly that count (early exit at <= 1, plus tl.where discard on the
+loads) so the two kernels cannot disagree about the workspace layout.
 """
 
 from __future__ import annotations
@@ -331,61 +338,16 @@ def _qsa_merge_splitk_kernel(
 _SPLIT_CAP_TILE_WIDTH = 64
 
 
-def _select_launch_config(
-    num_rows: int, num_splits: int, group_size: int, is_fp8: bool
-) -> tuple[int, int, int]:
-    """(BLOCK_N, num_warps, num_stages) for the main kernel.
+# Launch policies (split count and the main kernel's launch config) come from
+# the backend heuristics system; resolved once at import (the heuristics
+# table is static backend configuration, never call data).
+_QSA_HEURISTICS = runtime.get_heuristic_config("qsa_sparse_paged_attention")
 
-    Bucket rules in the style of the upstream port's config tables; values
-    are the 2026-10 sweep winners (BLOCK_N x num_warps x num_stages grid,
-    same-session A/B per bucket). The fp8 t_bucket=8192 exception and the
-    bf16 t_bucket=4096 choice were re-measured against their neighbors
-    (3-11%). Unseen combinations fall through to conservative mid-size tiles.
-    """
-    t_bucket = triton.next_power_of_2(num_rows)
-    if is_fp8:
-        if num_splits == 1:
-            if group_size >= 12:
-                return 32, 4, 2
-            if t_bucket == 8192:
-                return 64, 4, 2
-            return 32, 1, 1
-        if num_splits >= 33:
-            if t_bucket <= 8:
-                return 64, 8, 3
-            return 64, 8, 1
-        # fp8 mid split counts (4..16): small buckets favour narrower tiles
-        if t_bucket <= 128 and group_size < 12:
-            return 32, 4, 2
-        return 128, 4, 1
-    if num_splits == 1:
-        if t_bucket <= 32:
-            return 64, 8, 2
-        if group_size >= 12:
-            return 64, 2, 3
-        return 128, 4, 2
-    if num_splits == 2:
-        if t_bucket <= 8:
-            return 32, 4, 1
-        return 128, 4, 2
-    if num_splits == 4:
-        if group_size >= 6:
-            return 64, 4, 2
-        return 32, 4, 3
-    # decode: many splits (33 after the split clamp)
-    if t_bucket <= 8:
-        return 64, 8, 1
-    return 64, 8, 2
-
-
-# Split policy from the backend heuristics system; resolved once at import
-# (the heuristics table is static backend configuration, never call data).
-_QSA_SPLIT_HEURISTICS = runtime.get_heuristic_config("qsa_sparse_paged_attention")
-
-# Explicit conservative default when the backend has no split policy entry
-# (single split, always correct); the NVIDIA backend installs the real
-# policy through HEURISTICS_CONFIGS.
+# Explicit conservative defaults when the backend has no policy entry (a
+# single split and a mid-size tile are always correct); the NVIDIA backend
+# installs the real policies through HEURISTICS_CONFIGS.
 _QSA_SPLIT_HEUR_DEFAULT = 1
+_QSA_LAUNCH_CONFIG_DEFAULT = (64, 4, 1)
 
 
 def _select_splits(
@@ -395,7 +357,7 @@ def _select_splits(
     is_fp8: bool,
 ) -> int:
     """Resolve the target split count from the backend heuristics system."""
-    heuristics = _QSA_SPLIT_HEURISTICS
+    heuristics = _QSA_HEURISTICS
     if not heuristics or "NUM_SPLITS" not in heuristics:
         return _QSA_SPLIT_HEUR_DEFAULT
     return heuristics["NUM_SPLITS"](
@@ -403,6 +365,23 @@ def _select_splits(
             "num_rows": num_rows,
             "num_kv_heads": num_kv_heads,
             "use_prefill_config": use_prefill_config,
+            "is_fp8": is_fp8,
+        }
+    )
+
+
+def _select_launch_config(
+    num_rows: int, num_splits: int, group_size: int, is_fp8: bool
+) -> tuple[int, int, int]:
+    """(BLOCK_N, num_warps, num_stages) from the backend heuristics system."""
+    heuristics = _QSA_HEURISTICS
+    if not heuristics or "LAUNCH_CONFIG" not in heuristics:
+        return _QSA_LAUNCH_CONFIG_DEFAULT
+    return heuristics["LAUNCH_CONFIG"](
+        {
+            "num_rows": num_rows,
+            "num_splits": num_splits,
+            "group_size": group_size,
             "is_fp8": is_fp8,
         }
     )

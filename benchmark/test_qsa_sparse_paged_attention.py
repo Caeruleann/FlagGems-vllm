@@ -139,8 +139,17 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
                 # and catches a k/v swap; scales are host floats, as the layer exposes
                 # them. Stored values are the scaled ones, as reshape_and_cache does.
                 k_scale, v_scale = 0.5, 2.0
-                k_cache = (k_cache / k_scale).to(torch.float8_e4m3fn)
-                v_cache = (v_cache / v_scale).to(torch.float8_e4m3fn)
+                # Quantize into the fused KV buffer and then split, so K/V keep
+                # the production interleaved layout (views with a 2*head_dim
+                # token stride) instead of becoming independent compact tensors.
+                kv_fp8 = torch.empty_like(kv_cache, dtype=torch.float8_e4m3fn)
+                k_cache, v_cache = kv_fp8.split(head_dim, dim=-1)
+                k_cache.copy_(
+                    (kv_cache[..., :head_dim] / k_scale).to(torch.float8_e4m3fn)
+                )
+                v_cache.copy_(
+                    (kv_cache[..., head_dim:] / v_scale).to(torch.float8_e4m3fn)
+                )
             else:
                 k_scale, v_scale = 1.0, 1.0
 
