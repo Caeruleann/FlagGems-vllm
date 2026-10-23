@@ -22,11 +22,11 @@ import flaggems_vllm
 from . import base
 
 
-def _make_packed_indices(rows, counts, selection_width, context_capacity, index_kind):
+def _make_packed_indices(rows, counts, selection_width, context_capacity):
     """Packed [rows, selection_width + 1] indices with a trailing count column.
 
-    index_kind="random": scattered tokens. index_kind="group4": contiguous
-    groups of 4 tokens (QSA-like locality).
+    Indices are uniform random over the context capacity (worst-case
+    locality).
     """
     device = rows.device
     logical = torch.full(
@@ -36,16 +36,7 @@ def _make_packed_indices(rows, counts, selection_width, context_capacity, index_
         count = int(counts[r].item())
         if count <= 0:
             continue
-        if index_kind == "random":
-            perm = torch.randperm(context_capacity, device=device)[:count]
-        elif index_kind == "group4":
-            n_groups = (count + 3) // 4
-            starts = torch.randint(0, context_capacity - 4, (n_groups,), device=device)
-            perm = (
-                starts[:, None] + torch.arange(4, device=device)[None, :]
-            ).flatten()[:count]
-        else:
-            raise ValueError(f"unknown index_kind: {index_kind}")
+        perm = torch.randperm(context_capacity, device=device)[:count]
         logical[r, :count] = perm.to(torch.int32)
     packed = torch.full(
         (rows.numel(), selection_width + 1), -1, device=device, dtype=torch.int32
@@ -75,12 +66,15 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
                 num_requests,
                 fp8,
             ) = shape[:7]
-            index_kind = shape[7] if len(shape) > 7 else "random"
-            count_mode = shape[8] if len(shape) > 8 else "mixed"
+            # Real-shape fidelity fields: pages per request and the physical
+            # pool size (default: 65 pages and a fully-unique table, the
+            # synthetic layout).
+            num_pages_per_request = shape[7] if len(shape) > 7 else 65
             torch.manual_seed(2)
             head_dim = 256
-            num_pages_per_request = 65
-            num_cache_blocks = num_requests * num_pages_per_request
+            num_cache_blocks = (
+                shape[8] if len(shape) > 8 else num_requests * num_pages_per_request
+            )
             selection_width = 2051
             q = torch.randn(
                 num_rows,
@@ -99,11 +93,25 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
                 dtype=dtype,
             )
             k_cache, v_cache = kv_cache.split(head_dim, dim=-1)
-            block_table = (
-                torch.randperm(num_cache_blocks, device=flaggems_vllm.device)
-                .reshape(num_requests, num_pages_per_request)
-                .to(torch.int32)
-            )
+            total_pages = num_requests * num_pages_per_request
+            if num_cache_blocks >= total_pages:
+                block_table = (
+                    torch.randperm(num_cache_blocks, device=flaggems_vllm.device)[
+                        :total_pages
+                    ]
+                    .reshape(num_requests, num_pages_per_request)
+                    .to(torch.int32)
+                )
+            else:
+                # Real pools are smaller than the logical table (not every page
+                # is allocated); entries may repeat.
+                block_table = torch.randint(
+                    0,
+                    num_cache_blocks,
+                    (num_requests, num_pages_per_request),
+                    device=flaggems_vllm.device,
+                    dtype=torch.int32,
+                )
             rows = torch.arange(
                 num_rows, device=flaggems_vllm.device, dtype=torch.int32
             )
@@ -111,31 +119,19 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
             token_to_req = rows // rows_per_request
 
             context_capacity = num_pages_per_request * page_size
-            if count_mode == "mixed":
-                # Legacy regression distribution: mostly long rows, every third
-                # row short (17).
-                counts = torch.where(rows % 3 == 1, 17, selection_width - rows % 4)
-            elif count_mode == "short-long":
-                counts = torch.where(rows % 2 == 0, 17, selection_width)
-            elif count_mode == "short":
-                counts = torch.full(
-                    (num_rows,), 17, device=flaggems_vllm.device, dtype=torch.int32
-                )
-            elif count_mode == "long":
-                counts = torch.full(
-                    (num_rows,),
-                    selection_width,
-                    device=flaggems_vllm.device,
-                    dtype=torch.int32,
-                )
-            else:
-                raise ValueError(f"unknown count_mode: {count_mode}")
+            # Worst case: every row selects the full width, so no row hits the
+            # short-row direct-write or empty-split paths.
+            counts = torch.full(
+                (num_rows,),
+                selection_width,
+                device=flaggems_vllm.device,
+                dtype=torch.int32,
+            )
             logical_indices = _make_packed_indices(
                 rows,
-                counts.to(torch.int32),
+                counts,
                 selection_width,
                 context_capacity,
-                index_kind,
             )
 
             if fp8:

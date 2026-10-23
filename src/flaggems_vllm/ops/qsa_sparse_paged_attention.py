@@ -6,15 +6,14 @@
 
 Launch geometry: the split count comes from the backend heuristics system
 (`runtime.get_heuristic_config("qsa_sparse_paged_attention")`), which keeps
-the per-device split policies out of the op. BLOCK_N / num_warps /
-num_stages go through the FlagGems tuned-config pipeline
-(`runtime.get_tuned_config` + `@libtuner`). T is bucketed explicitly via the
-T_BUCKET constexpr so it participates in the outer LibEntry cache key and the
-tuned-config selection. NUM_SPLITS is fixed by the host before any launch;
-the main kernel records, per row, how many splits actually wrote partials,
-and the merge kernel applies exactly that count (early exit at <= 1, plus
-tl.where discard on the loads) so the two kernels cannot disagree about the
-workspace layout.
+the per-device split policies out of the op. BLOCK_N / num_warps / num_stages
+come from `_select_launch_config` (bucketed on next_pow2(num_rows), in the
+style of the upstream port's config tables); both kernels are launched
+directly (no libentry/libtuner on the host path). NUM_SPLITS is fixed by the
+host before any launch; the main kernel records, per row, how many splits
+actually wrote partials, and the merge kernel applies exactly that count
+(early exit at <= 1, plus tl.where discard on the loads) so the two kernels
+cannot disagree about the workspace layout.
 """
 
 from __future__ import annotations
@@ -24,27 +23,8 @@ import triton
 import triton.language as tl
 
 from flaggems_vllm import runtime
-from flaggems_vllm.utils import libentry, libtuner
 
 
-@libentry()
-@libtuner(
-    configs=runtime.get_tuned_config("qsa_sparse_paged_attention")
-    or [triton.Config(kwargs={"BLOCK_N": 64}, num_warps=2, num_stages=2)],
-    key=[
-        "T_BUCKET",
-        "NUM_QUERY_HEADS",
-        "GROUP_SIZE",
-        "HEAD_DIM",
-        "TOPK",
-        "PAGE_SIZE",
-        "NUM_SPLITS",
-        "stride_k_head",
-        "stride_k_token",
-        "stride_k_block",
-        "stride_indices_row",
-    ],
-)
 @triton.jit(do_not_specialize=["num_rows", "num_requests", "num_cache_blocks"])
 def _qsa_sparse_paged_gqa_splitk_kernel(
     q_ptr,
@@ -82,7 +62,6 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
     HEAD_DIM: tl.constexpr,
     NUM_QUERY_HEADS: tl.constexpr,
     NUM_SPLITS: tl.constexpr,
-    T_BUCKET: tl.constexpr,
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
     IS_FP8: tl.constexpr,
@@ -269,13 +248,6 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
         )
 
 
-@libentry()
-@libtuner(
-    configs=runtime.get_tuned_config("qsa_sparse_paged_attention_merge")
-    or [triton.Config(kwargs={}, num_warps=2, num_stages=1)],
-    key=["NUM_SPLITS", "HEAD_DIM"],
-    strategy=["log", "default"],
-)
 @triton.jit(do_not_specialize=["num_rows"])
 def _qsa_merge_splitk_kernel(
     partial_output_ptr,
@@ -353,10 +325,58 @@ def _qsa_merge_splitk_kernel(
 # Reference tile width for the NUM_SPLITS clamp below. Every split writes one
 # partial per row, so more splits than the tile count at this width only widen
 # the merge kernel's per-row read without adding main-kernel work it can
-# parallelize. Measured on H800 decode shapes (2026-10): clamping at the
-# 64-wide tile count matches vLLM's fixed BLOCK_N=64 policy and cuts the
-# merge time ~25-30% vs clamping at the smallest candidate BLOCK_N (32).
+# parallelize. Measured on decode shapes (2026-10): clamping at the 64-wide
+# tile count matches vLLM's fixed BLOCK_N=64 policy and cuts the merge time
+# ~25-30% vs clamping at the smallest candidate BLOCK_N (32).
 _SPLIT_CAP_TILE_WIDTH = 64
+
+
+def _select_launch_config(
+    num_rows: int, num_splits: int, group_size: int, is_fp8: bool
+) -> tuple[int, int, int]:
+    """(BLOCK_N, num_warps, num_stages) for the main kernel.
+
+    Bucket rules in the style of the upstream port's config tables; values
+    are the 2026-10 sweep winners (BLOCK_N x num_warps x num_stages grid,
+    same-session A/B per bucket). The fp8 t_bucket=8192 exception and the
+    bf16 t_bucket=4096 choice were re-measured against their neighbors
+    (3-11%). Unseen combinations fall through to conservative mid-size tiles.
+    """
+    t_bucket = triton.next_power_of_2(num_rows)
+    if is_fp8:
+        if num_splits == 1:
+            if group_size >= 12:
+                return 32, 4, 2
+            if t_bucket == 8192:
+                return 64, 4, 2
+            return 32, 1, 1
+        if num_splits >= 33:
+            if t_bucket <= 8:
+                return 64, 8, 3
+            return 64, 8, 1
+        # fp8 mid split counts (4..16): small buckets favour narrower tiles
+        if t_bucket <= 128 and group_size < 12:
+            return 32, 4, 2
+        return 128, 4, 1
+    if num_splits == 1:
+        if t_bucket <= 32:
+            return 64, 8, 2
+        if group_size >= 12:
+            return 64, 2, 3
+        return 128, 4, 2
+    if num_splits == 2:
+        if t_bucket <= 8:
+            return 32, 4, 1
+        return 128, 4, 2
+    if num_splits == 4:
+        if group_size >= 6:
+            return 64, 4, 2
+        return 32, 4, 3
+    # decode: many splits (33 after the split clamp)
+    if t_bucket <= 8:
+        return 64, 8, 1
+    return 64, 8, 2
+
 
 # Split policy from the backend heuristics system; resolved once at import
 # (the heuristics table is static backend configuration, never call data).
@@ -509,11 +529,14 @@ def qsa_sparse_paged_attention(
     selection_width = logical_indices.shape[1] - 1  # trailing column is the count
     target_splits = _select_splits(num_rows, k_shape[2], use_prefill_config, is_fp8)
     # Clamp splits to the tile count at the reference width: each split then
-    # owns ~2 tiles when the tuner picks BLOCK_N=32, and the merge kernel
-    # never reads more partials per row than this cap allows. Splits beyond
-    # the tuned BLOCK_N's tile count exit empty in the kernel, and
+    # owns ~2 tiles when the config table picks BLOCK_N=32, and the merge
+    # kernel never reads more partials per row than this cap allows. Splits
+    # beyond the launch BLOCK_N's tile count exit empty in the kernel, and
     # split_counts keeps the merge correct for any clamp outcome.
     num_splits = min(target_splits, triton.cdiv(selection_width, _SPLIT_CAP_TILE_WIDTH))
+    block_n, num_warps, num_stages = _select_launch_config(
+        num_rows, num_splits, group_size, is_fp8
+    )
 
     q_stride = q.stride()
     k_stride = k_cache.stride()
@@ -577,9 +600,11 @@ def qsa_sparse_paged_attention(
         HEAD_DIM=q_shape[2],
         NUM_QUERY_HEADS=q_shape[1],
         NUM_SPLITS=num_splits,
-        T_BUCKET=triton.next_power_of_2(num_rows),
         BLOCK_M=block_m,
+        BLOCK_N=block_n,
         IS_FP8=is_fp8,
+        num_warps=num_warps,
+        num_stages=num_stages,
     )
     if num_splits == 1:
         return out
@@ -597,5 +622,7 @@ def qsa_sparse_paged_attention(
         NUM_QUERY_HEADS=q_shape[1],
         NUM_SPLITS=num_splits,
         BLOCK_SPLITS=triton.next_power_of_2(num_splits),
+        num_warps=2,
+        num_stages=1,
     )
     return out
