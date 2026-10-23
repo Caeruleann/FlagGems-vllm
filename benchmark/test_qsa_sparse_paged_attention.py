@@ -22,27 +22,20 @@ import flaggems_vllm
 from . import base
 
 
-def _make_packed_indices(rows, counts, selection_width, context_capacity):
+def _make_packed_indices(num_rows, selection_width, context_capacity, device):
     """Packed [rows, selection_width + 1] indices with a trailing count column.
 
-    Indices are uniform random over the context capacity (worst-case
-    locality).
+    Every row selects the full width: uniform random distinct indices over
+    the context capacity (worst-case locality), and the count column is the
+    selection width.
     """
-    device = rows.device
-    logical = torch.full(
-        (rows.numel(), selection_width), -1, device=device, dtype=torch.int32
+    packed = torch.empty(
+        (num_rows, selection_width + 1), device=device, dtype=torch.int32
     )
-    for r in range(rows.numel()):
-        count = int(counts[r].item())
-        if count <= 0:
-            continue
-        perm = torch.randperm(context_capacity, device=device)[:count]
-        logical[r, :count] = perm.to(torch.int32)
-    packed = torch.full(
-        (rows.numel(), selection_width + 1), -1, device=device, dtype=torch.int32
-    )
-    packed[:, :selection_width] = logical
-    packed[:, -1] = counts.to(torch.int32)
+    for r in range(num_rows):
+        perm = torch.randperm(context_capacity, device=device)[:selection_width]
+        packed[r, :selection_width] = perm.to(torch.int32)
+    packed[:, -1] = selection_width
     return packed
 
 
@@ -121,17 +114,11 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
             context_capacity = num_pages_per_request * page_size
             # Worst case: every row selects the full width, so no row hits the
             # short-row direct-write or empty-split paths.
-            counts = torch.full(
-                (num_rows,),
-                selection_width,
-                device=flaggems_vllm.device,
-                dtype=torch.int32,
-            )
             logical_indices = _make_packed_indices(
-                rows,
-                counts,
+                num_rows,
                 selection_width,
                 context_capacity,
+                flaggems_vllm.device,
             )
 
             if fp8:

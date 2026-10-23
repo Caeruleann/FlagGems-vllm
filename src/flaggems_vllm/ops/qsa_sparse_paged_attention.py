@@ -89,8 +89,9 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
         return
     if NUM_SPLITS > 1 and split_id == 0:
         # How many splits wrote mergeable partials for this row: 0 when the
-        # row was finalized directly below. The merge kernel masks its reads
-        # by exactly this value, so it never touches unwritten workspace.
+        # row was finalized directly below. The merge kernel loads the full
+        # allocated split range and discards entries at or above this count
+        # with tl.where.
         tl.store(
             split_counts_ptr + row,
             tl.where(tile_end <= 1, 0, tl.minimum(tile_end, NUM_SPLITS)),
@@ -415,8 +416,8 @@ def qsa_sparse_paged_attention(
     see runtime.get_heuristic_config("qsa_sparse_paged_attention").
 
     out= may be any non-overlapping tensor with matching shape/dtype/device;
-    storage shared with an input is rejected because autotuning reruns the
-    kernel with the first-call arguments.
+    storage shared with an input is rejected because the kernels read the
+    inputs and write out in the same launch, with no ordering between them.
     """
     q_shape = q.shape
     k_shape = k_cache.shape
@@ -486,8 +487,9 @@ def qsa_sparse_paged_attention(
     if not num_rows:
         return out
     if out_is_caller_provided and out.numel():
-        # Autotuning reruns the kernel with the first-call arguments, so an
-        # out tensor that overlaps an input would be corrupted between reruns.
+        # The kernels read the inputs and write out in the same launch with
+        # no ordering guarantee, so an out that overlaps an input corrupts
+        # the input while it is still being read.
         out_storage = out.untyped_storage().data_ptr()
         for tensor in (
             q,
@@ -530,9 +532,7 @@ def qsa_sparse_paged_attention(
     else:
         # FP32 partials preserve accuracy when merging independently normalized
         # splits. Freshly allocated on every call; nothing call-specific is
-        # retained beyond the launch. (A single-allocation + views variant was
-        # measured 7-9 µs/call SLOWER on the host path: three torch.empty calls
-        # are cheaper than empty + slice + view(dtype) + view(shape) chains.)
+        # retained beyond the launch.
         partial_output = torch.empty(
             (num_splits, *q_shape), dtype=torch.float32, device=device
         )

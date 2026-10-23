@@ -181,9 +181,12 @@ def test_qsa_sparse_paged_attention(
         # A fixed non-unit pair (k != v) exercises the host-side scale folding
         # and catches a k/v swap; scales are host floats, as the layer exposes
         # them. Stored values are the scaled ones, as reshape_and_cache does.
+        # Quantize the fused buffer before splitting, so the production
+        # interleaved K/V layout survives the dtype conversion.
         k_scale, v_scale = 0.5, 2.0
-        k_cache = (k_cache / k_scale).to(torch.float8_e4m3fn)
-        v_cache = (v_cache / v_scale).to(torch.float8_e4m3fn)
+        k_cache.div_(k_scale)
+        v_cache.div_(v_scale)
+        k_cache, v_cache = kv_cache.to(torch.float8_e4m3fn).split(head_dim, dim=-1)
     else:
         k_scale, v_scale = 1.0, 1.0
 
@@ -199,7 +202,10 @@ def test_qsa_sparse_paged_attention(
         v_scale=v_scale,
         output_gate=output_gate,
     )
-    actual = flaggems_vllm.qsa_sparse_paged_attention(
+    # Production passes a preallocated output buffer; NaN-fill it so any row
+    # the kernels fail to write stays NaN and fails the comparisons below.
+    out = torch.full_like(q, float("nan"))
+    flaggems_vllm.qsa_sparse_paged_attention(
         q,
         k_cache,
         v_cache,
@@ -207,10 +213,12 @@ def test_qsa_sparse_paged_attention(
         block_table,
         token_to_req,
         use_prefill_config=use_prefill_config,
+        out=out,
         k_scale=k_scale,
         v_scale=v_scale,
         output_gate=output_gate,
     )
+    actual = out
 
     assert actual.shape == q.shape
     assert actual.dtype == q.dtype

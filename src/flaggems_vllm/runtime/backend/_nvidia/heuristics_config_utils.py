@@ -29,9 +29,8 @@ _MAX_ONE_TILE_N = 2048
 # policy returns (BLOCK_N, num_warps, num_stages) bucketed on
 # next_pow2(num_rows), in the style of the upstream port's config tables; its
 # values are the 2026-10 sweep winners (BLOCK_N x num_warps x num_stages
-# grid, same-session A/B per bucket; the fp8 t_bucket=8192 exception and the
-# bf16 t_bucket=4096 choice were re-measured against their neighbors at
-# 3-11%). Only H800 is tested and validated (2026-10), so a single
+# grid, same-session A/B per bucket). Only H800 is tested and validated
+# (2026-10), so a single
 # H800-tuned policy applies to all NVIDIA devices without hardware routing.
 # Reintroduce per-device tables here when other devices are measured.
 # ---------------------------------------------------------------------------
