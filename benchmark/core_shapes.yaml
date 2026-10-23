@@ -517,38 +517,26 @@ swiglu:
   shape_desc: "M, 2H (last dim is split in half)"
 
 qsa_sparse_paged_attention:
-  shape_desc: >-
-    T, Hq, Hkv, page_size, prefill_config, requests, fp8, pages_per_req, pool_blocks;
-    representative shapes from Qwen3.8-Flash-Next-FP8 captures (2026-10-22).
-    Contents remain synthetic: uniform random indices, all rows full length.
-  # 20 of 164 captured shapes, retained for workload and launch-config
-  # coverage. The unique multi-token decode/verify case is kept despite its
-  # small share. Fixed D=256, selection_width=2051. Only Q is BF16; all
-  # selected KV are FP8.
   shapes:
-    # Single-token decode: small batches, split=33.
+    # From Qwen3.8-Flash-Next-FP8 production captures.
     - [1, 6, 1, 784, false, 1, true, 88, 2712]
     - [16, 6, 1, 784, false, 16, true, 88, 512]
-    # Decode split transitions: 16 -> 8 -> 4.
     - [32, 6, 1, 784, false, 32, true, 88, 2712]
     - [40, 6, 1, 784, false, 40, true, 88, 512]
     - [64, 6, 1, 784, false, 64, true, 88, 512]
     - [72, 6, 1, 784, false, 72, true, 88, 2712]
     - [128, 6, 1, 784, false, 128, true, 88, 512]
-    # Larger decode: split=8 -> 4, both pool sizes.
     - [136, 6, 1, 784, false, 136, true, 88, 512]
     - [272, 6, 1, 784, false, 272, true, 88, 512]
     - [336, 6, 1, 784, false, 336, true, 88, 512]
     - [512, 6, 1, 784, false, 512, true, 88, 2712]
-    # Prefill-config captures: irregular T and the 8192-bucket launch exception.
     - [902, 6, 1, 784, true, 451, true, 88, 2712]
     - [2369, 6, 1, 784, true, 54, true, 88, 2712]
     - [6177, 6, 1, 784, true, 57, true, 88, 2712]
-    # T=16384 prefill: request-count range and pool-allocation boundary.
     - [16384, 6, 1, 784, true, 1, true, 88, 2712]
     - [16384, 6, 1, 784, true, 16, true, 88, 2712]
     - [16384, 6, 1, 784, true, 30, true, 88, 2712]
     - [16384, 6, 1, 784, true, 31, true, 88, 2712]
     - [16384, 6, 1, 784, true, 57, true, 88, 2712]
-    # Decode/verify: 8 query tokens per request.
     - [16384, 6, 1, 784, false, 2048, true, 88, 2712]
+  shape_desc: "T, Hq, Hkv, page_size, prefill_config, requests, fp8, pages_per_req, pool_blocks"
