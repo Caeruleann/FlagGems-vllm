@@ -68,40 +68,6 @@ def _gate_norm_reference(
     return gated, normalized
 
 
-def sparse_reference(
-    q, k, v, indices, table, requests, *, gate=None, split_workspace=None
-):
-    page_size = k.shape[1]
-    pages = indices // page_size
-    valid = (
-        (indices >= 0)
-        & (pages < table.shape[1])
-        & (requests[:, None] >= 0)
-        & (requests[:, None] < table.shape[0])
-    )
-    physical = table[
-        requests.clamp(0, table.shape[0] - 1)[:, None],
-        pages.clamp(0, table.shape[1] - 1),
-    ].long()
-    valid &= (physical >= 0) & (physical < k.shape[0])
-    offset = indices.remainder(page_size)
-    keys = (
-        k[physical.clamp(0, k.shape[0] - 1), offset]
-        .repeat_interleave(q.shape[1] // k.shape[2], dim=2)
-        .transpose(1, 2)
-    )
-    values = (
-        v[physical.clamp(0, v.shape[0] - 1), offset]
-        .repeat_interleave(q.shape[1] // v.shape[2], dim=2)
-        .transpose(1, 2)
-    )
-    scores = (q.float().unsqueeze(2) * keys.float()).sum(-1) * q.shape[2] ** -0.5
-    scores.masked_fill_(~valid[:, None], -float("inf"))
-    probabilities = scores.softmax(-1).nan_to_num()
-    output = (probabilities.unsqueeze(-1) * values.float()).sum(2).to(q.dtype)
-    return output if gate is None else output * torch.sigmoid(gate)
-
-
 def prefill_conv_reference(
     x,
     output,

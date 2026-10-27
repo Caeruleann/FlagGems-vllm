@@ -105,9 +105,11 @@ EXPLICIT_SOURCE_TO_TESTS = {
     ],
     "src/flaggems_vllm/ops/qwen4/qsa.py": [
         "tests/test_qwen4_self_kernels.py",
-        "tests/test_qsa_attention.py",
+        "tests/test_qsa_sparse_paged_attention.py",
     ],
-    "src/flaggems_vllm/ops/qwen4/qsa_attention.py": ["tests/test_qsa_attention.py"],
+    "src/flaggems_vllm/ops/qwen4/qsa_sparse_paged_attention.py": [
+        "tests/test_qsa_sparse_paged_attention.py"
+    ],
     "src/flaggems_vllm/ops/qwen4/ple_fusion.py": ["tests/test_ple_fusion.py"],
     "src/flaggems_vllm/ops/kda_bounded.py": [
         "tests/test_kda_bounded.py",
@@ -233,9 +235,11 @@ EXPLICIT_SOURCE_TO_BENCHMARKS = {
     ],
     "src/flaggems_vllm/ops/qwen4/qsa.py": [
         "benchmark/test_qwen4_self_kernels.py",
-        "benchmark/test_qsa_attention.py",
+        "benchmark/test_qsa_sparse_paged_attention.py",
     ],
-    "src/flaggems_vllm/ops/qwen4/qsa_attention.py": ["benchmark/test_qsa_attention.py"],
+    "src/flaggems_vllm/ops/qwen4/qsa_sparse_paged_attention.py": [
+        "benchmark/test_qsa_sparse_paged_attention.py"
+    ],
     "src/flaggems_vllm/ops/qwen4/ple_fusion.py": ["benchmark/test_ple_fusion.py"],
     "src/flaggems_vllm/ops/kda_bounded.py": ["benchmark/test_kda_bounded_perf.py"],
     "src/flaggems_vllm/ops/kda64.py": ["benchmark/test_kda_bounded_perf.py"],

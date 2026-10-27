@@ -12,4 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-HEURISTICS_CONFIGS = {}
+# PPU requires an M tile of at least 16 for matrix dot. Keep the original
+# conservative single-split launch configuration for sparse QSA.
+HEURISTICS_CONFIGS = {
+    "qsa_sparse_paged_attention": {
+        "MIN_BLOCK_M": 16,
+        "NUM_SPLITS": lambda args: 1,
+        "LAUNCH_CONFIG": lambda args: (16, 4, 2),
+    },
+}
