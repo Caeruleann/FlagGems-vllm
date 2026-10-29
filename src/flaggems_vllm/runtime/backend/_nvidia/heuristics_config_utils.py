@@ -26,11 +26,8 @@ _MAX_ONE_TILE_N = 2048
 # selection tile count), keyed on base_programs = num_rows * num_kv_heads.
 # The launch-config policy returns (BLOCK_N, num_warps, num_stages), primarily
 # bucketed on next_pow2(num_rows), in the style of the upstream port's config
-# tables. Split counts and launch values are H800 sweep winners, including the
-# 2026-10 formal-FlagTree FP8 retune. Only H800 is tested and validated, so a
-# single H800-tuned policy applies to all NVIDIA devices without hardware
-# routing.
-# Reintroduce per-device tables here when other devices are measured.
+# tables. Split counts and launch values are static NVIDIA policies; introduce
+# per-device tables when needed.
 # ---------------------------------------------------------------------------
 
 _INF = 1 << 62
@@ -52,7 +49,7 @@ def qsa_sparse_num_splits_heur(args):
     """Target split count for qsa_sparse_paged_attention (host-side policy).
 
     args: num_rows, num_kv_heads, is_fp8 (use_prefill_config currently has no
-    effect under the single H800 policy). The result is clamped against the
+    effect under the single NVIDIA policy). The result is clamped against the
     selection tile count by the op.
     """
     base_programs = args["num_rows"] * args["num_kv_heads"]
@@ -89,9 +86,7 @@ def qsa_sparse_launch_config_heur(args):
         if t_bucket <= 128 and group_size < 12:
             return 32, 4, 2
         if t_bucket >= 512 and group_size < 12:
-            if t_bucket == 512 and args["num_rows"] >= 512:
-                return 32, 1, 1
-            return 32, 4, 2
+            return 32, 1, 1
         return 128, 4, 1
     if num_splits == 1:
         if t_bucket <= 32:

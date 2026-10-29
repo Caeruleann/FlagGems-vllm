@@ -15,14 +15,13 @@
 """Native vLLM QSA baseline (v0.32-compatible packed-index/FP8 interface).
 
 The collector imports this module without FlagGems-vllm or pytest. The benchmark
-uses the same input builder; all shapes come from benchmark/core_shapes.yaml.
+uses the same input builder and shape set, which is defined locally so collection
+does not depend on repository package imports or data-file loading.
 """
 
 import importlib
-from importlib import resources
 
 import torch
-import yaml
 
 OP_NAME = "qsa_sparse_paged_attention"
 DTYPES = [torch.bfloat16]
@@ -43,9 +42,29 @@ def native():
 
 
 def grid():
-    with resources.files("benchmark").joinpath("core_shapes.yaml").open() as stream:
-        shapes = yaml.safe_load(stream)[OP_NAME]["shapes"]
-    return [{"shape": list(shape)} for shape in shapes]
+    shapes = [
+        [1, 6, 1, 784, False, 1, True, 88, 2712],
+        [16, 6, 1, 784, False, 16, True, 88, 512],
+        [32, 6, 1, 784, False, 32, True, 88, 2712],
+        [40, 6, 1, 784, False, 40, True, 88, 512],
+        [64, 6, 1, 784, False, 64, True, 88, 512],
+        [72, 6, 1, 784, False, 72, True, 88, 2712],
+        [128, 6, 1, 784, False, 128, True, 88, 512],
+        [136, 6, 1, 784, False, 136, True, 88, 512],
+        [272, 6, 1, 784, False, 272, True, 88, 512],
+        [336, 6, 1, 784, False, 336, True, 88, 512],
+        [512, 6, 1, 784, False, 512, True, 88, 2712],
+        [902, 6, 1, 784, True, 451, True, 88, 2712],
+        [2369, 6, 1, 784, True, 54, True, 88, 2712],
+        [6177, 6, 1, 784, True, 57, True, 88, 2712],
+        [16384, 6, 1, 784, True, 1, True, 88, 2712],
+        [16384, 6, 1, 784, True, 16, True, 88, 2712],
+        [16384, 6, 1, 784, True, 30, True, 88, 2712],
+        [16384, 6, 1, 784, True, 31, True, 88, 2712],
+        [16384, 6, 1, 784, True, 57, True, 88, 2712],
+        [16384, 6, 1, 784, True, 2048, True, 88, 2712],
+    ]
+    return [{"shape": shape} for shape in shapes]
 
 
 def _shape(binding):

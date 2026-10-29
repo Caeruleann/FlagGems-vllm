@@ -22,13 +22,18 @@ from baseline import qsa_sparse_paged_attention as qsa_baseline
 
 from . import base, consts
 
+VENDOR = flaggems_vllm.vendor_name
+
+vendor_qsa = None
+if VENDOR == "nvidia":
+    from vllm.models.qwen4_exp.nvidia.ops.qsa import (
+        qsa_sparse_paged_attention as vendor_qsa,
+    )
+
 
 def _get_baseline_op():
-    if flaggems_vllm.vendor_name == "nvidia":
-        return qsa_baseline.native()
-    # No other vendor-native implementation with this ABI is configured.
-    # The framework can compare against --base-data without importing vLLM.
-    return None
+    """Select the vendor-native baseline when one is configured."""
+    return vendor_qsa
 
 
 class QSASparsePagedAttentionBenchmark(base.Benchmark):
@@ -58,4 +63,7 @@ class QSASparsePagedAttentionBenchmark(base.Benchmark):
 @pytest.mark.qsa_sparse_paged_attention
 @torch.inference_mode()
 def test_qsa_sparse_paged_attention_benchmark():
-    QSASparsePagedAttentionBenchmark(_get_baseline_op()).run()
+    baseline_op = _get_baseline_op()
+    if VENDOR == "nvidia":
+        assert callable(baseline_op), "vLLM native QSA attention is not available"
+    QSASparsePagedAttentionBenchmark(baseline_op).run()

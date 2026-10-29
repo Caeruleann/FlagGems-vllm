@@ -10,12 +10,8 @@ BLOCK_N / num_warps / num_stages come from the backend heuristics system
 the per-device policies out of the op. Both kernels are launched directly
 (no libentry/libtuner on the host path).
 
-Autotune exemption (AGENTS.md rule 3): the launch tables are static H800
-sweep winners (2026-10); on microsecond-scale decode shapes libtuner's
-per-call dispatch and tuning-DB selection noise cost more than per-shape
-adaptation earns, and H800 is the only validated device. Re-tune by
-re-running the sweep and editing the backend tables. The tune_configs.yaml
-candidate lists for this op were removed with the libtuner path.
+Autotune exemption (AGENTS.md rule 3): the launch tables are static backend
+policies, so this op keeps no libtuner candidate lists in tune_configs.yaml.
 
 NUM_SPLITS is fixed by the host before any launch; the main kernel records,
 per row, how many splits actually wrote partials, and the merge kernel
@@ -166,13 +162,14 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
         else:
             keys = tl.load(
                 k_cache_ptr
-                + safe_page[None, :] * stride_k_block
-                + page_offset[None, :] * stride_k_token
+                + safe_page[:, None] * stride_k_block
+                + page_offset[:, None] * stride_k_token
                 + kv_head * stride_k_head
-                + dim_offsets[:, None],
-                mask=valid[None, :],
+                + dim_offsets[None, :],
+                mask=valid[:, None],
                 other=0.0,
             )
+            keys = tl.permute(keys, (1, 0))
         if not DEFER_V_LOAD:
             values = tl.load(
                 v_cache_ptr
@@ -184,8 +181,7 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
                 other=0.0,
             )
         if IS_FP8:
-            # e4m3 -> Q dtype is exact; keep the QK dot in Q's dtype (fp8 QK
-            # measured slower here and less accurate).
+            # e4m3 -> Q dtype is exact; keep the QK dot in Q's dtype.
             keys = keys.to(query.dtype)
         scores = tl.dot(query, keys)
         # Scaling scores avoids re-quantizing a scaled query to BF16; for fp8
@@ -209,9 +205,8 @@ def _qsa_sparse_paged_gqa_splitk_kernel(
                 other=0.0,
             )
         if IS_FP8:
-            # Dequant V to fp16 (not bf16) for the PV dot: P <= 1 (online
-            # softmax) so fp16 has the range, its wider mantissa is more
-            # accurate, and the fp8->fp16 upcast with an fp16 PV dot is faster.
+            # P <= 1 after online softmax, so fp16 has the range and a wider
+            # mantissa than bf16 for the PV dot.
             values = values.to(tl.float16)
         accumulator = tl.dot(
             probabilities.to(values.dtype),
@@ -353,12 +348,9 @@ def _qsa_merge_splitk_kernel(
     )
 
 
-# Reference tile width for the NUM_SPLITS clamp below. Every split writes one
-# partial per row, so more splits than the tile count at this width only widen
-# the merge kernel's per-row read without adding main-kernel work it can
-# parallelize. Measured on decode shapes (2026-10): clamping at the 64-wide
-# tile count matches vLLM's fixed BLOCK_N=64 policy and cuts the merge time
-# ~25-30% vs clamping at the smallest candidate BLOCK_N (32).
+# Reference tile width for the NUM_SPLITS clamp below. More splits than the
+# tile count only widen the merge kernel's per-row read without adding
+# main-kernel work they can parallelize.
 _SPLIT_CAP_TILE_WIDTH = 64
 
 
@@ -533,8 +525,7 @@ def qsa_sparse_paged_attention(
     block_m = max(_QSA_MIN_BLOCK_M, triton.next_power_of_2(group_size))
     selection_width = logical_indices.shape[1] - 1  # trailing column is the count
     target_splits = _select_splits(num_rows, k_shape[2], use_prefill_config, is_fp8)
-    # Clamp splits to the tile count at the reference width: each split then
-    # owns ~2 tiles when the config table picks BLOCK_N=32, and the merge
+    # Clamp splits to the tile count at the reference width so the merge
     # kernel never reads more partials per row than this cap allows. Splits
     # beyond the launch BLOCK_N's tile count exit empty in the kernel, and
     # split_counts keeps the merge correct for any clamp outcome.
@@ -606,7 +597,7 @@ def qsa_sparse_paged_attention(
         BLOCK_M=block_m,
         BLOCK_N=block_n,
         IS_FP8=is_fp8,
-        DEFER_V_LOAD=num_splits == 1 and num_rows >= 4096,
+        DEFER_V_LOAD=num_splits > 1 or num_rows >= 4096,
         num_warps=num_warps,
         num_stages=num_stages,
     )
