@@ -37,13 +37,21 @@ def _qsa_sparse_paged_attention_reference(
     repeats = q.shape[1] // k_cache.shape[2]
     page_size = k_cache.shape[1]
     for row in range(q.shape[0]):
+        request = int(token_to_req[row].item())
+        if not 0 <= request < block_table.shape[0]:
+            continue
         logical = logical_indices[row]
-        logical = logical[logical >= 0].long()
+        logical = logical[
+            (logical >= 0) & (logical < block_table.shape[1] * page_size)
+        ].long()
         if not logical.numel():
             continue
-        request = token_to_req[row].long()
         pages = block_table[request, logical // page_size].long()
-        offsets = logical % page_size
+        valid_pages = (pages >= 0) & (pages < k_cache.shape[0])
+        offsets = (logical % page_size)[valid_pages]
+        pages = pages[valid_pages]
+        if not pages.numel():
+            continue
         keys = (k_cache[pages, offsets].float() * k_scale).repeat_interleave(
             repeats, dim=1
         )
@@ -445,3 +453,137 @@ def test_qsa_sparse_paged_attention_small_selection_width(selection_width: int) 
         output_gate=output_gate,
     )
     flaggems_vllm.testing.assert_close(actual, expected, dtype=q.dtype, atol=2e-2)
+
+
+@pytest.mark.qsa_sparse_paged_attention
+@pytest.mark.parametrize(
+    "head_dim, group_size, fp8, selection_width",
+    [
+        (64, 3, False, 17),
+        (128, 17, False, 513),
+        (256, 32, False, 513),
+        (64, 16, True, 17),
+        (128, 3, True, 513),
+        (256, 17, True, 513),
+    ],
+)
+@torch.inference_mode()
+def test_qsa_sparse_paged_attention_masking_gates_and_strides(
+    head_dim: int, group_size: int, fp8: bool, selection_width: int
+) -> None:
+    """Independent numerical regressions from the original QSA tests.
+
+    Mix invalid metadata and saturated gates in one batch. Padded storage
+    exercises Q/K/V/output strides; widths cover short and multi-tile rows.
+    This test requires no vLLM installation.
+    """
+    torch.manual_seed(19)
+    device = flaggems_vllm.device
+    num_rows, num_kv_heads, page_size = 12, 2, 16
+    num_query_heads = group_size * num_kv_heads
+    pages_per_request = (selection_width + page_size - 1) // page_size
+    num_cache_blocks = num_rows * pages_per_request
+    context_capacity = pages_per_request * page_size
+
+    q_storage = torch.randn(
+        num_rows, num_query_heads, head_dim + 8, device=device, dtype=torch.bfloat16
+    )
+    q = q_storage[..., 3 : head_dim + 3]
+    k_storage = torch.randn(
+        num_cache_blocks,
+        page_size,
+        num_kv_heads,
+        head_dim + 8,
+        device=device,
+        dtype=torch.bfloat16,
+    )
+    v_storage = torch.randn(
+        num_cache_blocks,
+        page_size,
+        num_kv_heads,
+        head_dim + 16,
+        device=device,
+        dtype=torch.bfloat16,
+    )
+    k_scale, v_scale = (0.5, 2.0) if fp8 else (1.0, 1.0)
+    if fp8:
+        # Convert the padded allocations before slicing to retain their strides.
+        k_storage = (k_storage / k_scale).to(torch.float8_e4m3fn)
+        v_storage = (v_storage / v_scale).to(torch.float8_e4m3fn)
+    k_cache = k_storage[..., :head_dim]
+    v_cache = v_storage[..., 1 : head_dim + 1]
+    out_storage = torch.full(
+        (num_rows, num_query_heads, head_dim + 16),
+        float("nan"),
+        device=device,
+        dtype=q.dtype,
+    )
+    out = out_storage[..., 5 : head_dim + 5]
+    assert not q.is_contiguous() and not out.is_contiguous()
+    assert k_cache.stride() != v_cache.stride()
+
+    block_table = (
+        torch.arange(num_cache_blocks, device=device, dtype=torch.int32)
+        .reshape(num_rows, pages_per_request)
+        .flip(1)
+    )
+    token_to_req = torch.arange(num_rows, device=device, dtype=torch.int32)
+    logical_indices = torch.empty(
+        (num_rows, selection_width + 1), device=device, dtype=torch.int32
+    )
+    logical_indices[:, :-1] = torch.arange(
+        selection_width, device=device, dtype=torch.int32
+    )
+    logical_indices[:, -1] = selection_width
+    # Keep the last selected token valid so the final page is still visited.
+    logical_indices[:, selection_width - 2] = -1
+    logical_indices[:, selection_width - 3] = context_capacity + 5
+    token_to_req[0] = -1
+    token_to_req[1] = num_rows
+    block_table[2, 0] = -1
+    block_table[3, -1] = num_cache_blocks + 7
+    logical_indices[4, :-1] = -1
+    logical_indices[5, :-1] = context_capacity + 5
+    block_table[10, :] = -1
+    logical_indices[11, :-1] = -1
+    logical_indices[11, -1] = 0
+
+    output_gate = torch.randn(q.shape, device=device, dtype=q.dtype)
+    output_gate[6] = -80
+    output_gate[7] = 80
+    output_gate[8] = 0
+    ungated = _qsa_sparse_paged_attention_reference(
+        q,
+        k_cache,
+        v_cache,
+        logical_indices[:, :-1],
+        block_table,
+        token_to_req,
+        head_dim**-0.5,
+        k_scale=k_scale,
+        v_scale=v_scale,
+    )
+    expected = (ungated.float() * torch.sigmoid(output_gate.float())).to(q.dtype)
+    flaggems_vllm.qsa_sparse_paged_attention(
+        q,
+        k_cache,
+        v_cache,
+        logical_indices,
+        block_table,
+        token_to_req,
+        use_prefill_config=True,
+        out=out,
+        k_scale=k_scale,
+        v_scale=v_scale,
+        output_gate=output_gate,
+    )
+    flaggems_vllm.testing.assert_close(out, expected, dtype=q.dtype, atol=2e-2)
+    zero_rows = out[[0, 1, 4, 5, 10, 11]]
+    flaggems_vllm.testing.assert_equal(zero_rows, torch.zeros_like(zero_rows))
+    flaggems_vllm.testing.assert_close(
+        out[6], torch.zeros_like(out[6]), dtype=q.dtype, atol=1e-30
+    )
+    flaggems_vllm.testing.assert_close(out[7], ungated[7], dtype=q.dtype, atol=2e-2)
+    flaggems_vllm.testing.assert_close(
+        out[8], ungated[8] * 0.5, dtype=q.dtype, atol=2e-2
+    )
