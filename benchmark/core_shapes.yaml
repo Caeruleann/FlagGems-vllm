@@ -548,3 +548,12 @@ bmm_w8a8:
     - [2, 64, 128, 256]
     - [4, 129, 17, 257]
   shape_desc: "B, M, N, K"
+
+fused_deepseek_v4_kv_rope_insert:
+  shapes:
+    - [1, 1, 64]
+    - [17, 17, 16]
+    - [128, 117, 64]
+    - [1024, 1024, 64]
+    - [8192, 8192, 64]
+  shape_desc: "num_tokens, num_tokens_insert, cache_block_size"
