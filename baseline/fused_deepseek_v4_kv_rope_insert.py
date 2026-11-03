@@ -24,13 +24,27 @@ IS_INPLACE = True
 
 # Input KV is always BF16; cache format is an independent collection dimension.
 CACHE_FORMATS = ("bf16", "fp8", "packed_v4", "mxfp8")
-_CORE_SHAPES = [
-    (1, 1, 64),
-    (17, 17, 16),
-    (128, 117, 64),
-    (1024, 1024, 64),
-    (8192, 8192, 64),
+
+# DeepseekV4Attention uses 32-token SWA pages. Full KV rows may exceed the
+# insertion count because of DP padding.
+RUNTIME_SHAPES = [
+    (1, 1, 32),
+    (4, 1, 32),
+    (20, 17, 32),
+    (128, 117, 32),
+    (1027, 1024, 32),
+    (8192, 8192, 32),
 ]
+
+# test_dspark_context_kv_matches_query_insert uses 256-token pages, three
+# additional KV rows, and insertion counts 1, 17, 1023, and 1024.
+VLLM_TEST_SHAPES = [
+    (4, 1, 256),
+    (20, 17, 256),
+    (1026, 1023, 256),
+    (1027, 1024, 256),
+]
+CORE_SHAPES = RUNTIME_SHAPES + VLLM_TEST_SHAPES
 
 
 def native():
@@ -45,8 +59,8 @@ def native():
 def grid():
     shapes = list(
         dict.fromkeys(
-            _CORE_SHAPES
-            + [(n, n, bs) for n in (4, 64, 2048, 32768, 131072) for bs in (16, 64)]
+            CORE_SHAPES
+            + [(n, n, bs) for n in (4, 64, 2048, 32768, 131072) for bs in (32, 64)]
         )
     )
     return [
@@ -79,7 +93,7 @@ def build_inputs(binding, dtype, device):
     kv = torch.randn(num_tokens, 512, dtype=dtype, device=device)
     num_blocks = (num_insert + block_size - 1) // block_size + 1
     cache = torch.zeros(num_blocks, block_size, width, dtype=cache_dtype, device=device)
-    # Unique shuffled slots stress paged writes; -1 masks an unused row.
+    # Unique shuffled slots stress paged writes; larger cases mask one row.
     slots = torch.randperm(num_insert, dtype=torch.int64, device=device)
     if num_insert > 1:
         slots[-1] = -1

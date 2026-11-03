@@ -26,7 +26,7 @@ from __future__ import annotations
 import logging
 import weakref
 
-import flag_gems
+# import flag_gems
 import torch
 import triton
 import triton.language as tl

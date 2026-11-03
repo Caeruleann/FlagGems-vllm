@@ -508,7 +508,7 @@ ops:
   - id: fused_deepseek_v4_kv_rope_insert
     description: |
       DeepSeekV4 KV-only GPT-J RoPE and paged cache insertion.
-      Host wrapper and native vLLM baseline scaffold; Triton kernels pending.
+      Triton implementation matching the native vLLM CUDA semantics.
       Supports BF16, per-tensor FP8, packed V4 and MXFP8 cache interfaces.
     for:
       - torch.ops._C.fused_deepseek_v4_kv_rope_insert

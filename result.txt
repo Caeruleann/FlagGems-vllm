@@ -1,0 +1,72 @@
+[Note] No specialized fused operators were found for the nvidia, generic fused operators will be used by default.
+[base-data] 未指定 --base-data，'vs Base' 列关闭。
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /workspace/FlagGems-vllm
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collected 4 items
+
+benchmark/test_fused_deepseek_v4_kv_rope_insert.py 
+Operator: fused_deepseek_v4_kv_rope_insert  Performance Test (dtype=torch.bfloat16, mode=kernel,level=comprehensive)
+Status       Torch Latency (ms)    Gems Latency (ms)         Gems Speedup          Size Detail
+-----------------------------------------------------------------------------------------------
+SUCCESS               0.006848            0.006688               1.024          [torch.Size([1, 512]), torch.Size([2, 32, 512]), torch.Size([1]), torch.Size([1]), torch.Size([1, 64]), 32, None, False]
+SUCCESS               0.006976            0.006496               1.074          [torch.Size([4, 512]), torch.Size([2, 32, 512]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 32, None, False]
+SUCCESS               0.007200            0.006464               1.114          [torch.Size([20, 512]), torch.Size([2, 32, 512]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 32, None, False]
+SUCCESS               0.007328            0.006976               1.050          [torch.Size([128, 512]), torch.Size([5, 32, 512]), torch.Size([117]), torch.Size([128]), torch.Size([128, 64]), 32, None, False]
+SUCCESS               0.008032            0.007584               1.059          [torch.Size([1027, 512]), torch.Size([33, 32, 512]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 32, None, False]
+SUCCESS               0.015488            0.013888               1.115          [torch.Size([8192, 512]), torch.Size([257, 32, 512]), torch.Size([8192]), torch.Size([8192]), torch.Size([8192, 64]), 32, None, False]
+SUCCESS               0.006944            0.006592               1.053          [torch.Size([4, 512]), torch.Size([2, 256, 512]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 256, None, False]
+SUCCESS               0.007424            0.006752               1.100          [torch.Size([20, 512]), torch.Size([2, 256, 512]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 256, None, False]
+SUCCESS               0.008096            0.007680               1.054          [torch.Size([1026, 512]), torch.Size([5, 256, 512]), torch.Size([1023]), torch.Size([1026]), torch.Size([1026, 64]), 256, None, False]
+SUCCESS               0.008032            0.007584               1.059          [torch.Size([1027, 512]), torch.Size([5, 256, 512]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 256, None, False]
+
+.
+Operator: fused_deepseek_v4_kv_rope_insert  Performance Test (dtype=torch.bfloat16, mode=kernel,level=comprehensive)
+Status       Torch Latency (ms)    Gems Latency (ms)         Gems Speedup          Size Detail
+-----------------------------------------------------------------------------------------------
+SUCCESS               0.007232            0.006912               1.046          [torch.Size([1, 512]), torch.Size([2, 32, 512]), torch.Size([1]), torch.Size([1]), torch.Size([1, 64]), 32, torch.Size([1]), False]
+SUCCESS               0.007360            0.006816               1.080          [torch.Size([4, 512]), torch.Size([2, 32, 512]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 32, torch.Size([1]), False]
+SUCCESS               0.007232            0.006848               1.056          [torch.Size([20, 512]), torch.Size([2, 32, 512]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 32, torch.Size([1]), False]
+SUCCESS               0.007360            0.007392               0.996          [torch.Size([128, 512]), torch.Size([5, 32, 512]), torch.Size([117]), torch.Size([128]), torch.Size([128, 64]), 32, torch.Size([1]), False]
+SUCCESS               0.008096            0.007840               1.033          [torch.Size([1027, 512]), torch.Size([33, 32, 512]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 32, torch.Size([1]), False]
+SUCCESS               0.013984            0.013952               1.002          [torch.Size([8192, 512]), torch.Size([257, 32, 512]), torch.Size([8192]), torch.Size([8192]), torch.Size([8192, 64]), 32, torch.Size([1]), False]
+SUCCESS               0.007136            0.007040               1.014          [torch.Size([4, 512]), torch.Size([2, 256, 512]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 256, torch.Size([1]), False]
+SUCCESS               0.007264            0.007104               1.023          [torch.Size([20, 512]), torch.Size([2, 256, 512]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 256, torch.Size([1]), False]
+SUCCESS               0.008192            0.007648               1.071          [torch.Size([1026, 512]), torch.Size([5, 256, 512]), torch.Size([1023]), torch.Size([1026]), torch.Size([1026, 64]), 256, torch.Size([1]), False]
+SUCCESS               0.008128            0.007808               1.041          [torch.Size([1027, 512]), torch.Size([5, 256, 512]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 256, torch.Size([1]), False]
+
+.
+Operator: fused_deepseek_v4_kv_rope_insert  Performance Test (dtype=torch.bfloat16, mode=kernel,level=comprehensive)
+Status       Torch Latency (ms)    Gems Latency (ms)         Gems Speedup          Size Detail
+-----------------------------------------------------------------------------------------------
+SUCCESS               0.007104            0.007040               1.009          [torch.Size([1, 512]), torch.Size([2, 32, 584]), torch.Size([1]), torch.Size([1]), torch.Size([1, 64]), 32, None, False]
+SUCCESS               0.007456            0.007232               1.031          [torch.Size([4, 512]), torch.Size([2, 32, 584]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 32, None, False]
+SUCCESS               0.007216            0.007264               0.993          [torch.Size([20, 512]), torch.Size([2, 32, 584]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 32, None, False]
+SUCCESS               0.007680            0.007584               1.013          [torch.Size([128, 512]), torch.Size([5, 32, 584]), torch.Size([117]), torch.Size([128]), torch.Size([128, 64]), 32, None, False]
+SUCCESS               0.007968            0.008000               0.996          [torch.Size([1027, 512]), torch.Size([33, 32, 584]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 32, None, False]
+SUCCESS               0.015744            0.016704               0.943          [torch.Size([8192, 512]), torch.Size([257, 32, 584]), torch.Size([8192]), torch.Size([8192]), torch.Size([8192, 64]), 32, None, False]
+SUCCESS               0.007360            0.007328               1.004          [torch.Size([4, 512]), torch.Size([2, 256, 584]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 256, None, False]
+SUCCESS               0.007520            0.007040               1.068          [torch.Size([20, 512]), torch.Size([2, 256, 584]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 256, None, False]
+SUCCESS               0.008256            0.008288               0.996          [torch.Size([1026, 512]), torch.Size([5, 256, 584]), torch.Size([1023]), torch.Size([1026]), torch.Size([1026, 64]), 256, None, False]
+SUCCESS               0.008160            0.008240               0.990          [torch.Size([1027, 512]), torch.Size([5, 256, 584]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 256, None, False]
+
+.
+Operator: fused_deepseek_v4_kv_rope_insert  Performance Test (dtype=torch.bfloat16, mode=kernel,level=comprehensive)
+Status       Torch Latency (ms)    Gems Latency (ms)         Gems Speedup          Size Detail
+-----------------------------------------------------------------------------------------------
+SUCCESS               0.007072            0.006848               1.033          [torch.Size([1, 512]), torch.Size([2, 32, 528]), torch.Size([1]), torch.Size([1]), torch.Size([1, 64]), 32, None, True]
+SUCCESS               0.007072            0.007040               1.005          [torch.Size([4, 512]), torch.Size([2, 32, 528]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 32, None, True]
+SUCCESS               0.007168            0.007232               0.991          [torch.Size([20, 512]), torch.Size([2, 32, 528]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 32, None, True]
+SUCCESS               0.007584            0.007520               1.009          [torch.Size([128, 512]), torch.Size([5, 32, 528]), torch.Size([117]), torch.Size([128]), torch.Size([128, 64]), 32, None, True]
+SUCCESS               0.007872            0.007968               0.988          [torch.Size([1027, 512]), torch.Size([33, 32, 528]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 32, None, True]
+SUCCESS               0.015360            0.016640               0.923          [torch.Size([8192, 512]), torch.Size([257, 32, 528]), torch.Size([8192]), torch.Size([8192]), torch.Size([8192, 64]), 32, None, True]
+SUCCESS               0.007264            0.007264               1.000          [torch.Size([4, 512]), torch.Size([2, 256, 528]), torch.Size([1]), torch.Size([4]), torch.Size([4, 64]), 256, None, True]
+SUCCESS               0.007200            0.007008               1.027          [torch.Size([20, 512]), torch.Size([2, 256, 528]), torch.Size([17]), torch.Size([20]), torch.Size([20, 64]), 256, None, True]
+SUCCESS               0.008256            0.008000               1.032          [torch.Size([1026, 512]), torch.Size([5, 256, 528]), torch.Size([1023]), torch.Size([1026]), torch.Size([1026, 64]), 256, None, True]
+SUCCESS               0.008000            0.008192               0.977          [torch.Size([1027, 512]), torch.Size([5, 256, 528]), torch.Size([1024]), torch.Size([1027]), torch.Size([1027, 64]), 256, None, True]
+
+.
+
+============================== 4 passed in 27.99s ==============================

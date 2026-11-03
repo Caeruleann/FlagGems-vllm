@@ -16,8 +16,104 @@ import logging
 from typing import Optional
 
 import torch
+import triton
+import triton.language as tl
 
 logger = logging.getLogger(__name__)
+
+_CACHE_BF16 = tl.constexpr(0)
+_CACHE_FP8 = tl.constexpr(1)
+_CACHE_PACKED_V4 = tl.constexpr(2)
+_CACHE_PACKED_MXFP8 = 3
+
+
+@triton.jit
+def _quantize_ue8m0(values, NUM_BLOCKS: tl.constexpr, BLOCK_SIZE: tl.constexpr):
+    tiles = tl.reshape(values, (NUM_BLOCKS, BLOCK_SIZE))
+    absmax = tl.maximum(tl.max(tl.abs(tiles), axis=1), 1e-4)
+    exponent = tl.ceil(tl.log2(absmax / 448.0))
+    inv_scale = tl.exp2(-exponent)
+    scaled = tiles * tl.reshape(inv_scale, (NUM_BLOCKS, 1))
+    quantized = tl.clamp(scaled, -448.0, 448.0).to(tl.float8e4nv)
+    return quantized, exponent
+
+
+@triton.jit
+def _fused_deepseek_v4_kv_rope_insert_kernel(
+    kv,
+    k_cache,
+    slot_mapping,
+    position_ids,
+    cos_sin_cache,
+    fp8_scale,
+    cache_block_size,
+    cache_block_stride,
+    cache_token_stride,
+    CACHE_KIND: tl.constexpr,
+):
+    token_idx = tl.program_id(0).to(tl.int64)
+    slot_id = tl.load(slot_mapping + token_idx)
+    if slot_id < 0:
+        return
+
+    dims = tl.arange(0, 512)
+    values = tl.load(kv + token_idx * 512 + dims).to(tl.float32)
+    position = tl.load(position_ids + token_idx)
+    cs_base = cos_sin_cache + position * 64
+
+    even, odd = tl.split(tl.reshape(values, (256, 2)))
+    pair_idx = tl.arange(0, 256) - 224
+    cos = tl.load(
+        cs_base + tl.maximum(pair_idx, 0), mask=pair_idx >= 0, other=1.0
+    )
+    sin = tl.load(
+        cs_base + 32 + tl.maximum(pair_idx, 0), mask=pair_idx >= 0, other=0.0
+    )
+    rotated = tl.interleave(even * cos - odd * sin, odd * cos + even * sin)
+    rotated = tl.where(dims >= 448, rotated, values)
+
+    if CACHE_KIND >= _CACHE_PACKED_V4:
+        rotated = rotated.to(tl.bfloat16).to(tl.float32)
+
+    block_idx = slot_id // cache_block_size
+    pos_in_block = slot_id % cache_block_size
+    block_base = k_cache + block_idx * cache_block_stride
+
+    if CACHE_KIND == _CACHE_BF16:
+        dst = block_base + pos_in_block * cache_token_stride + dims
+        tl.store(dst, rotated.to(tl.bfloat16))
+    elif CACHE_KIND == _CACHE_FP8:
+        dst = block_base + pos_in_block * cache_token_stride + dims
+        scaled = rotated * (1.0 / tl.load(fp8_scale))
+        tl.store(dst, tl.clamp(scaled, -448.0, 448.0).to(tl.float8e4nv))
+    elif CACHE_KIND == _CACHE_PACKED_V4:
+        token_base = block_base + pos_in_block * 576
+        quantized, exponent = _quantize_ue8m0(rotated, 8, 64)
+        quantized = tl.reshape(quantized, (512,)).to(tl.uint8, bitcast=True)
+        tl.store(token_base + dims, quantized, mask=dims < 448)
+
+        rope_base = (token_base + 448).to(tl.pointer_type(tl.bfloat16))
+        tl.store(
+            rope_base + dims - 448,
+            rotated.to(tl.bfloat16),
+            mask=dims >= 448,
+        )
+
+        scale_base = block_base + cache_block_size * 576 + pos_in_block * 8
+        scale_dims = tl.arange(0, 8)
+        encoded = tl.minimum(tl.maximum(exponent + 127.0, 0.0), 255.0)
+        tl.store(scale_base + scale_dims, encoded.to(tl.uint8), mask=scale_dims < 7)
+        tl.store(scale_base + 7, tl.zeros((), dtype=tl.uint8))
+    else:
+        token_base = block_base + pos_in_block * 512
+        quantized, exponent = _quantize_ue8m0(rotated, 16, 32)
+        quantized = tl.reshape(quantized, (512,)).to(tl.uint8, bitcast=True)
+        tl.store(token_base + dims, quantized)
+
+        scale_base = block_base + cache_block_size * 512 + pos_in_block * 16
+        scale_dims = tl.arange(0, 16)
+        encoded = tl.minimum(tl.maximum(exponent + 127.0, 0.0), 255.0)
+        tl.store(scale_base + scale_dims, encoded.to(tl.uint8))
 
 
 def fused_deepseek_v4_kv_rope_insert(
@@ -45,9 +141,9 @@ def fused_deepseek_v4_kv_rope_insert(
         Packed blocks store token data followed by scales, rather than
         independent token records; only the block stride is used.
 
-    This is a host-wrapper scaffold. Empty insertions return immediately;
-    nonempty insertions raise until the Triton kernels are implemented.
-    No autotune configuration is needed until those kernels exist.
+    Each Triton program handles one token with one warp, matching the CUDA
+    implementation's per-warp work assignment. This fixed semantic mapping
+    exposes no autotune parameters.
     """
     logger.debug("GEMS FUSED_DEEPSEEK_V4_KV_ROPE_INSERT")
     if not (
@@ -104,6 +200,23 @@ def fused_deepseek_v4_kv_rope_insert(
     if slot_mapping.shape[0] == 0:
         return
 
-    raise NotImplementedError(
-        "fused_deepseek_v4_kv_rope_insert Triton kernels are not implemented"
+    if packed:
+        cache_kind = _CACHE_PACKED_MXFP8 if kv_mxfp8 else _CACHE_PACKED_V4
+    elif fp8:
+        cache_kind = _CACHE_FP8
+    else:
+        cache_kind = _CACHE_BF16
+
+    _fused_deepseek_v4_kv_rope_insert_kernel[(slot_mapping.shape[0],)](
+        kv,
+        k_cache,
+        slot_mapping,
+        position_ids,
+        cos_sin_cache,
+        fp8_scale,
+        cache_block_size,
+        k_cache.stride(0),
+        k_cache.stride(1),
+        CACHE_KIND=cache_kind,
+        num_warps=1,
     )
