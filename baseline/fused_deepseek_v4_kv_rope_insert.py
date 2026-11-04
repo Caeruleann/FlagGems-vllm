@@ -45,6 +45,9 @@ VLLM_TEST_SHAPES = [
     (1027, 1024, 256),
 ]
 CORE_SHAPES = RUNTIME_SHAPES + VLLM_TEST_SHAPES
+EXTENDED_SHAPES = [
+    (n, n, bs) for n in (4, 64, 2048, 32768) for bs in (32, 64)
+]
 
 
 def native():
@@ -57,12 +60,7 @@ def native():
 
 
 def grid():
-    shapes = list(
-        dict.fromkeys(
-            CORE_SHAPES
-            + [(n, n, bs) for n in (4, 64, 2048, 32768, 131072) for bs in (32, 64)]
-        )
-    )
+    shapes = list(dict.fromkeys(CORE_SHAPES + EXTENDED_SHAPES))
     return [
         {
             "num_tokens": num_tokens,
@@ -84,7 +82,16 @@ def _cache_spec(cache_format):
     }[cache_format]
 
 
-def build_inputs(binding, dtype, device):
+def build_inputs(
+    binding,
+    dtype,
+    device,
+    *,
+    padded_pages=False,
+    slot_mapping=None,
+    position_offset=0,
+    scale_value=0.5,
+):
     num_tokens = binding["num_tokens"]
     num_insert = binding["num_tokens_insert"]
     block_size = binding["cache_block_size"]
@@ -92,19 +99,41 @@ def build_inputs(binding, dtype, device):
     cache_dtype, width = _cache_spec(cache_format)
     kv = torch.randn(num_tokens, 512, dtype=dtype, device=device)
     num_blocks = (num_insert + block_size - 1) // block_size + 1
-    cache = torch.zeros(num_blocks, block_size, width, dtype=cache_dtype, device=device)
+    if padded_pages:
+        page_stride = ((block_size * width + 575) // 576) * 576 + 576
+        backing = torch.full((num_blocks, page_stride), 3.0, device=device).to(
+            cache_dtype
+        )
+        cache = backing.as_strided(
+            (num_blocks, block_size, width), (page_stride, width, 1)
+        )
+    else:
+        cache = torch.zeros(
+            num_blocks, block_size, width, dtype=cache_dtype, device=device
+        )
     # Unique shuffled slots stress paged writes; larger cases mask one row.
-    slots = torch.randperm(num_insert, dtype=torch.int64, device=device)
-    if num_insert > 1:
-        slots[-1] = -1
-    positions = torch.arange(num_tokens, dtype=torch.int64, device=device)
+    if slot_mapping is None:
+        slots = torch.randperm(num_insert, dtype=torch.int64, device=device)
+        if num_insert > 1:
+            slots[-1] = -1
+    else:
+        slots = slot_mapping
+    positions = torch.arange(
+        position_offset,
+        position_offset + num_tokens,
+        dtype=torch.int64,
+        device=device,
+    )
+    angle_positions = torch.arange(
+        position_offset + num_tokens, dtype=torch.int64, device=device
+    )
     angles = (
-        positions.float()[:, None]
+        angle_positions.float()[:, None]
         * (10000.0 ** (-torch.arange(0, 64, 2, device=device).float() / 64))[None, :]
     )
     cos_sin = torch.cat((angles.cos(), angles.sin()), dim=-1)
     scale = (
-        torch.tensor([0.5], dtype=torch.float32, device=device)
+        torch.tensor([scale_value], dtype=torch.float32, device=device)
         if cache_format == "fp8"
         else None
     )

@@ -19,6 +19,8 @@ import torch
 import triton
 import triton.language as tl
 
+from flaggems_vllm.runtime import torch_device_fn
+
 logger = logging.getLogger(__name__)
 
 _CACHE_BF16 = tl.constexpr(0)
@@ -46,7 +48,7 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
     position_ids,
     cos_sin_cache,
     fp8_scale,
-    cache_block_size,
+    cache_block_size: tl.constexpr,
     cache_block_stride,
     cache_token_stride,
     CACHE_KIND: tl.constexpr,
@@ -61,16 +63,20 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
     position = tl.load(position_ids + token_idx)
     cs_base = cos_sin_cache + position * 64
 
-    even, odd = tl.split(tl.reshape(values, (256, 2)))
-    pair_idx = tl.arange(0, 256) - 224
-    cos = tl.load(
-        cs_base + tl.maximum(pair_idx, 0), mask=pair_idx >= 0, other=1.0
+    rope_dims = tl.arange(0, 64)
+    rope_values = tl.load(kv + token_idx * 512 + 448 + rope_dims).to(tl.float32)
+    even, odd = tl.split(tl.reshape(rope_values, (32, 2)))
+    pair_idx = tl.arange(0, 32)
+    cos = tl.load(cs_base + pair_idx)
+    sin = tl.load(cs_base + 32 + pair_idx)
+    rotated_rope = tl.interleave(
+        even * cos - odd * sin, tl.fma(even, sin, odd * cos)
     )
-    sin = tl.load(
-        cs_base + 32 + tl.maximum(pair_idx, 0), mask=pair_idx >= 0, other=0.0
+    tiles = tl.reshape(values, (8, 64))
+    rotated = tl.reshape(
+        tl.where(tl.arange(0, 8)[:, None] == 7, rotated_rope[None, :], tiles),
+        (512,),
     )
-    rotated = tl.interleave(even * cos - odd * sin, odd * cos + even * sin)
-    rotated = tl.where(dims >= 448, rotated, values)
 
     if CACHE_KIND >= _CACHE_PACKED_V4:
         rotated = rotated.to(tl.bfloat16).to(tl.float32)
@@ -146,6 +152,10 @@ def fused_deepseek_v4_kv_rope_insert(
     exposes no autotune parameters.
     """
     logger.debug("GEMS FUSED_DEEPSEEK_V4_KV_ROPE_INSERT")
+    if kv.device.type != "cuda":
+        raise NotImplementedError(
+            "fused_deepseek_v4_kv_rope_insert requires CUDA tensors"
+        )
     if not (
         kv.is_contiguous()
         and kv.ndim == 2
@@ -207,16 +217,17 @@ def fused_deepseek_v4_kv_rope_insert(
     else:
         cache_kind = _CACHE_BF16
 
-    _fused_deepseek_v4_kv_rope_insert_kernel[(slot_mapping.shape[0],)](
-        kv,
-        k_cache,
-        slot_mapping,
-        position_ids,
-        cos_sin_cache,
-        fp8_scale,
-        cache_block_size,
-        k_cache.stride(0),
-        k_cache.stride(1),
-        CACHE_KIND=cache_kind,
-        num_warps=1,
-    )
+    with torch_device_fn.device(kv.device):
+        _fused_deepseek_v4_kv_rope_insert_kernel[(slot_mapping.shape[0],)](
+            kv,
+            k_cache,
+            slot_mapping,
+            position_ids,
+            cos_sin_cache,
+            fp8_scale,
+            cache_block_size,
+            k_cache.stride(0),
+            k_cache.stride(1),
+            CACHE_KIND=cache_kind,
+            num_warps=1,
+        )

@@ -15,11 +15,16 @@
 """Benchmark FlagGems-vllm against the native vLLM CUDA kernel.
 
 Run only the native baseline with:
-    pytest -s benchmark/test_fused_deepseek_v4_kv_rope_insert.py -k baseline \
-        --level core --iter 1 --warmup 1
+    pytest -s benchmark/test_fused_deepseek_v4_kv_rope_insert.py \
+        --level core --iter 1 --warmup 1 --metrics latency_base
 
-The baseline-only test reports median kernel latency in ms without a speedup.
-The comparison test reports native latency, Triton latency, and speedup.
+Run the CUDA Graph replay comparison on both implementations with:
+    pytest -s benchmark/test_fused_deepseek_v4_kv_rope_insert.py \
+        --mode cudagraph --level core --iter 100
+
+The comparison test reports native latency, Triton latency, and speedup. If the
+native op is unavailable, it is skipped and the separate Triton-only test
+reports latency without claiming a native comparison.
 """
 
 import pytest
@@ -28,6 +33,7 @@ import torch
 import flaggems_vllm
 from baseline.fused_deepseek_v4_kv_rope_insert import (
     CACHE_FORMATS,
+    EXTENDED_SHAPES,
     OP_NAME,
     build_inputs,
     native,
@@ -46,6 +52,9 @@ class FusedDeepseekV4KVRopeInsertBenchmark(base.Benchmark):
         self.cache_format = cache_format
         self.set_gems(flaggems_vllm.fused_deepseek_v4_kv_rope_insert)
 
+    def set_more_shapes(self):
+        return EXTENDED_SHAPES
+
     def get_input_iter(self, dtype):
         for num_tokens, num_tokens_insert, cache_block_size in self.shapes:
             binding = {
@@ -58,7 +67,16 @@ class FusedDeepseekV4KVRopeInsertBenchmark(base.Benchmark):
             yield args
 
 
+@pytest.mark.skipif(VLLM_REF is None, reason="vLLM native comparison unavailable")
 @pytest.mark.parametrize("cache_format", CACHE_FORMATS)
 def test_fused_deepseek_v4_kv_rope_insert(cache_format):
     bench = FusedDeepseekV4KVRopeInsertBenchmark(cache_format)
+    bench.run()
+
+
+@pytest.mark.skipif(VLLM_REF is not None, reason="native comparison is available")
+@pytest.mark.parametrize("cache_format", CACHE_FORMATS)
+def test_fused_deepseek_v4_kv_rope_insert_triton_only(cache_format):
+    bench = FusedDeepseekV4KVRopeInsertBenchmark(cache_format)
+    bench.metrics = ["latency"]
     bench.run()
