@@ -55,6 +55,11 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
 ):
     token_idx = tl.program_id(0).to(tl.int64)
     slot_id = tl.load(slot_mapping + token_idx)
+    position = tl.load(position_ids + token_idx)
+    cs_base = cos_sin_cache + position * 64
+    pair_idx = tl.arange(0, 32)
+    cos = tl.load(cs_base + pair_idx)
+    sin = tl.load(cs_base + 32 + pair_idx)
     if slot_id < 0:
         return
 
@@ -63,15 +68,10 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
         nope_values = tl.load(
             kv + token_idx * 512 + dims, mask=dims < 448, other=0.0
         ).to(tl.float32)
-        position = tl.load(position_ids + token_idx)
-        cs_base = cos_sin_cache + position * 64
         rope_dims = tl.arange(0, 64)
         rope_values = tl.load(kv + token_idx * 512 + 448 + rope_dims).to(
             tl.float32
         )
-        pair_idx = tl.arange(0, 32)
-        cos = tl.load(cs_base + pair_idx)
-        sin = tl.load(cs_base + 32 + pair_idx)
 
         quantized, exponent = _quantize_ue8m0(nope_values, 8, 64)
         quantized = tl.reshape(quantized, (512,)).to(tl.uint8, bitcast=True)
@@ -97,15 +97,9 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
 
     dims = tl.arange(0, 512)
     values = tl.load(kv + token_idx * 512 + dims).to(tl.float32)
-    position = tl.load(position_ids + token_idx)
-    cs_base = cos_sin_cache + position * 64
-
     rope_dims = tl.arange(0, 64)
     rope_values = tl.load(kv + token_idx * 512 + 448 + rope_dims).to(tl.float32)
     even, odd = tl.split(tl.reshape(rope_values, (32, 2)))
-    pair_idx = tl.arange(0, 32)
-    cos = tl.load(cs_base + pair_idx)
-    sin = tl.load(cs_base + 32 + pair_idx)
     rotated_rope = tl.interleave(
         even * cos - odd * sin, tl.fma(even, sin, odd * cos)
     )
