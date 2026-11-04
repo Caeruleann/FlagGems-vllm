@@ -74,3 +74,9 @@ flaggems_vllm.fused_deepseek_v4_kv_rope_insert(*args, **kwargs)
 torch.cuda.synchronize()
 PY
 ```
+
+## Follow-up A/B data
+
+See `ab_position_v4/README.md` for the paired CUDA/Triton measurements,
+SourceCounters/SASS analysis, position-prefetch result, and packed V4 split
+result.

@@ -58,6 +58,43 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
     if slot_id < 0:
         return
 
+    if CACHE_KIND == _CACHE_PACKED_V4:
+        dims = tl.arange(0, 512)
+        nope_values = tl.load(
+            kv + token_idx * 512 + dims, mask=dims < 448, other=0.0
+        ).to(tl.float32)
+        position = tl.load(position_ids + token_idx)
+        cs_base = cos_sin_cache + position * 64
+        rope_dims = tl.arange(0, 64)
+        rope_values = tl.load(kv + token_idx * 512 + 448 + rope_dims).to(
+            tl.float32
+        )
+        pair_idx = tl.arange(0, 32)
+        cos = tl.load(cs_base + pair_idx)
+        sin = tl.load(cs_base + 32 + pair_idx)
+
+        quantized, exponent = _quantize_ue8m0(nope_values, 8, 64)
+        quantized = tl.reshape(quantized, (512,)).to(tl.uint8, bitcast=True)
+        even, odd = tl.split(tl.reshape(rope_values, (32, 2)))
+        rotated_rope = tl.interleave(
+            even * cos - odd * sin, tl.fma(even, sin, odd * cos)
+        )
+
+        block_idx = slot_id // cache_block_size
+        pos_in_block = slot_id % cache_block_size
+        block_base = k_cache + block_idx * cache_block_stride
+        token_base = block_base + pos_in_block * 576
+        tl.store(token_base + dims, quantized, mask=dims < 448)
+        rope_base = (token_base + 448).to(tl.pointer_type(tl.bfloat16))
+        tl.store(rope_base + rope_dims, rotated_rope.to(tl.bfloat16))
+
+        scale_base = block_base + cache_block_size * 576 + pos_in_block * 8
+        scale_dims = tl.arange(0, 8)
+        encoded = tl.minimum(tl.maximum(exponent + 127.0, 0.0), 255.0)
+        tl.store(scale_base + scale_dims, encoded.to(tl.uint8), mask=scale_dims < 7)
+        tl.store(scale_base + 7, tl.zeros((), dtype=tl.uint8))
+        return
+
     dims = tl.arange(0, 512)
     values = tl.load(kv + token_idx * 512 + dims).to(tl.float32)
     position = tl.load(position_ids + token_idx)
@@ -92,24 +129,6 @@ def _fused_deepseek_v4_kv_rope_insert_kernel(
         dst = block_base + pos_in_block * cache_token_stride + dims
         scaled = rotated * (1.0 / tl.load(fp8_scale))
         tl.store(dst, tl.clamp(scaled, -448.0, 448.0).to(tl.float8e4nv))
-    elif CACHE_KIND == _CACHE_PACKED_V4:
-        token_base = block_base + pos_in_block * 576
-        quantized, exponent = _quantize_ue8m0(rotated, 8, 64)
-        quantized = tl.reshape(quantized, (512,)).to(tl.uint8, bitcast=True)
-        tl.store(token_base + dims, quantized, mask=dims < 448)
-
-        rope_base = (token_base + 448).to(tl.pointer_type(tl.bfloat16))
-        tl.store(
-            rope_base + dims - 448,
-            rotated.to(tl.bfloat16),
-            mask=dims >= 448,
-        )
-
-        scale_base = block_base + cache_block_size * 576 + pos_in_block * 8
-        scale_dims = tl.arange(0, 8)
-        encoded = tl.minimum(tl.maximum(exponent + 127.0, 0.0), 255.0)
-        tl.store(scale_base + scale_dims, encoded.to(tl.uint8), mask=scale_dims < 7)
-        tl.store(scale_base + 7, tl.zeros((), dtype=tl.uint8))
     else:
         token_base = block_base + pos_in_block * 512
         quantized, exponent = _quantize_ue8m0(rotated, 16, 32)
