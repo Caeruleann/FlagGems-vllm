@@ -1,0 +1,7 @@
+num_tokens,num_tokens_insert,cache_block_size,cache_format,grid_size,registers_per_thread,duration_us,sm_throughput_pct,dram_throughput_pct,l1tex_stall_pct,no_eligible_pct,theoretical_occupancy_pct,achieved_occupancy_pct,waves_per_sm,l1_hit_pct,l2_hit_pct
+20,17,32,bf16,17,38,3.62,0.06,0.21,78.2,94.63,50,1.52,0.00,5.12,97.06
+20,17,32,packed_v4,17,55,3.90,0.16,0.22,60.9,88.69,50,1.53,0.00,45.49,98.65
+8192,8192,32,bf16,8192,38,8.93,12.85,35.64,83.2,80.95,50,31.55,1.94,5.13,48.86
+8192,8192,32,fp8,8192,53,9.15,21.11,34.77,79.2,67.82,50,30.73,1.94,45.79,35.01
+8192,8192,32,packed_v4,8192,55,9.38,34.28,33.92,61.7,50.31,50,36.40,1.94,45.37,38.46
+8192,8192,32,mxfp8,8192,54,8.86,30.71,35.96,66.4,56.88,50,35.74,1.94,44.89,35.95
