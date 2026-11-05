@@ -17,7 +17,6 @@ import torch
 
 import flaggems_vllm
 from baseline.fused_deepseek_v4_kv_rope_insert import (
-    BENCHMARK_SHAPES,
     CACHE_FORMATS,
     OP_NAME,
     build_inputs,
@@ -28,21 +27,17 @@ from . import base
 
 VLLM_REF = native()
 
-pytestmark = pytest.mark.fused_deepseek_v4_kv_rope_insert
+pytestmark = [
+    pytest.mark.fused_deepseek_v4_kv_rope_insert,
+    pytest.mark.skipif(VLLM_REF is None, reason="vLLM native op unavailable"),
+]
 
 
 class FusedDeepseekV4KVRopeInsertBenchmark(base.Benchmark):
-    DEFAULT_SHAPES = BENCHMARK_SHAPES
-    DEFAULT_SHAPE_DESC = "num_tokens, num_tokens_insert, cache_block_size"
-
     def __init__(self, cache_format):
         super().__init__(OP_NAME, VLLM_REF, [torch.bfloat16], is_inplace=True)
         self.cache_format = cache_format
         self.set_gems(flaggems_vllm.fused_deepseek_v4_kv_rope_insert)
-
-    def set_shapes(self, shape_file_path=None):
-        self.shapes = self.DEFAULT_SHAPES
-        self.shape_desc = self.DEFAULT_SHAPE_DESC
 
     def get_input_iter(self, dtype):
         for num_tokens, num_tokens_insert, cache_block_size in self.shapes:

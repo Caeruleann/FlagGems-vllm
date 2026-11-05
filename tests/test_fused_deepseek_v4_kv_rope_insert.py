@@ -27,7 +27,10 @@ from . import conftest as cfg
 
 VLLM_REF = native()
 
-pytestmark = pytest.mark.fused_deepseek_v4_kv_rope_insert
+pytestmark = [
+    pytest.mark.fused_deepseek_v4_kv_rope_insert,
+    pytest.mark.skipif(VLLM_REF is None, reason="vLLM native op unavailable"),
+]
 
 # Functional coverage retains DP padding and upstream's 256-token page cases.
 TEST_SHAPES = [
