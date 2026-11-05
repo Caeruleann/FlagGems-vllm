@@ -165,10 +165,6 @@ def fused_deepseek_v4_kv_rope_insert(
     exposes no autotune parameters.
     """
     logger.debug("GEMS FUSED_DEEPSEEK_V4_KV_ROPE_INSERT")
-    if kv.device.type != "cuda":
-        raise NotImplementedError(
-            "fused_deepseek_v4_kv_rope_insert requires CUDA tensors"
-        )
     if not (
         kv.is_contiguous()
         and kv.ndim == 2

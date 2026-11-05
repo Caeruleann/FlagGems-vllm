@@ -25,28 +25,19 @@ IS_INPLACE = True
 # Input KV is always BF16; cache format is an independent collection dimension.
 CACHE_FORMATS = ("bf16", "fp8", "packed_v4", "mxfp8")
 
-# DeepseekV4Attention uses 32-token SWA pages. Full KV rows may exceed the
-# insertion count because of DP padding.
-RUNTIME_SHAPES = [
+# FlagOSTune covers concurrency 1/2/4/8/64/100, up to 2048 sequences and
+# 16384 batched tokens. vLLM uses 32-token pages for this SWA cache.
+BENCHMARK_SHAPES = [
     (1, 1, 32),
-    (4, 1, 32),
-    (20, 17, 32),
-    (128, 117, 32),
+    (2, 2, 32),
+    (4, 4, 32),
+    (8, 8, 32),
+    (64, 64, 32),
+    (100, 100, 32),
     (1027, 1024, 32),
+    (2048, 2048, 32),
     (8192, 8192, 32),
-]
-
-# test_dspark_context_kv_matches_query_insert uses 256-token pages, three
-# additional KV rows, and insertion counts 1, 17, 1023, and 1024.
-VLLM_TEST_SHAPES = [
-    (4, 1, 256),
-    (20, 17, 256),
-    (1026, 1023, 256),
-    (1027, 1024, 256),
-]
-CORE_SHAPES = RUNTIME_SHAPES + VLLM_TEST_SHAPES
-EXTENDED_SHAPES = [
-    (n, n, bs) for n in (4, 64, 2048, 32768) for bs in (32, 64)
+    (16384, 16384, 32),
 ]
 
 
@@ -60,7 +51,6 @@ def native():
 
 
 def grid():
-    shapes = list(dict.fromkeys(CORE_SHAPES + EXTENDED_SHAPES))
     return [
         {
             "num_tokens": num_tokens,
@@ -68,7 +58,7 @@ def grid():
             "cache_block_size": block_size,
             "cache_format": cache_format,
         }
-        for num_tokens, num_insert, block_size in shapes
+        for num_tokens, num_insert, block_size in BENCHMARK_SHAPES
         for cache_format in CACHE_FORMATS
     ]
 
