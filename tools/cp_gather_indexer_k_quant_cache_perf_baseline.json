@@ -1,0 +1,759 @@
+{
+  "_environment": {
+    "hardware": {
+      "gpu": {
+        "name": "NVIDIA H800",
+        "uuid": "198a9496-3d7a-f01d-ee60-190fe0bc5b51",
+        "total_memory_bytes": 85029158912,
+        "total_memory_gib": 79.19,
+        "compute_capability": "9.0",
+        "multiprocessor_count": 132,
+        "cuda_device_index": 0,
+        "driver_version": "570.124.06"
+      },
+      "cpu_model": "Intel(R) Xeon(R) Platinum 8468V",
+      "cpu_architecture": "x86_64",
+      "cpu_socket_count": 2,
+      "physical_cpu_core_count": 96,
+      "logical_cpu_count": 192,
+      "cpu_threads_per_core": 2,
+      "numa_node_count": 2,
+      "process_cpu_affinity_count": 192,
+      "hypervisor_vendor": null
+    },
+    "software": {
+      "os": "Linux",
+      "os_release": "5.15.0-78-generic",
+      "machine": "x86_64",
+      "python": "3.12.13",
+      "packages": {
+        "torch": "2.13.0+cu130",
+        "triton": "3.6.0",
+        "vllm": "0.32.0",
+        "sglang": null
+      },
+      "torch_cuda_version": "13.0",
+      "nvcc_version": null,
+      "ncu_version": null
+    },
+    "run": {
+      "device": null,
+      "op_timeout_seconds": 1800,
+      "reference_chip": "H800",
+      "only": ["cp_gather_indexer_k_quant_cache"],
+      "latency_warmup_ms": 25,
+      "latency_rep_ms": 100,
+      "ncu_warmup_calls": 3
+    },
+    "environment_variables": {
+      "CUDA_VISIBLE_DEVICES": null,
+      "CUDA_DEVICE_ORDER": null
+    }
+  },
+  "_scaling_factors": {
+    "reference_chip": "H800",
+    "source_specs": "hardware_specs.json",
+    "chips": [
+      {
+        "vendor": "nvidia",
+        "chip": "H800",
+        "measured": {
+          "bandwidth_gbps": 1.0,
+          "tensor": {
+            "bf16": 1.0,
+            "fp16": 1.0,
+            "fp32": 1.0,
+            "tf32": 1.0,
+            "int8": 1.0,
+            "fp64": 1.0,
+            "fp8": 1.0
+          },
+          "vector": {
+            "bf16": 1.0,
+            "fp16": 1.0,
+            "fp32": 1.0,
+            "int8": 1.0,
+            "fp64": 1.0,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "nvidia",
+        "chip": "H100",
+        "measured": {
+          "bandwidth_gbps": 1.0,
+          "tensor": {
+            "bf16": 1.0,
+            "fp16": 1.043177,
+            "fp32": 1.0,
+            "tf32": 0.964248,
+            "int8": 0.988141,
+            "fp64": 58.895238,
+            "fp8": 1.048242
+          },
+          "vector": {
+            "bf16": 0.99985,
+            "fp16": 0.99985,
+            "fp32": 0.992618,
+            "int8": 1.0003,
+            "fp64": 29.304762,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "thead",
+        "chip": "PPU-ZW810E",
+        "measured": {
+          "bandwidth_gbps": 0.66226,
+          "tensor": {
+            "bf16": 0.133197,
+            "fp16": 0.142668,
+            "fp32": 0.561111,
+            "tf32": 0.119997,
+            "int8": 0.112969,
+            "fp64": 6.6,
+            "fp8": null
+          },
+          "vector": {
+            "bf16": 0.818522,
+            "fp16": 0.829162,
+            "fp32": 0.416993,
+            "int8": 0.198651,
+            "fp64": 6.114286,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "enflame",
+        "chip": "S60",
+        "measured": {
+          "bandwidth_gbps": 0.150341,
+          "tensor": {
+            "bf16": 0.135387,
+            "fp16": 0.144764,
+            "fp32": 0.672634,
+            "tf32": null,
+            "int8": 0.134389,
+            "fp64": null,
+            "fp8": null
+          },
+          "vector": {
+            "bf16": 0.026225,
+            "fp16": 0.026225,
+            "fp32": 0.029527,
+            "int8": 0.013338,
+            "fp64": null,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "ascend",
+        "chip": "Ascend910B4",
+        "measured": {
+          "bandwidth_gbps": 0.389412,
+          "tensor": {
+            "bf16": 0.035172,
+            "fp16": 0.037468,
+            "fp32": 0.416872,
+            "tf32": null,
+            "int8": 0.034847,
+            "fp64": null,
+            "fp8": null
+          },
+          "vector": {
+            "bf16": 0.024876,
+            "fp16": 0.03117,
+            "fp32": 0.025008,
+            "int8": 0.004721,
+            "fp64": null,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "metax",
+        "chip": "C550",
+        "measured": {
+          "bandwidth_gbps": 0.472539,
+          "tensor": {
+            "bf16": 0.285784,
+            "fp16": 0.298125,
+            "fp32": 0.816461,
+            "tf32": 0.265815,
+            "int8": 0.291016,
+            "fp64": null,
+            "fp8": null
+          },
+          "vector": {
+            "bf16": 0.04166,
+            "fp16": 0.136071,
+            "fp32": 0.542031,
+            "int8": 0.06804,
+            "fp64": 2.152381,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "kunlunxin",
+        "chip": "P800",
+        "measured": {
+          "bandwidth_gbps": 0.206687,
+          "tensor": {
+            "bf16": 0.032282,
+            "fp16": 0.034524,
+            "fp32": null,
+            "tf32": 0.062095,
+            "int8": null,
+            "fp64": null,
+            "fp8": null
+          },
+          "vector": {
+            "bf16": 0.017533,
+            "fp16": 0.036565,
+            "fp32": 0.038265,
+            "int8": 0.000899,
+            "fp64": null,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "mthreads",
+        "chip": "MTT-S5000",
+        "measured": {
+          "bandwidth_gbps": 0.42387,
+          "tensor": {
+            "bf16": 0.46863,
+            "fp16": 0.499849,
+            "fp32": 0.585391,
+            "tf32": 0.449552,
+            "int8": 0.463452,
+            "fp64": 13.533333,
+            "fp8": 0.504517
+          },
+          "vector": {
+            "bf16": 0.285029,
+            "fp16": 0.284879,
+            "fp32": 0.255348,
+            "int8": 0.095017,
+            "fp64": null,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "hygon",
+        "chip": "BW1000",
+        "measured": {
+          "bandwidth_gbps": 0.473529,
+          "tensor": {
+            "bf16": 0.494279,
+            "fp16": 0.526445,
+            "fp32": 1.253704,
+            "tf32": 0.475373,
+            "int8": 0.490587,
+            "fp64": 29.009524,
+            "fp8": 0.268358
+          },
+          "vector": {
+            "bf16": 0.109996,
+            "fp16": 0.454668,
+            "fp32": 0.228834,
+            "int8": 0.114125,
+            "fp64": 14.419048,
+            "fp8": null
+          }
+        }
+      },
+      {
+        "vendor": "iluvatar",
+        "chip": "BI-V150",
+        "measured": {
+          "bandwidth_gbps": 0.356378,
+          "tensor": {
+            "bf16": 0.220302,
+            "fp16": 0.234676,
+            "fp32": 0.940123,
+            "tf32": null,
+            "int8": 0.391076,
+            "fp64": null,
+            "fp8": null
+          },
+          "vector": {
+            "bf16": 0.461262,
+            "fp16": 0.469354,
+            "fp32": 0.230792,
+            "int8": 0.119895,
+            "fp64": null,
+            "fp8": null
+          }
+        }
+      }
+    ]
+  },
+  "cp_gather_indexer_k_quant_cache": {
+    "native_api": "ops.cp_gather_indexer_k_quant_cache",
+    "shapes": {
+      "[4, 256, 16, 128, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [64, 16, 132],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [1024, 128],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [1024, 4],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [4, 16],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [5],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [1024, 128],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [1024, 4],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 4,
+              "seq_len": 256,
+              "block_size": 16,
+              "head_dim": 128,
+              "quant_block_size": 128,
+              "num_blocks": 64,
+              "num_tokens": 1024,
+              "cache_stride": 132
+            }
+          },
+          "T_us": 14.62399959564209,
+          "latency_ms": 0.01462399959564209,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.02147199958562851, 0.019936000928282738, 0.015968000516295433, 0.015200000256299973, 0.015168000012636185, 0.01583999954164028, 0.015807999297976494, 0.01408000010997057, 0.014816000126302242, 0.01462399959564209, 0.014816000126302242, 0.014271999709308147, 0.014303999952971935, 0.014399999752640724, 0.015135999768972397, 0.013887999579310417, 0.01414399966597557, 0.014271999709308147, 0.014368000440299511, 0.01414399966597557, 0.014271999709308147, 0.014655999839305878, 0.014655999839305878, 0.014592000283300877, 0.013567999936640263]
+        }
+      },
+      "[8, 512, 16, 128, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [256, 16, 132],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [4096, 128],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [4096, 4],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [8, 32],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [9],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [4096, 128],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [4096, 4],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 8,
+              "seq_len": 512,
+              "block_size": 16,
+              "head_dim": 128,
+              "quant_block_size": 128,
+              "num_blocks": 256,
+              "num_tokens": 4096,
+              "cache_stride": 132
+            }
+          },
+          "T_us": 27.424000203609467,
+          "latency_ms": 0.027424000203609467,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.03686400130391121, 0.031199999153614044, 0.03030399978160858, 0.029023999348282814, 0.02751999907195568, 0.026976000517606735, 0.02735999971628189, 0.02816000021994114, 0.028192000463604927, 0.029023999348282814, 0.027135999873280525, 0.027327999472618103, 0.027936000376939774, 0.027424000203609467, 0.027424000203609467, 0.0272000003606081, 0.02800000086426735, 0.027648000046610832, 0.026976000517606735, 0.027264000847935677, 0.026623999699950218, 0.028095999732613564, 0.02707199938595295, 0.0272000003606081, 0.026944000273942947]
+        }
+      },
+      "[16, 1024, 16, 512, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [1024, 16, 528],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [16384, 512],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [16384, 16],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [16, 64],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [17],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [16384, 512],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [16384, 16],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 16,
+              "seq_len": 1024,
+              "block_size": 16,
+              "head_dim": 512,
+              "quant_block_size": 128,
+              "num_blocks": 1024,
+              "num_tokens": 16384,
+              "cache_stride": 528
+            }
+          },
+          "T_us": 15.552000142633915,
+          "latency_ms": 0.015552000142633915,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.06038400158286095, 0.04851200059056282, 0.04800000041723251, 0.047040000557899475, 0.038015998899936676, 0.02300800010561943, 0.022463999688625336, 0.02300800010561943, 0.016672000288963318, 0.015359999611973763, 0.014751999638974667, 0.024320000782608986, 0.015552000142633915, 0.015072000212967396, 0.014655999839305878, 0.014688000082969666, 0.014655999839305878, 0.014816000126302242, 0.014751999638974667, 0.015072000212967396, 0.01568000018596649, 0.015615999698638916, 0.01462399959564209, 0.014688000082969666, 0.014911999925971031]
+        }
+      },
+      "[32, 1024, 16, 512, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [2048, 16, 528],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [32768, 512],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [32768, 16],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [32, 64],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [33],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [32768, 512],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [32768, 16],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 32,
+              "seq_len": 1024,
+              "block_size": 16,
+              "head_dim": 512,
+              "quant_block_size": 128,
+              "num_blocks": 2048,
+              "num_tokens": 32768,
+              "cache_stride": 528
+            }
+          },
+          "T_us": 22.592000663280487,
+          "latency_ms": 0.022592000663280487,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.025696000084280968, 0.023360000923275948, 0.02316799946129322, 0.022463999688625336, 0.02319999970495701, 0.022336000576615334, 0.022463999688625336, 0.022655999287962914, 0.022336000576615334, 0.022336000576615334, 0.022495999932289124, 0.021663999184966087, 0.08726400136947632, 0.022655999287962914, 0.02271999977529049, 0.022336000576615334, 0.02223999984562397, 0.022592000663280487, 0.022463999688625336, 0.022207999601960182, 0.02271999977529049, 0.023104000836610794, 0.022304000332951546, 0.02284800074994564, 0.023679999634623528]
+        }
+      },
+      "[1, 8192, 64, 128, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [128, 64, 132],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [8192, 128],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [8192, 4],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [1, 128],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [2],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [8192, 128],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [8192, 4],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 1,
+              "seq_len": 8192,
+              "block_size": 64,
+              "head_dim": 128,
+              "quant_block_size": 128,
+              "num_blocks": 128,
+              "num_tokens": 8192,
+              "cache_stride": 132
+            }
+          },
+          "T_us": 14.336000196635723,
+          "latency_ms": 0.014336000196635723,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.01894400082528591, 0.015263999812304974, 0.015424000099301338, 0.014527999795973301, 0.0144640002399683, 0.01398400031030178, 0.014399999752640724, 0.01398400031030178, 0.014015999622642994, 0.017535999417304993, 0.014336000196635723, 0.01408000010997057, 0.013632000423967838, 0.014047999866306782, 0.08761599659919739, 0.01500799972563982, 0.014495999552309513, 0.013663999736309052, 0.014015999622642994, 0.014303999952971935, 0.01398400031030178, 0.013824000023305416, 0.014911999925971031, 0.014879999682307243, 0.013919999822974205]
+        }
+      },
+      "[8, 4096, 64, 128, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [512, 64, 132],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [32768, 128],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [32768, 4],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [8, 64],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [9],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [32768, 128],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [32768, 4],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 8,
+              "seq_len": 4096,
+              "block_size": 64,
+              "head_dim": 128,
+              "quant_block_size": 128,
+              "num_blocks": 512,
+              "num_tokens": 32768,
+              "cache_stride": 132
+            }
+          },
+          "T_us": 14.240000396966934,
+          "latency_ms": 0.014240000396966934,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.018912000581622124, 0.015456000342965126, 0.015039999969303608, 0.014720000326633453, 0.014336000196635723, 0.014240000396966934, 0.014240000396966934, 0.014495999552309513, 0.014368000440299511, 0.013504000380635262, 0.014560000039637089, 0.014688000082969666, 0.014240000396966934, 0.013824000023305416, 0.014527999795973301, 0.01408000010997057, 0.01414399966597557, 0.013887999579310417, 0.014047999866306782, 0.014175999909639359, 0.01408000010997057, 0.013952000066637993, 0.013791999779641628, 0.01408000010997057, 0.014303999952971935]
+        }
+      },
+      "[64, 1024, 64, 128, 128]": {
+        "torch.float16": {
+          "config": {
+            "inputs": {
+              "kv_cache": {
+                "shape": [1024, 64, 132],
+                "dtype": "torch.uint8",
+                "note": "paged FP8 K + scale 源"
+              },
+              "dst_k": {
+                "shape": [65536, 128],
+                "dtype": "torch.float8_e4m3fn",
+                "note": "原地写回收集的 K"
+              },
+              "dst_scale": {
+                "shape": [65536, 4],
+                "dtype": "torch.uint8",
+                "note": "原地写回收集的 scale"
+              },
+              "block_table": {
+                "shape": [64, 16],
+                "dtype": "torch.int32"
+              },
+              "cu_seq_lens": {
+                "shape": [65],
+                "dtype": "torch.int32"
+              }
+            },
+            "outputs": {
+              "dst_k": {
+                "shape": [65536, 128],
+                "dtype": "torch.float8_e4m3fn"
+              },
+              "dst_scale": {
+                "shape": [65536, 4],
+                "dtype": "torch.uint8"
+              }
+            },
+            "dims": {
+              "batch_size": 64,
+              "seq_len": 1024,
+              "block_size": 64,
+              "head_dim": 128,
+              "quant_block_size": 128,
+              "num_blocks": 1024,
+              "num_tokens": 65536,
+              "cache_stride": 132
+            }
+          },
+          "T_us": 17.472000792622566,
+          "latency_ms": 0.017472000792622566,
+          "F_cuda": 0.0,
+          "F_tensor": 0.0,
+          "B_mem": 0.0,
+          "U_cuda": 0.0,
+          "U_tensor": 0.0,
+          "U_mem": 0.0,
+          "U_bottle_neck": 0.0,
+          "bottle_neck_unit": null,
+          "num_kernels": 0,
+          "per_kernel": [],
+          "timing_protocol": "no-graph-device-event-reset-outside-5warmup-25sample-median",
+          "samples_ms": [0.022336000576615334, 0.018592000007629395, 0.017823999747633934, 0.017983999103307724, 0.017791999503970146, 0.017664000391960144, 0.017696000635623932, 0.01756799966096878, 0.01756799966096878, 0.01740800030529499, 0.017216000705957413, 0.017343999817967415, 0.01727999933063984, 0.017535999417304993, 0.01744000054895878, 0.01740800030529499, 0.017023999243974686, 0.017311999574303627, 0.017343999817967415, 0.01727999933063984, 0.017503999173641205, 0.017823999747633934, 0.017023999243974686, 0.017472000792622566, 0.017472000792622566]
+        }
+      }
+    }
+  }
+}
