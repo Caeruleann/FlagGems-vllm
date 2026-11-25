@@ -28,7 +28,7 @@ def _vendor_native():
     try:
         import vllm._custom_ops  # noqa: F401 - registers the cache operators
 
-        op = torch.ops._C_cache_ops.indexer_k_quant_and_cache.default
+        op = torch.ops._C_cache_ops.indexer_k_quant_and_cache
     except (ImportError, AttributeError, OSError, RuntimeError):
         return None
 
