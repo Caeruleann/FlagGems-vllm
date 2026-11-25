@@ -22,23 +22,13 @@ from . import base
 
 
 def _vendor_native():
-    # Stock mcoplib registers this kernel as a silent no-op on MetaX.
-    if flaggems_vllm.vendor_name == "metax":
+    if flaggems_vllm.vendor_name == "ascend":
         return None
+
     try:
         import vllm._custom_ops  # noqa: F401 - registers the cache operators
 
         op = torch.ops._C_cache_ops.indexer_k_quant_and_cache.default
-        key = torch._C._dispatch_key_for_device(flaggems_vllm.device)
-        if not any(
-            op.has_kernel_for_dispatch_key(dispatch_key)
-            for dispatch_key in (
-                key,
-                "CompositeExplicitAutograd",
-                "CompositeImplicitAutograd",
-            )
-        ):
-            return None
     except (ImportError, AttributeError, OSError, RuntimeError):
         return None
 
